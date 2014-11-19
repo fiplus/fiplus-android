@@ -5,7 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -82,6 +82,9 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
             }
         });
 
+        //Button mSignUpButton = (Button) findViewById(R.id.sign_up_button);
+        //mSignUpButton.setOnClickListener(view -> {signUpFunction(view); });
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -143,6 +146,13 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
             mAuthTask.execute((Void) null);
         }
     }
+
+    public void signUpFunction(View view)
+    {
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
+    }
+
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");

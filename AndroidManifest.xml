@@ -16,10 +16,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.Fiplus.SignUpActivity"
+            android:label="@string/sign_up_activity"
+            android:parentActivityName="com.Fiplus.MyActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.Fiplus.MyActivity" />
+        </activity>
+
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+
 
 </manifest>
