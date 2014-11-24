@@ -41,11 +41,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
+            "fit@gmail.com:hello", "fit2@gmail.com:world"
     };
-
-    private String dummyEmail ="fit@gmail.com";
-    private String dummyPassword = "hello";
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -115,10 +112,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
-        boolean fail = false;
         View focusView = null;
 
-        // Check for a valid email address.
+        // Check for a valid email address and password.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -134,34 +130,19 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
             focusView = mPasswordView;
             cancel = true;
         }
-        else if(!isUserAuthentic(email,password))
-        {
-            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-            builder.setMessage(R.string.error_log_in);
-            builder.setTitle("Error");
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    //close the dialog
-                    dialogInterface.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-            fail = true;
-        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else if(!fail) {
+        }
+        else
+        {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             //showProgress(true);
-            //mAuthTask = new UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
-            mainScreenFunction();
+            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);
         }
     }
 
@@ -169,26 +150,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         //TODO: Replace this with your own logic
 
         return email.contains("@");
-        //return email.equalsIgnoreCase(dummyEmail);
     }
 
-//    private boolean isPasswordValid(String password) {
-//
-//        //return password.length() > 4;
-//        return password.equals(dummyPassword);
-//    }
-
-    private boolean isUserAuthentic(String email, String password)
-    {
-        boolean isAuthentic = false;
-
-        if (email.equalsIgnoreCase(dummyEmail) && password.equals(dummyPassword))
-        {
-            isAuthentic = true;
-        }
-
-        return isAuthentic;
-    }
 
     /**
      * Creates a new intent for SignUpActivity
@@ -278,7 +241,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(Loader<Cursor> cursorLoader)
+    {
 
     }
 
@@ -320,23 +284,17 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
+
+                if (pieces[0].equalsIgnoreCase(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
             }
 
             // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
@@ -344,11 +302,24 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+            if (success)
+            {
+                mainScreenFunction();
+            }
+            else
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                builder.setMessage(R.string.error_log_in);
+                builder.setTitle("Error");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //close the dialog
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         }
 
