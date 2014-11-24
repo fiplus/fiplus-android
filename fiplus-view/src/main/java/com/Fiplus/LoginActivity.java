@@ -4,14 +4,15 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Intent;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -25,15 +26,15 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * A login screen that offers login via email/password.
-
  */
-public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -42,6 +43,10 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+
+    private String dummyEmail ="fit@gmail.com";
+    private String dummyPassword = "hello";
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -82,9 +87,6 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
             }
         });
 
-        //Button mSignUpButton = (Button) findViewById(R.id.sign_up_button);
-        //mSignUpButton.setOnClickListener(view -> {signUpFunction(view); });
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -113,15 +115,8 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
+        boolean fail = false;
         View focusView = null;
-
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -133,35 +128,89 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
             focusView = mEmailView;
             cancel = true;
         }
+        else if(TextUtils.isEmpty(password))
+        {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+        else if(!isUserAuthentic(email,password))
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+            builder.setMessage(R.string.error_log_in);
+            builder.setTitle("Error");
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //close the dialog
+                    dialogInterface.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            fail = true;
+        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
+        } else if(!fail) {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            //showProgress(true);
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
+            mainScreenFunction();
         }
     }
 
+    private boolean isEmailValid(String email) {
+        //TODO: Replace this with your own logic
+
+        return email.contains("@");
+        //return email.equalsIgnoreCase(dummyEmail);
+    }
+
+//    private boolean isPasswordValid(String password) {
+//
+//        //return password.length() > 4;
+//        return password.equals(dummyPassword);
+//    }
+
+    private boolean isUserAuthentic(String email, String password)
+    {
+        boolean isAuthentic = false;
+
+        if (email.equalsIgnoreCase(dummyEmail) && password.equals(dummyPassword))
+        {
+            isAuthentic = true;
+        }
+
+        return isAuthentic;
+    }
+
+    /**
+     * Creates a new intent for SignUpActivity
+     */
     public void signUpFunction(View view)
     {
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+    /**
+     * Creates a new intent for MainScreenActivity
+     */
+    public void mainScreenFunction()
+    {
+        Intent intent = new Intent(this, MainScreenActivity.class);
+        startActivity(intent);
     }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
+    /**
+     * THE FOLLOWING FUNCTIONS ARE USELESS FOR NOW
+     */
 
     /**
      * Shows the progress UI and hides the login form.
@@ -247,7 +296,7 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(MyActivity.this,
+                new ArrayAdapter<String>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -309,6 +358,7 @@ public class MyActivity extends Activity implements LoaderCallbacks<Cursor>{
             showProgress(false);
         }
     }
+
 }
 
 

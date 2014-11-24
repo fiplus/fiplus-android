@@ -8,7 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    >
 
     <!-- Login progress -->
     <ProgressBar
@@ -22,8 +23,7 @@
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
             <LinearLayout
                 android:id="@+id/email_login_form"
@@ -61,12 +61,22 @@
                     android:text="@string/action_sign_in"
                     android:textStyle="bold"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="or"
+                    android:id="@+id/or_text"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:textSize="16dp" />
+
                 <Button
-                    android:id="@+id/sign_up_button"
+                    android:id="@+id/sign_up_button1"
                     style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:text="@string/sign_up"
                     android:textStyle="bold"
                     android:onClick="signUpFunction"/>

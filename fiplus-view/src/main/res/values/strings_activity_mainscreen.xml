@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Strings related to main screen -->
+    <string name="main_near">near you</string>
+    <string name="main_interest">interest</string>
+    <string name="main_favorite">favorite</string>
+
+</resources>
