@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Fiplus.iml" filepath="$PROJECT_DIR$/Fiplus.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fiplus-android.iml" filepath="$PROJECT_DIR$/fiplus-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/fiplus-view/fiplus-view.iml" filepath="$PROJECT_DIR$/fiplus-view/fiplus-view.iml" />
     </modules>
   </component>

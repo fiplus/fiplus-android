@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Fiplus</string>
+
+    <string name="app_name">Welcome to Fi+</string>
     <string name="sign_up_activity">Sign Up</string>
+    <string name="mainscreen_activity">What\'s happening?</string>
+    <string name="fragment_a">Hello blank fragment A</string>
+    <string name="fragment_b">Hello blank fragment B</string>
+
 </resources>
