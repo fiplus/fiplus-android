@@ -10,11 +10,25 @@ import fragments.FragmentNearYou;
 /**
  * Created by jsfirme on 14-11-26.
  */
-public class MainScreenAdapter extends FragmentPagerAdapter
+public class TabPagerAdapter extends FragmentPagerAdapter
 {
-    public MainScreenAdapter(FragmentManager fm)
+    private String[] TABS;
+
+    public TabPagerAdapter(FragmentManager fm)
     {
         super(fm);
+    }
+
+    public TabPagerAdapter(FragmentManager fm, String[] tabs)
+    {
+        super(fm);
+        TABS = tabs;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position)
+    {
+        return TABS[position];
     }
 
     @Override
@@ -29,13 +43,20 @@ public class MainScreenAdapter extends FragmentPagerAdapter
         {
             fragment = new FragmentInterest();
         }
+        else if(arg0==2)
+        {
+            fragment = new FragmentInterest();
+        }
+        else if(arg0==3)
+        {
+            fragment = new FragmentNearYou();
+        }
         return fragment;
     }
 
     @Override
     public int getCount() {
-        //number of fragments
-        // TODO: There might be a way to grab number of added tabs
-        return 2;
+        //number of tabs
+        return TABS.length;
     }
 }

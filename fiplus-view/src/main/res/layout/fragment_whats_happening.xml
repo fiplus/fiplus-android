@@ -1,21 +1,28 @@
-<android.support.v4.view.ViewPager
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pager"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.Mainscreen">
 
-    <!--
-    This title strip will display the currently visible page title, as well as the page
-    titles for adjacent pages.
-    -->
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:clickable="true"
+        android:textColor="#ff000000"
+        android:textStyle="bold"
+        app:pstsIndicatorColor="#FFF8A426"
+        app:pstsUnderlineColor="#fff4a917"
+        app:pstsShouldExpand="true"
+        />
 
-    <android.support.v4.view.PagerTitleStrip
-        android:layout_width="wrap_content"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        class="android.support.v4.view.ViewPager"
-        android:id="@+id/pager_title_strip"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/tabs"
+        tools:context=".MainActivity" />
 
-
-</android.support.v4.view.ViewPager>
+</RelativeLayout>

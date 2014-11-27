@@ -17,14 +17,15 @@
 
     <!-- Listview to display slider menu -->
     <ListView
-        android:id="@+id/list_rightdrawer"
-        android:layout_width="240dp"
+        android:id="@+id/list_leftdrawer"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="@color/list_divider"
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector"
-        android:background="@color/list_background"/>
+        android:background="@color/list_background"
+      />
 
 </android.support.v4.widget.DrawerLayout>

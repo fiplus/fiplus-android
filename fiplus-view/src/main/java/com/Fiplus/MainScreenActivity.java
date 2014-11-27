@@ -1,14 +1,18 @@
 package com.Fiplus;
 
+import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -23,6 +27,9 @@ import model.NavDrawerItem;
 public class MainScreenActivity extends FragmentActivity //implements TabListener {
 {
     private static final String TAG = MainScreenActivity.class.getSimpleName();
+
+    private float lastTranslate = 0.0f;
+    private FrameLayout mainScreenFrame;
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -55,7 +62,8 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_rightdrawer);
+        mDrawerList = (ListView) findViewById(R.id.list_leftdrawer);
+        mainScreenFrame = (FrameLayout) findViewById(R.id.frame_container);
 
         // set a custom shadow that overlays the main content when the drawer oepns
         //mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,  GravityCompat.START);
@@ -63,9 +71,6 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         //add nav drawer items to array
         navDrawerItems = new ArrayList<NavDrawerItem>();
         functionAddDrawerItems();
-
-        // Recycle the typed array
-        navMenuIcons.recycle();
 
         // setting the nav drawer list adapter
         adapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
@@ -75,6 +80,7 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         // enabling action bar app icon and behaving it as toggle button
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.drawable.ic_drawer, //icon
@@ -92,6 +98,27 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
                 getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu
             }
+
+            //override this function to slide the main view when navdrawer is open
+            @SuppressLint("NewApi")
+            public void onDrawerSlide(View drawerView, float slideOffset)
+            {
+                float moveFactor = (mDrawerList.getWidth() * slideOffset);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                {
+                    mainScreenFrame.setTranslationX(moveFactor);
+                }
+                else
+                {
+                    TranslateAnimation anim = new TranslateAnimation(lastTranslate, moveFactor, 0.0f, 0.0f);
+                    anim.setDuration(0);
+                    anim.setFillAfter(true);
+                    mainScreenFrame.startAnimation(anim);
+
+                    lastTranslate = moveFactor;
+                }
+            }
         };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -107,12 +134,16 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
     private void functionAddDrawerItems()
     {
         // adding nav drawer items to array
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
+        for(int i=0;i<navMenuTitles.length;i++)
+        {
+            navDrawerItems.add(new NavDrawerItem(navMenuTitles[i], navMenuIcons.getResourceId(i, -1)));
+        }
+
+        // Recycle the typed array
+        navMenuIcons.recycle();
+
+        //MAY NEED IN THE FUTURE
+        //navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
     }
 
     /*

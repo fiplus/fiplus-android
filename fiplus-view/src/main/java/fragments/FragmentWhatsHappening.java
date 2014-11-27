@@ -1,94 +1,53 @@
 package fragments;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.Fiplus.R;
+import com.astuetz.PagerSlidingTabStrip;
 
-import adapters.MainScreenAdapter;
+import adapters.TabPagerAdapter;
 
-public class FragmentWhatsHappening extends Fragment implements ActionBar.TabListener {
+/**
+ * Created by jsfirme on 14-11-26.
+ */
+public class FragmentWhatsHappening extends Fragment {
 
-    private ViewPager viewPager;
-    private ActionBar actionBar;
-    public static final String TAG = FragmentWhatsHappening.class.getSimpleName();
+    public static final String TAG = FragmentWhatsHappening.class
+            .getSimpleName();
 
-    public static FragmentWhatsHappening newInstance()
-    {
+    public static FragmentWhatsHappening newInstance() {
         return new FragmentWhatsHappening();
     }
 
     @Override
-    //protected void onCreate(Bundle savedInstancesState)
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        //super.onCreate(savedInstancesState);
-        //setContentView(R.layout.activity_mainscreen);
-        View v = inflater.inflate(R.layout.fragment_whats_happening, container, false);
-
-        /**
-         * Fragments
-         */
-        viewPager=(ViewPager)v.findViewById(R.id.pager);
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int arg0, float v, int i2) {
-
-            }
-
-            @Override
-            public void onPageSelected(int arg0) {
-                actionBar.setSelectedNavigationItem(arg0);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-            }
-        });
-        viewPager.setAdapter(new MainScreenAdapter(getFragmentManager()));
-        actionBar=getActivity().getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        setTabs();
-
-        return v;
-    }
-    private void setTabs()
-    {
-        ActionBar.Tab tabNearYou=actionBar.newTab();
-        tabNearYou.setText(getString(R.string.main_near));
-        tabNearYou.setTabListener(this);
-
-        ActionBar.Tab tabFavorite=actionBar.newTab();
-        tabFavorite.setText(getString(R.string.main_favorite));
-        tabFavorite.setTabListener(this);
-
-        actionBar.addTab(tabNearYou);
-        actionBar.addTab(tabFavorite);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft)
-    {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_whats_happening, container, false);
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft)
-    {
-        viewPager.setCurrentItem(tab.getPosition());
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
+        ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
+
+
+        TabPagerAdapter adapter =
+                new TabPagerAdapter(getChildFragmentManager(), getResources().getStringArray(R.array.tab_items));
+
+        pager.setAdapter(adapter);
+        tabs.setViewPager(pager);
     }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft)
-    {
-
-    }
-
 }

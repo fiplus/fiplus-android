@@ -29,6 +29,7 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_mainscreen</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_mainscreen</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Mainscreen</item>
+        <!--<item name="android:windowActionBarOverlay">true</item>-->
         
         
     </style>
