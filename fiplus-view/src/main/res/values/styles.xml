@@ -1,5 +1,8 @@
 <resources>
 
+    <!--&lt;!&ndash;custom attributes&ndash;&gt;-->
+    <!--<attr name="pstsIndicatorColor" format="boolean"/>-->
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Customize your theme here. -->

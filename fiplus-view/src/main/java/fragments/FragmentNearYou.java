@@ -1,4 +1,4 @@
-package com.Fiplus;
+package fragments;
 
 
 import android.os.Bundle;
@@ -8,13 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
 
+import com.Fiplus.R;
+
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentInterest extends Fragment {
+public class FragmentNearYou extends Fragment {
 
 
-    public FragmentInterest() {
+    public FragmentNearYou() {
         // Required empty public constructor
     }
 
@@ -23,7 +26,7 @@ public class FragmentInterest extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragment_interest, container, false);
+        return inflater.inflate(R.layout.fragment_near_you, container, false);
     }
 
 

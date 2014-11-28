@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item >Configure Profile</item>
+        <item >Recent Activities</item>
+        <item >Favorites</item>
+        <item >Settings</item>
+        <item >Log Out</item>
+        <item >Help</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_configure</item>
+        <item>@drawable/ic_activities</item>
+        <item>@drawable/ic_star</item>
+        <item>@drawable/ic_settings</item>
+        <item>@drawable/ic_logout</item>
+        <item>@drawable/ic_help</item>
+    </array>
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+</resources>
