@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Interest Spinner Items -->
+    <string-array name="interest_spinner_items">
+        <item >Soccer</item>
+        <item >Ping Pong</item>
+        <item >Basketball</item>
+        <item >Baseball</item>
+        <item >Hockey</item>
+        <item >Dodgeball</item>
+    </string-array>
+
+</resources>

@@ -1,7 +1,9 @@
 package com.Fiplus;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
@@ -195,6 +197,8 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         // TODO: Options fragments/intents here
         switch(position) {
             case 0:
+                Intent intent = new Intent(this, ConfigureProfileActivity.class);
+                startActivity(intent);
 			/*getSupportFragmentManager()
 				.beginTransaction()
 				.add(R.id.content_frame,

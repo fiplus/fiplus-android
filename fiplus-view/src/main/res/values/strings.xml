@@ -6,5 +6,6 @@
     <string name="mainscreen_activity">What\'s happening?</string>
     <string name="fragment_a">Hello blank fragment A</string>
     <string name="fragment_b">Hello blank fragment B</string>
+    <string name="configure_profile">Configure Profile</string>
 
 </resources>
