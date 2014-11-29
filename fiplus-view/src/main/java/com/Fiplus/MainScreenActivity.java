@@ -3,7 +3,6 @@ package com.Fiplus;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
@@ -193,22 +192,31 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
 
     private void navigateTo(int position)
     {
+        Intent intent;
 
         // TODO: Options fragments/intents here
         switch(position) {
-            case 0:
-                Intent intent = new Intent(this, ConfigureProfileActivity.class);
+            case 0: //Configure Profile
+                intent = new Intent(this, ConfigureProfileActivity.class);
                 startActivity(intent);
+
 			/*getSupportFragmentManager()
 				.beginTransaction()
 				.add(R.id.content_frame,
 						ItemOne.newInstance(),
 						ItemOne.TAG).commit();*/
                 break;
-            case 1:
-
+            case 1: //Recent Activities
+                break;
+            case 2: //Favorites
+                break;
+            case 3: //Settings
                 break;
         }
+
+        //for slide in and out transition
+        // TODO: fix black flicker
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
         /**
          * TODO: Remove once the options are implemented
