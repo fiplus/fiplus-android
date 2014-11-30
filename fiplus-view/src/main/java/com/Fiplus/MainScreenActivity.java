@@ -207,6 +207,8 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
 						ItemOne.TAG).commit();*/
                 break;
             case 1: //Recent Activities
+                intent = new Intent(this, RecentActivitiesActivity.class);
+                startActivity(intent);
                 break;
             case 2: //Favorites
                 break;
