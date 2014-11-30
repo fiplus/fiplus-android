@@ -52,20 +52,30 @@
         android:layout_alignRight="@+id/interests_linear_layout"
         android:layout_alignEnd="@+id/interests_linear_layout" />
 
+    <TextView
+        android:paddingTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/add_schedule_text"
+        android:id="@+id/add_schedule_label"
+        android:layout_below="@+id/configure_gender"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:clickable="true" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:paddingTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_alignLeft="@+id/configure_gender"
         android:layout_alignStart="@+id/configure_gender"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/configure_gender"
         android:id="@+id/interests_linear_layout"
         android:weightSum="1"
-        android:layout_alignParentBottom="true">
+        android:layout_below="@+id/add_schedule_label">
 
         <TextView
             android:paddingTop="7dp"
@@ -92,6 +102,7 @@
             android:text="@string/add_interest_label"
             android:id="@+id/add_interest_label"
             android:clickable="true"
+            android:onClick="onAddClick"
             android:enabled="true" />
 
     </LinearLayout>
@@ -101,7 +112,16 @@
         android:layout_height="wrap_content"
         android:text="@string/save_button_text"
         android:id="@+id/configure_save_button"
-        android:layout_alignBottom="@+id/interests_linear_layout"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/interests_list"
+        android:layout_below="@+id/interests_linear_layout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/configure_save_button" />
 
 </RelativeLayout>
