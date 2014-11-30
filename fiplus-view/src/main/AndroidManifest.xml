@@ -41,6 +41,12 @@
             android:parentActivityName=".MainScreenActivity"
             android:theme="@style/Theme.Mainscreen" >
         </activity>
+        <activity
+            android:name=".RecentActivitiesActivity"
+            android:label="@string/recent_activities_activity"
+            android:parentActivityName=".MainScreenActivity"
+            android:theme="@style/Theme.Mainscreen" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
