@@ -199,12 +199,6 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
             case 0: //Configure Profile
                 intent = new Intent(this, ConfigureProfileActivity.class);
                 startActivity(intent);
-
-			/*getSupportFragmentManager()
-				.beginTransaction()
-				.add(R.id.content_frame,
-						ItemOne.newInstance(),
-						ItemOne.TAG).commit();*/
                 break;
             case 1: //Recent Activities
                 intent = new Intent(this, RecentActivitiesActivity.class);

@@ -47,6 +47,12 @@
             android:parentActivityName=".MainScreenActivity"
             android:theme="@style/Theme.Mainscreen" >
         </activity>
+        <activity
+            android:name=".CreateEventActivity"
+            android:label="@string/create_event_activity_title"
+            android:parentActivityName=".MainScreenActivity"
+            android:theme="@style/Theme.Mainscreen" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />

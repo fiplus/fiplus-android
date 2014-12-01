@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_event_name_hint">Event Name</string>
+    <string name="create_event_location_hint">Event Location</string>
+    <string name="create_event_time_hint">Time</string>
+    <string name="create_event_date_hint">Date</string>
+    <string name="create_event_number_of_people_hint">How many people?</string>
+    <string name="create_event_check_in_question_hint">Check in question</string>
+    <string name="create_event_description_hint">Description</string>
+    <string name="create_event_tags_label">Tags:</string>
+    <string name="create_event_create_button_label">Create</string>
+</resources>
