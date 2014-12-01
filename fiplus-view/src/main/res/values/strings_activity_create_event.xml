@@ -8,4 +8,5 @@
     <string name="create_event_check_in_question_hint">Check in question</string>
     <string name="create_event_description_hint">Description</string>
     <string name="create_event_tags_label">Tags:</string>
+    <string name="create_event_create_button_label">Create</string>
 </resources>
