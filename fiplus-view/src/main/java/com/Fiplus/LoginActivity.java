@@ -160,6 +160,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
     {
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.activity_in_from_right, R.anim.activity_out_to_left);
     }
 
     /**

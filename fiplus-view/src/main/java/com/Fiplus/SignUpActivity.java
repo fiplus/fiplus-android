@@ -28,4 +28,16 @@ public class SignUpActivity extends Activity {
         signUpButton = (Button)findViewById(R.id.sign_up_button2);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
+    }
+
 }

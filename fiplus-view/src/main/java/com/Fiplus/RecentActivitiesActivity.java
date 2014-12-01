@@ -1,13 +1,9 @@
 package com.Fiplus;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import fragments.FragmentRecentActivities;
-import fragments.FragmentWhatsHappening;
 
 
 public class RecentActivitiesActivity extends FragmentActivity {
@@ -27,6 +23,16 @@ public class RecentActivitiesActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
+    }
 
 }
