@@ -211,8 +211,7 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         }
 
         //for slide in and out transition
-        // TODO: fix black flicker
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        overridePendingTransition(R.anim.activity_in_from_right, R.anim.activity_out_to_left);
 
         /**
          * TODO: Remove once the options are implemented
