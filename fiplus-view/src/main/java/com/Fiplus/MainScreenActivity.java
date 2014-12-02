@@ -124,6 +124,11 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        functionCheckInstance(savedInstancesState);
+    }
+
+    protected void functionCheckInstance(Bundle savedInstancesState)
+    {
         if (savedInstancesState == null)
         {
             // on first time display What's happening fragment
@@ -132,7 +137,7 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         }
     }
 
-    private void functionAddDrawerItems()
+    protected void functionAddDrawerItems()
     {
         // adding nav drawer items to array
         for(int i=0;i<navMenuTitles.length;i++)
@@ -182,7 +187,7 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private class DrawerItemClickListener implements AdapterView.OnItemClickListener {
+    protected class DrawerItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
@@ -190,7 +195,7 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         }
     }
 
-    private void navigateTo(int position)
+    protected void navigateTo(int position)
     {
         Intent intent;
 
