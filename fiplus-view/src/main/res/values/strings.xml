@@ -12,5 +12,7 @@
     <string name="fragment_people">People fragment!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="create_event_activity_title">Create Event</string>
+    <string name="my_events">My Events</string>
+    <string name="view_profile">View Profile</string>
 
 </resources>
