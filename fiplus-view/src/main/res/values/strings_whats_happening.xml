@@ -2,10 +2,11 @@
 <resources>
     <!-- Nav Drawer Menu Items -->
     <string-array name="tab_items">
+        <item >Be Fi+!</item>
         <item >Near You</item>
         <item >Interest</item>
-        <item >Favorites</item>
-        <item >Whatever</item>
     </string-array>
+
+    <string name="join_button">Join</string>
 
 </resources>

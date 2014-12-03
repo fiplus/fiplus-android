@@ -52,34 +52,36 @@
                     android:maxLines="1"
                     android:singleLine="true"/>
 
-                <Button
-                    android:id="@+id/email_sign_in_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/action_sign_in"
-                    android:textStyle="bold"/>
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="or"
-                    android:id="@+id/or_text"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="10dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/forgot_pw"
+                    android:id="@+id/forgotPW"
+                    android:layout_gravity="right"
+                    android:textColor="#fff8a426"
+                    android:textIsSelectable="true" />
+
+                <Button
+                    android:id="@+id/email_sign_in_button"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="302dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/action_sign_in"
                     android:textStyle="bold"
-                    android:textSize="16dp" />
+                    android:layout_gravity="center_horizontal" />
 
                 <Button
                     android:id="@+id/sign_up_button1"
                     style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
+                    android:layout_width="299dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="@string/sign_up"
                     android:textStyle="bold"
-                    android:onClick="signUpFunction"/>
+                    android:onClick="signUpFunction"
+                    android:layout_gravity="center_horizontal" />
 
             </LinearLayout>
     </ScrollView>

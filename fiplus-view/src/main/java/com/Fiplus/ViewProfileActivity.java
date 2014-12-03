@@ -70,15 +70,15 @@ public class ViewProfileActivity extends Activity
         mProfileName.setText(name);
     }
 
+    // TODO: layout for view profile event list
     private void setEventList()
     {
-        // Create and populate a List of planet names.
-        String[] planets = new String[] { "Event 1", "Event 2", "Event 3", "Event 4" };
-        ArrayList<String> planetList = new ArrayList<String>();
-        planetList.addAll( Arrays.asList(planets) );
+        String[] events = new String[] { "Event 1", "Event 2", "Event 3", "Event 4" };
+        ArrayList<String> eventsList = new ArrayList<String>();
+        eventsList.addAll( Arrays.asList(events) );
 
         // Create ArrayAdapter using the planet list.
-        listAdapter = new ArrayAdapter<String>(this, R.layout.event_list_layout, planetList);
+        listAdapter = new ArrayAdapter<String>(this, R.layout.item_view_profile_activities, eventsList);
 
         // If you passed a String[] instead of a List<String>
         // into the ArrayAdapter constructor, you must not add more items.
