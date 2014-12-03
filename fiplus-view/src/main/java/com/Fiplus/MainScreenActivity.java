@@ -131,7 +131,7 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
     {
         if (savedInstancesState == null)
         {
-            // on first time display What's happening fragment
+            //on first time display What's happening fragment
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_container, FragmentWhatsHappening.newInstance(), FragmentWhatsHappening.TAG).commit();
         }

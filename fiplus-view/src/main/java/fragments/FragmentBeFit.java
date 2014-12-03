@@ -1,6 +1,5 @@
 package fragments;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,26 +15,22 @@ import java.util.ArrayList;
 import adapters.EventListAdapter;
 import model.EventListItem;
 
-//import android.app.Fragment;
-
-
 /**
- * A simple {@link Fragment} subclass.
+ * Created by jsfirme on 14-12-03.
  */
-public class FragmentNearYou extends Fragment {
+public class FragmentBeFit extends Fragment{
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
 
-    public FragmentNearYou() {
+    public FragmentBeFit() {
         // Required empty public constructor
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
@@ -50,8 +45,11 @@ public class FragmentNearYou extends Fragment {
     {
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
-        eventList.add(new EventListItem(R.drawable.ic_configure, "First Near You Event", "Saint John", "4:30PM", "4 Attendees"));
-        eventList.add(new EventListItem(R.drawable.ic_activities, "Second Near You Event", "Calgary", "10:30PM", "4 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "First Be Fi+! Event", "Calgary", "4:30PM", "10 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_help, "Second Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "Third Be Fi+! Event", "Toronto", "10:30PM", "2 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "Fourth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "Fifth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList);
         mEventsList.setAdapter(mEventListAdapter);
@@ -65,5 +63,4 @@ public class FragmentNearYou extends Fragment {
 
         }
     }
-
 }
