@@ -1,6 +1,6 @@
 <resources>
     
-    <!-- Strings related to login -->
+    <!-- Strings related to Login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_name">Name</string>
