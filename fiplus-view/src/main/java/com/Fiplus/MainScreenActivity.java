@@ -214,6 +214,8 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
                 startActivity(intent);
                 break;
             case 3: //Settings
+                intent = new Intent(this, MyEventsActivity.class);
+                startActivity(intent);
                 break;
         }
 
