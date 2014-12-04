@@ -20,6 +20,9 @@ import model.EventListItem;
  */
 public class FragmentBeFit extends Fragment{
 
+    public static final String TAG = FragmentBeFit.class
+            .getSimpleName();
+
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
 
@@ -51,7 +54,7 @@ public class FragmentBeFit extends Fragment{
         eventList.add(new EventListItem(R.drawable.ic_configure, "Fourth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
         eventList.add(new EventListItem(R.drawable.ic_configure, "Fifth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
 
-        mEventListAdapter = new EventListAdapter(getActivity(), eventList);
+        mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);
 
     }
@@ -60,7 +63,7 @@ public class FragmentBeFit extends Fragment{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
-
+            // TODO: Put implementation
         }
     }
 }

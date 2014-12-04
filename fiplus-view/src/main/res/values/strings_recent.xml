@@ -4,4 +4,7 @@
         <item >Events</item>
         <item >People</item>
     </string-array>
+
+    <string name="rate_now">Rate now!</string>
+    <string name="rated">Rated:</string>
 </resources>
