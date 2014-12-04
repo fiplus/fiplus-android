@@ -210,6 +210,8 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
                 startActivity(intent);
                 break;
             case 2: //Favorites
+                intent = new Intent(this, FavouriteUsersActivity.class);
+                startActivity(intent);
                 break;
             case 3: //Settings
                 break;
