@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    android:theme="@style/AppTheme">
-
-    <!-- TODO: Update blank fragment layout -->
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.Mainscreen"
+    android:background="@color/list_background"
+    >
 
     <ListView
         android:layout_width="wrap_content"
@@ -14,5 +14,8 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentEnd="false"
         android:layout_alignParentRight="false"
+        android:divider="@color/list_divider"
+        android:dividerHeight="2dp"
+        android:listSelector="@drawable/list_selector"
       />
 </RelativeLayout>

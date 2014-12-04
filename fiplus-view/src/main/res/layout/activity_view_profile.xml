@@ -3,12 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:background="@color/list_background">
 
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+         >
 
     <!--TODO: View Profile - Circle Image View, Fix Fonts, Change Star Color-->
 
@@ -67,7 +71,11 @@
             android:id="@+id/profileEventListView"
             android:layout_below="@+id/recentActivitiesText"
             android:layout_centerHorizontal="true"
-            android:layout_margin="10dp" />
+            android:divider="@color/list_divider"
+            android:listSelector="@drawable/list_selector"
+            android:dividerHeight="2dp"
+            android:scrollbars="none"
+            android:smoothScrollbar="true"/>
 
     </RelativeLayout>
 </ScrollView>

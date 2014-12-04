@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,17 +17,26 @@ import java.util.ArrayList;
 
 import model.EventListItem;
 
-
 public class EventListAdapter extends BaseAdapter
 {
+    enum Classes {
+        VIEWPROFILEACTIVITY,
+        FRAGMENTBEFIT,
+        FRAGMENTNEARYOU,
+        FRAGMENTINTEREST,
+        FRAGMENTMYEVENTS,
+        FRAGMENTEVENTS
+    }
 
     private Context context;
     private ArrayList<EventListItem> mEventItems;
+    private String className;
 
-    public EventListAdapter(Context context, ArrayList<EventListItem> mEventItems)
+    public EventListAdapter(Context context, ArrayList<EventListItem> mEventItems, String className)
     {
         this.context = context;
         this.mEventItems = mEventItems;
+        this.className = className;
     }
 
     @Override
@@ -51,10 +61,36 @@ public class EventListAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
+        Classes currentClass = Classes.valueOf(className.toUpperCase());
+        Button eventButton;
+        TextView confirmEvent;
+
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
             convertView = mInflater.inflate(R.layout.item_events_whats_happening, parent, false);
+            eventButton = (Button) convertView.findViewById(R.id.event_button);
+            confirmEvent = (TextView) convertView.findViewById(R.id.confirm_event);
+
+            switch (currentClass)
+            {
+                case VIEWPROFILEACTIVITY :
+                    eventButton.setVisibility(convertView.GONE);
+                    confirmEvent.setVisibility(convertView.GONE);
+                    break;
+                case FRAGMENTMYEVENTS:
+                    eventButton.setText(R.string.cancel_button);
+                    break;
+                case FRAGMENTEVENTS:
+                    eventButton.setText(R.string.rate_now);
+                    confirmEvent.setVisibility(convertView.GONE);
+                    break;
+                default:
+                    eventButton.setText(R.string.join_button);
+                    confirmEvent.setVisibility(convertView.GONE);
+                    break;
+            }
 
         }
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="joiner"><u>Is this happening?</u></string>
+    <string name="creator"><u>Firm up!</u></string>
+    <string name="cancel_button">Cancel</string>
+</resources>

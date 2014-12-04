@@ -10,11 +10,6 @@ public class MyEventsActivity extends MainScreenActivity {
         super.onCreate(savedInstancesState);
         //setContentView(R.layout.fragment_my_events);
 
-        //PUT THIS WHEN CALLING A NEW INTENT
-        //finish();
-        //intent = new Intent(this, MyEventsActivity.class);
-        //startActivity(intent);
-
     }
 
     @Override
