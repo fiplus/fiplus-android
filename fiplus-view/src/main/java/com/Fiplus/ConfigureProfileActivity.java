@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -21,6 +22,10 @@ public class ConfigureProfileActivity extends Activity {
     protected Spinner mInterestSpinner;
     protected ListView mInterestListView;
 
+    protected EditText mProfileName;
+    protected EditText mGender;
+    protected EditText mAge;
+
     protected ArrayList<String> mInterestListItems = new ArrayList<String>();
 
     protected ArrayAdapter<String> listAdapter;
@@ -33,6 +38,10 @@ public class ConfigureProfileActivity extends Activity {
 
         mImageView = (ImageView)findViewById(R.id.imageView);
         mImageView.setImageResource(R.drawable.fiplus);
+
+        mProfileName = (EditText)findViewById(R.id.configure_profile_name);
+        mGender = (EditText)findViewById(R.id.configure_gender);
+        mAge = (EditText)findViewById(R.id.configure_age);
 
         mInterestSpinner = (Spinner)findViewById(R.id.interests_spinner);
 
@@ -62,7 +71,7 @@ public class ConfigureProfileActivity extends Activity {
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mInterestListItems);
         mInterestListView.setAdapter(listAdapter);
 
-
+        getProfile();
     }
 
     @Override
@@ -89,6 +98,18 @@ public class ConfigureProfileActivity extends Activity {
     public void onPause() {
         super.onPause();
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
+    }
+
+    private void getProfile()
+    {
+        // Dummy profile
+        mProfileName.setText("John Doe");
+        mGender.setText("M");
+        mAge.setText("22");
+
+        mInterestListItems.add(0, "Soccer");
+        mInterestListItems.add(1, "Basketball");
+        listAdapter.notifyDataSetChanged();
     }
 
 }
