@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import fragments.FragmentBeFit;
 import fragments.FragmentInterest;
 import fragments.FragmentNearYou;
 
@@ -37,19 +38,15 @@ public class TabPagerAdapter extends FragmentPagerAdapter
         Fragment fragment=null;
         if(arg0==0)
         {
-            fragment = new FragmentNearYou();
+            fragment = new FragmentBeFit();
         }
         else if(arg0==1)
         {
-            fragment = new FragmentInterest();
+            fragment = new FragmentNearYou();
         }
         else if(arg0==2)
         {
             fragment = new FragmentInterest();
-        }
-        else if(arg0==3)
-        {
-            fragment = new FragmentNearYou();
         }
         return fragment;
     }

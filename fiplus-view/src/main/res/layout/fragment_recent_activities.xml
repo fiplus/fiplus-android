@@ -23,7 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/recent_activities_tabs"
-        tools:context=".RecentActivitiesActivity" />
+        tools:context=".RecentActivitiesActivity"
+        android:background="@color/list_background"/>
 
 
 </RelativeLayout>

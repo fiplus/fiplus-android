@@ -15,22 +15,19 @@ import java.util.ArrayList;
 import adapters.EventListAdapter;
 import model.EventListItem;
 
+/**
+ * Created by jsfirme on 14-12-03.
+ */
+public class FragmentBeFit extends Fragment{
 
-public class FragmentMyEvents extends Fragment {
-    public static final String TAG = FragmentMyEvents.class.getSimpleName();
+    public static final String TAG = FragmentBeFit.class
+            .getSimpleName();
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
 
-    public static FragmentMyEvents newInstance() {
-        return new FragmentMyEvents();
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+    public FragmentBeFit() {
+        // Required empty public constructor
     }
 
 
@@ -40,7 +37,6 @@ public class FragmentMyEvents extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
-
         setEventList();
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
@@ -52,8 +48,11 @@ public class FragmentMyEvents extends Fragment {
     {
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
-        eventList.add(new EventListItem(R.drawable.ic_configure, "My Event 1", "Saint John", "4:30PM", "4 Attendees"));
-        eventList.add(new EventListItem(R.drawable.ic_activities, "My Event 2", "Calgary", "10:30PM", "4 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "First Be Fi+! Event", "Calgary", "4:30PM", "10 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_help, "Second Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "Third Be Fi+! Event", "Toronto", "10:30PM", "2 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "Fourth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
+        eventList.add(new EventListItem(R.drawable.ic_configure, "Fifth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);
