@@ -5,15 +5,8 @@
     <string name="sign_up_activity">Sign Up</string>
     <string name="mainscreen_activity">What\'s happening?</string>
     <string name="forgot_pw">Forgot Password?</string>
-    <string name="fragment_a">Hello blank fragment A</string>
-    <string name="fragment_b">Hello blank fragment B</string>
     <string name="configure_profile">Configure Profile</string>
     <string name="recent_activities_activity">Recent Activities</string>
-    <string name="fragment_events">Events fragment!</string>
-    <string name="fragment_people">People fragment!</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="create_event_activity_title">Create Event</string>
-    <string name="my_events">My Events</string>
     <string name="view_profile">View Profile</string>
     <string name="favourite_users">Favourite Users</string>
 
