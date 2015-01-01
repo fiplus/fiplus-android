@@ -9,12 +9,15 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
@@ -30,7 +33,8 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
     private static final String TAG = MainScreenActivity.class.getSimpleName();
 
     private float lastTranslate = 0.0f;
-    private FrameLayout mainScreenFrame;
+    private RelativeLayout mainScreenFrame;
+    private Button mCreateEventButton;
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -55,6 +59,20 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         super.onCreate(savedInstancesState);
         setContentView(R.layout.activity_mainscreen);
 
+        /**
+         * Create Event Button
+         */
+        mCreateEventButton= (Button) findViewById(R.id.create_event_button);
+        mCreateEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToCreateEvent();
+            }
+        });
+
+        /**
+         * For Drawer Navigation Setup
+         */
         mTitle = mDrawerTitle = getTitle();
 
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
@@ -64,7 +82,7 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_leftdrawer);
-        mainScreenFrame = (FrameLayout) findViewById(R.id.frame_container);
+        mainScreenFrame = (RelativeLayout) findViewById(R.id.frame_container);
 
         // set a custom shadow that overlays the main content when the drawer oepns
         //mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,  GravityCompat.START);
@@ -81,7 +99,6 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         // enabling action bar app icon and behaving it as toggle button
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.drawable.ic_drawer, //icon
@@ -127,13 +144,11 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         functionCheckInstance(savedInstancesState);
     }
 
-    protected void functionCheckInstance(Bundle savedInstancesState)
-    {
-        if (savedInstancesState == null)
-        {
+    protected void functionCheckInstance(Bundle savedInstancesState) {
+        if (savedInstancesState == null) {
             //on first time display What's happening fragment
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_container, FragmentWhatsHappening.newInstance(), FragmentWhatsHappening.TAG).commit();
+                    .replace(R.id.fragment_container, FragmentWhatsHappening.newInstance(), FragmentWhatsHappening.TAG).commit();
         }
     }
 
@@ -152,6 +167,14 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
         //navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actionbarbuttons, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     /*
     * If you do not have any menus, you still need this function
     * in order to open or close the NavigationDrawer when the user
@@ -164,10 +187,37 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_my_events:
+                goToMyEvents();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
-	/*
+    /**
+     * Creates a new intent for Create Event Activity
+     */
+    private void goToCreateEvent()
+    {
+        Intent intent = new Intent(this, CreateEventActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+    }
+
+    /**
+     * Creates a new intent for My Events Activity
+     */
+    private void goToMyEvents()
+    {
+        Intent intent = new Intent(this, MyEventsActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.activity_in_from_right, R.anim.activity_out_to_left);
+    }
+
+	/**
 	 * When using the ActionBarDrawerToggle, you must call it during onPostCreate()
 	 * and onConfigurationChanged()
 	 */

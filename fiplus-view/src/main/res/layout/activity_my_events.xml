@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecentActivitiesActivity">
+    tools:context=".MyEventsActivity">
 
     <FrameLayout
-        android:id="@+id/recent_activities_frame_container"
+        android:id="@+id/my_events_frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
