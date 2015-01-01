@@ -8,16 +8,17 @@ import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Nick on 11/30/2014.
  */
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener
 {
+    static Calendar c = Calendar.getInstance();
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the current time as the default values for the picker
-        final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
@@ -27,7 +28,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        // Do something with the time chosen by the user
+        c.set(1,1,1,hourOfDay,minute);
     }
 
 }
