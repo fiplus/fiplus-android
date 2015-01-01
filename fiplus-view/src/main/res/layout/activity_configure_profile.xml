@@ -1,127 +1,134 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:paddingRight="20dp"
-    android:paddingLeft="20dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ConfigureProfileActivity">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_centerHorizontal="true" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ConfigureProfileActivity">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:id="@+id/configure_profile_name"
-        android:hint="@string/configure_name_hint"
-        android:layout_below="@+id/imageView"
-        android:layout_marginTop="24dp"
-        android:editable="true"
-        android:minLines="1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/configure_gender"
-        android:hint="@string/configure_gender_hint"
-        android:layout_below="@+id/configure_profile_name"
-        android:layout_alignLeft="@+id/configure_profile_name"
-        android:layout_alignStart="@+id/configure_profile_name"
-        android:editable="true"
-        android:maxLength="1"
-        android:layout_toStartOf="@+id/imageView"
-        android:layout_toLeftOf="@+id/imageView" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:id="@+id/configure_age"
-        android:hint="@string/configure_age_hint"
-        android:layout_toEndOf="@+id/configure_gender"
-        android:editable="true"
-        android:maxLength="3"
-        android:layout_alignTop="@+id/configure_gender"
-        android:layout_toRightOf="@+id/configure_gender"
-        android:layout_alignRight="@+id/interests_linear_layout"
-        android:layout_alignEnd="@+id/interests_linear_layout" />
-
-    <TextView
-        android:paddingTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/add_schedule_text"
-        android:id="@+id/add_schedule_label"
-        android:layout_below="@+id/configure_gender"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:clickable="true" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/configure_gender"
-        android:layout_alignStart="@+id/configure_gender"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/interests_linear_layout"
-        android:weightSum="1"
-        android:layout_below="@+id/add_schedule_label">
-
-        <TextView
-            android:paddingTop="7dp"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/interests_label"
-            android:id="@+id/interests_label" />
+            android:id="@+id/imageView"
+            android:layout_centerHorizontal="true" />
 
-        <Spinner
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:layout_width="150dp"
-            android:layout_height="41dp"
-            android:id="@+id/interests_spinner"
-            android:layout_weight="0.66" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:id="@+id/configure_profile_name"
+            android:hint="@string/configure_name_hint"
+            android:layout_below="@+id/imageView"
+            android:layout_marginTop="24dp"
+            android:editable="true"
+            android:minLines="1"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/configure_gender"
+            android:hint="@string/configure_gender_hint"
+            android:layout_below="@+id/configure_profile_name"
+            android:layout_alignLeft="@+id/configure_profile_name"
+            android:layout_alignStart="@+id/configure_profile_name"
+            android:editable="true"
+            android:maxLength="1"
+            android:layout_toStartOf="@+id/imageView"
+            android:layout_toLeftOf="@+id/imageView" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:id="@+id/configure_age"
+            android:hint="@string/configure_age_hint"
+            android:layout_toEndOf="@+id/configure_gender"
+            android:editable="true"
+            android:maxLength="3"
+            android:layout_alignTop="@+id/configure_gender"
+            android:layout_toRightOf="@+id/configure_gender"
+            android:layout_alignRight="@+id/interests_linear_layout"
+            android:layout_alignEnd="@+id/interests_linear_layout" />
 
         <TextView
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
+            android:paddingTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/add_interest_label"
-            android:id="@+id/add_interest_label"
-            android:clickable="true"
-            android:onClick="onAddClick"
-            android:enabled="true" />
+            android:text="@string/add_schedule_text"
+            android:id="@+id/add_schedule_label"
+            android:layout_below="@+id/configure_gender"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:clickable="true" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:paddingTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/configure_gender"
+            android:layout_alignStart="@+id/configure_gender"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/interests_linear_layout"
+            android:weightSum="1"
+            android:layout_below="@+id/add_schedule_label">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save_button_text"
-        android:id="@+id/configure_save_button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+            <TextView
+                android:paddingTop="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/interests_label"
+                android:id="@+id/interests_label" />
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/interests_list"
-        android:layout_below="@+id/interests_linear_layout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/configure_save_button" />
+            <Spinner
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:layout_width="150dp"
+                android:layout_height="41dp"
+                android:id="@+id/interests_spinner"
+                android:layout_weight="0.66" />
 
-</RelativeLayout>
+            <TextView
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/add_interest_label"
+                android:id="@+id/add_interest_label"
+                android:clickable="true"
+                android:onClick="onAddClick"
+                android:enabled="true" />
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save_button_text"
+            android:id="@+id/configure_save_button"
+            android:layout_below="@+id/interests_list"
+            android:layout_centerHorizontal="true" />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/interests_list"
+            android:layout_below="@+id/interests_linear_layout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:clickable="true" />
+
+    </RelativeLayout>
+</ScrollView>

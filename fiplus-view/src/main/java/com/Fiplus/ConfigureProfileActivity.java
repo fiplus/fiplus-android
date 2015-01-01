@@ -3,6 +3,7 @@ package com.Fiplus;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -52,6 +53,29 @@ public class ConfigureProfileActivity extends Activity {
             {
                 mInterestListItems.remove(position);
                 listAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
+            }
+        });
+
+        mInterestListView.setOnTouchListener(new ListView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                // Handle ListView touch events.
+                v.onTouchEvent(event);
+                return true;
             }
         });
 
@@ -71,7 +95,9 @@ public class ConfigureProfileActivity extends Activity {
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mInterestListItems);
         mInterestListView.setAdapter(listAdapter);
 
+
         getProfile();
+        ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
     }
 
     @Override
@@ -86,6 +112,7 @@ public class ConfigureProfileActivity extends Activity {
     {
         mInterestListItems.add(mInterestSpinner.getSelectedItem().toString());
         listAdapter.notifyDataSetChanged();
+        ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
     }
 
     @Override
