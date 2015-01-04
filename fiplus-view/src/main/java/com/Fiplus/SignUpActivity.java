@@ -71,9 +71,9 @@ public class SignUpActivity extends Activity {
        @Override
        protected String doInBackground(Void... params) {
 
-           UserApi userapi = new UserApi();
-           userapi.addHeader("X-DreamFactory-Application-Name", "ANDROID");
-           userapi.setBasePath("http://dreamfactory.dev-fiplus.bitnamiapp.com/rest");
+           UserApi userApi = new UserApi();
+           userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+           userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
            Register register = new Register();
            register.setEmail(signUpEmail.getText().toString());
@@ -81,7 +81,7 @@ public class SignUpActivity extends Activity {
            register.setNew_password(signUpPassword.getText().toString());
 
            try{
-               Success success = userapi.register(true, register);
+               Success success = userApi.register(true, register);
                System.out.println(success.toString());
            } catch (Exception e) {
                return e.getMessage();
