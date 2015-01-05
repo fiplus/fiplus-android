@@ -7,7 +7,6 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +27,7 @@ import model.NavDrawerItem;
 /**
  * Main screen
  */
-public class MainScreenActivity extends FragmentActivity //implements TabListener {
+public class MainScreenActivity extends BaseActivity
 {
     private static final String TAG = MainScreenActivity.class.getSimpleName();
 
@@ -264,6 +263,9 @@ public class MainScreenActivity extends FragmentActivity //implements TabListene
                 startActivity(intent);
                 break;
             case 3: //Settings
+                break;
+            case 4: //logout
+                logout();
                 break;
         }
 

@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import utils.ListViewUtil;
+
 
 public class ConfigureProfileActivity extends Activity {
 

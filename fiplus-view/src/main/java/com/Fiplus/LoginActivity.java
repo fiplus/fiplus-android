@@ -3,7 +3,6 @@ package com.Fiplus;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
@@ -27,23 +26,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.wordnik.client.api.UserApi;
+import com.wordnik.client.model.Login;
+import com.wordnik.client.model.Session;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.IAppConstants;
+import utils.PrefUtil;
 
 /**
- * A login screen that offers login via email/password.
- */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "fit@gmail.com:hello", "fit2@gmail.com:world"
-    };
-
+* A login screen that offers login via email/password.
+*/
+public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor>{
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -140,15 +140,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            //showProgress(true);
+            showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-
         return email.contains("@");
     }
 
@@ -162,19 +160,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         startActivity(intent);
         overridePendingTransition(R.anim.activity_in_from_right, R.anim.activity_out_to_left);
     }
-
-    /**
-     * Creates a new intent for MainScreenActivity
-     */
-    public void mainScreenFunction()
-    {
-        Intent intent = new Intent(this, MainScreenActivity.class);
-        startActivity(intent);
-    }
-
-    /**
-     * THE FOLLOWING FUNCTIONS ARE USELESS FOR NOW
-     */
 
     /**
      * Shows the progress UI and hides the login form.
@@ -271,7 +256,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, String> {
 
         private final String mEmail;
         private final String mPassword;
@@ -282,45 +267,56 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>{
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+        protected String doInBackground(Void... params) {
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
+            UserApi userApi = new UserApi();
+            userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            Login login = new Login();
+            login.setEmail(mEmail);
+            login.setPassword(mPassword);
+            try {
+                Session session =	userApi.login(login);
+                String session_id = session.getSession_id();
 
-                if (pieces[0].equalsIgnoreCase(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
+                PrefUtil.putString(getApplicationContext(), IAppConstants.DSP_URL, IAppConstants.DSP_URL);
+                PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, session_id);
+                PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, mEmail);
+                PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, mPassword);
+            } catch (Exception e) {
+                return e.getMessage();
             }
-
-            // TODO: register the new account here.
-            return false;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(String result) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success)
-            {
-                mainScreenFunction();
-            }
-            else
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                builder.setMessage(R.string.error_log_in);
-                builder.setTitle("Error");
-                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            if (result !=null){
+                String errorMsg = "";
+                try {
+                    JSONObject jObj = new JSONObject(result);
+                    JSONArray jArray = jObj.getJSONArray("error");
+                    JSONObject obj = jArray.getJSONObject(0);
+                    errorMsg = obj.getString("message");
+                } catch (JSONException e) {
+                    errorMsg = result;
+                }
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
+                alertDialog.setTitle("Error").setMessage(errorMsg).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //close the dialog
-                        dialogInterface.dismiss();
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                     }
                 });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                alertDialog.show();
+            }
+            else {
+                Intent in= new Intent(LoginActivity.this,MainScreenActivity.class);
+                startActivity(in);
+                finish();
             }
         }
 
