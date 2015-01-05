@@ -14,7 +14,7 @@ import utils.PrefUtil;
 /**
  * Created by jsfirme on 15-01-04.
  */
-public class SplashScreenActivity extends BaseActivity {
+public class SplashScreenActivity extends BaseFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -27,7 +27,7 @@ import model.NavDrawerItem;
 /**
  * Main screen
  */
-public class MainScreenActivity extends BaseActivity
+public class MainScreenActivity extends BaseFragmentActivity
 {
     private static final String TAG = MainScreenActivity.class.getSimpleName();
 

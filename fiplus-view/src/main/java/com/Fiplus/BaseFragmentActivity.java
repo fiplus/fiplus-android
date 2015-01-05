@@ -10,7 +10,7 @@ import utils.PrefUtil;
 /**
  * Created by jsfirme on 15-01-04.
  */
-public class BaseActivity extends FragmentActivity {
+public class BaseFragmentActivity extends FragmentActivity {
     protected String dsp_url;
     protected String session_id;
     @Override
