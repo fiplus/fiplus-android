@@ -1,6 +1,7 @@
 package com.Fiplus;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -8,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -32,6 +34,7 @@ public class ConfigureProfileActivity extends Activity {
     protected TextView mAddTextView;
     protected Spinner mInterestSpinner;
     protected ListView mInterestListView;
+    protected Button mSaveButton;
 
     protected EditText mProfileName;
     protected EditText mGender;
@@ -46,6 +49,15 @@ public class ConfigureProfileActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_profile);
+
+        mSaveButton = (Button) findViewById(R.id.configure_save_button);
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SaveProfileTask saveProfileTask = new SaveProfileTask();
+                saveProfileTask.execute();
+            }
+        });
 
         mImageView = (ImageView) findViewById(R.id.imageView);
         mImageView.setImageResource(R.drawable.fiplus);
@@ -185,17 +197,23 @@ public class ConfigureProfileActivity extends Activity {
             userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
             userProfile.setAge(Integer.parseInt(mAge.getText().toString()));
             userProfile.setGender(mGender.getText().toString());
+            userProfile.setTagged_interests(mInterestListItems);
 
             try{
                 //TODO: Test this somehow cause there's no API method to get the profile yet
-                String response = userfiApi.put_profile(userProfile);
+                String response = userfiApi.saveUserProfile(userProfile);
                 System.out.println(response.toString());
             } catch (Exception e) {
                 return e.getMessage();
             }
-
             return null;
         }
 
+        @Override
+        protected void onPostExecute(String result){
+            Intent in= new Intent(ConfigureProfileActivity.this, MainScreenActivity.class);
+            startActivity(in);
+            finish();
+        }
     }
 }
