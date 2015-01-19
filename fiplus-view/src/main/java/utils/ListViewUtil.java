@@ -15,7 +15,7 @@ public class ListViewUtil {
             // pre-condition
             return;
         }
-        if (listAdapter.getCount() >= 4)
+        if (listAdapter.getCount() >= 4 || listAdapter.getCount() == 0)
         {
             return;
         }

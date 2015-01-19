@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.wordnik.client.api.UserfiApi;
 import com.wordnik.client.model.UserProfile;
+import com.wordnik.client.model.UserProfileDetailResponse;
 
 import org.json.JSONException;
 
@@ -148,37 +149,34 @@ public class ConfigureProfileActivity extends Activity {
     }
 
     private void getProfile() {
-        //TODO: Create a GetProfileTask to populate the current user's profile when it works
-        // Dummy profile
-        mProfileName.setText("John Doe");
-        mGender.setText("M");
-        mAge.setText("22");
-
-        mInterestListItems.add(0, "Soccer");
-        mInterestListItems.add(1, "Basketball");
-        listAdapter.notifyDataSetChanged();
+        GetProfileTask getProfileTask = new GetProfileTask();
+        getProfileTask.execute();
     }
 
     class GetProfileTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
-            //TODO: Create the get profile object and get interests object, and then put the current user's information in here
+
+            UserfiApi userfiApi = new UserfiApi();
+            userfiApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            userfiApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
 
             try {
-                //TODO: Get the profile and interests here here when the stuff exists in the SDK
+                UserProfileDetailResponse response = userfiApi.GetUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
+
+                mProfileName.setText(response.getUsername().toString());
+                mGender.setText(response.getGender().toString());
+                mAge.setText(response.getAge().toString());
+
+                for(int i = 0; i < response.getTagged_interests().size(); i++) {
+                    mInterestListItems.add(response.getTagged_interests().get(i).toString());
+                }
+                listAdapter.notifyDataSetChanged();
+
             } catch (Exception e) {
                 return e.getMessage();
             }
-
-
-            mProfileName.setText("Get this from the profile we got above");
-            mGender.setText("Get this from the profile we got above");
-            mAge.setText("Get this from the profile we got above");
-
-            mInterestListItems.add(0, "Get from interest above");
-            mInterestListItems.add(1, "Get from interests above");
-
             return null;
         }
 
@@ -191,16 +189,16 @@ public class ConfigureProfileActivity extends Activity {
 
             UserfiApi userfiApi = new UserfiApi();
             userfiApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            userfiApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            userfiApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
 
             UserProfile userProfile = new UserProfile();
+            userProfile.setUsername(mProfileName.getText().toString());
             userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
             userProfile.setAge(Integer.parseInt(mAge.getText().toString()));
             userProfile.setGender(mGender.getText().toString());
             userProfile.setTagged_interests(mInterestListItems);
 
             try{
-                //TODO: Test this somehow cause there's no API method to get the profile yet
                 String response = userfiApi.saveUserProfile(userProfile);
                 System.out.println(response.toString());
             } catch (Exception e) {
