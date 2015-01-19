@@ -1,3 +1,3 @@
-include ':app', ':android-client', ':fiplus-view'
+include ':app', ':fiplus-view', ':android-client'
 include ':fiplus-view'
 include ':fiplus-view'
