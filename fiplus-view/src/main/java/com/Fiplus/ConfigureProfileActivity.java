@@ -15,12 +15,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wordnik.client.api.UserfiApi;
 import com.wordnik.client.model.UserProfile;
 import com.wordnik.client.model.UserProfileDetailResponse;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -155,6 +154,8 @@ public class ConfigureProfileActivity extends Activity {
 
     class GetProfileTask extends AsyncTask<Void, Void, String> {
 
+        protected UserProfileDetailResponse response;
+
         @Override
         protected String doInBackground(Void... params) {
 
@@ -163,21 +164,24 @@ public class ConfigureProfileActivity extends Activity {
             userfiApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
 
             try {
-                UserProfileDetailResponse response = userfiApi.GetUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
-
-                mProfileName.setText(response.getUsername().toString());
-                mGender.setText(response.getGender().toString());
-                mAge.setText(response.getAge().toString());
-
-                for(int i = 0; i < response.getTagged_interests().size(); i++) {
-                    mInterestListItems.add(response.getTagged_interests().get(i).toString());
-                }
-                listAdapter.notifyDataSetChanged();
-
+                response = userfiApi.GetUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
             } catch (Exception e) {
                 return e.getMessage();
             }
             return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(String result){
+            mProfileName.setText(response.getUsername());
+            mGender.setText(response.getGender());
+            mAge.setText(response.getAge().toString());
+
+            for(int i = 0; i < response.getTagged_interests().size(); i++) {
+                mInterestListItems.add(response.getTagged_interests().get(i));
+            }
+            listAdapter.notifyDataSetChanged();
         }
 
     }
@@ -211,6 +215,7 @@ public class ConfigureProfileActivity extends Activity {
         protected void onPostExecute(String result){
             Intent in= new Intent(ConfigureProfileActivity.this, MainScreenActivity.class);
             startActivity(in);
+            Toast.makeText(getBaseContext(), "Profile Saved", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
