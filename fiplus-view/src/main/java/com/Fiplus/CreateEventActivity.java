@@ -1,7 +1,10 @@
 package com.Fiplus;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -23,6 +26,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.wordnik.client.ApiException;
 import com.wordnik.client.api.ActivityApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Location;
@@ -44,11 +48,13 @@ public class CreateEventActivity extends FragmentActivity {
 
     static final String DATEFORMAT = "MM-dd-yyyy HH:mm a";
     final String btnInnerHTML = "<font color='gray'>\"%s\"    </font>";
-    final Integer TAGS = 3;
+    final Integer MAX = 3;
 
     protected ImageView mImageView;
     protected EditText mEventName;
     protected EditText mEventLocation;
+    protected Button mAddLocationBtn;
+    protected ListView mLocationListView;
     protected EditText mDescription;
     protected Button mCreateButton;
     protected Button mCancelButton;
@@ -57,8 +63,11 @@ public class CreateEventActivity extends FragmentActivity {
     protected ListView mDateTimeListView;
     protected EditText mTags;
     protected TextView mAddTags;
+    protected EditText mDateTimeError;
 
     protected List<Location> mEventLocationList = new ArrayList<Location>();
+    protected List<String> mEventLocationListItems = new ArrayList<String>();
+    protected ArrayAdapter<String> locationAdapter;
 
     protected List<Time> mDateTimeListItemsUTC = new ArrayList<Time>();
     protected List<String> mDateTimeListItems = new ArrayList<String>();
@@ -75,7 +84,6 @@ public class CreateEventActivity extends FragmentActivity {
     private Dialog mDateTimeDialog;
     private String mStart = "start", mEnd = "end";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +97,51 @@ public class CreateEventActivity extends FragmentActivity {
         mEventName = (EditText) findViewById(R.id.create_event_name);
         mDescription = (EditText) findViewById(R.id.create_event_description);
         mEventLocation = (EditText) findViewById(R.id.create_event_location);
+        mAddLocationBtn = (Button) findViewById(R.id.create_event_add_location);
+        mAddLocationBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                String address = mEventLocation.getText().toString();
+
+                if(!address.isEmpty())
+                {
+                    if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
+                    {
+                        GeocodingLocation location = new GeocodingLocation(getBaseContext());
+                        location.execute(address);
+                    }
+
+                }
+            }
+        });
+
+        //to show the list of suggested locations
+        mLocationListView = (ListView)findViewById(R.id.create_event_address_list);
+        mLocationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                mEventLocationList.remove(position);
+                mEventLocationListItems.remove(position);
+                locationAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
+
+                if(mEventLocationListItems.size() < MAX)
+                {
+                    mEventLocation.setHint(R.string.create_event_location_hint);
+                    mEventLocation.setClickable(true);
+                    mEventLocation.setEnabled(true);
+                }
+            }
+        });
+
+        //for locations
+        locationAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mEventLocationListItems);
+        mLocationListView.setAdapter(locationAdapter);
+        ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
+
         mMaxPeople = (EditText) findViewById(R.id.create_event_number_of_people);
 
         //for tags
@@ -101,18 +154,21 @@ public class CreateEventActivity extends FragmentActivity {
         mTagArray.add((TextView) findViewById(R.id.create_event_tag3));
         mTagArray.get(2).setVisibility(View.GONE);
 
+        mDateTimeError = (EditText) findViewById(R.id.create_event_datetime_error);
         mDateTimeButton = (Button) findViewById(R.id.create_event_suggest_date_time);
+        mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + MAX + "]");
         mDateTimeButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                mDateTimeError.setError(null);
                 Time time = new Time();
-                showDateTimePickerDialog(time);
+                showDateTimePickerDialog(time, mStart);
             }
         });
 
-        //to show the list of suggest start and end date/time
+        //to show the list of suggested start and end date/time
         mDateTimeListView = (ListView)findViewById(R.id.create_event_datetimelist);
         mDateTimeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -122,6 +178,14 @@ public class CreateEventActivity extends FragmentActivity {
                 mDateTimeListItemsUTC.remove(position);
                 dateTimeAdapter.notifyDataSetChanged();
                 ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
+
+                int maxDateTime = MAX - mDateTimeListItems.size();
+
+                if(mDateTimeListItems.size() < MAX)
+                {
+                    mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + maxDateTime + "]");
+                    mDateTimeButton.setEnabled(true);
+                }
             }
         });
 
@@ -161,69 +225,80 @@ public class CreateEventActivity extends FragmentActivity {
 
     private void checkMandatoryFields()
     {
+        //View focusView = mEventName;
         boolean error = false;
-        View focusView = null;
 
         // Reset errors.
         mEventName.setError(null);
-        mEventLocation.setError(null);
         mDescription.setError(null);
         mMaxPeople.setError(null);
+        mDateTimeError.setError(null);
 
         // Store values at the time of the create event attempt.
         String event_name = mEventName.getText().toString();
-        String address = mEventLocation.getText().toString();
         String description = mDescription.getText().toString();
         String maxPeople = mMaxPeople.getText().toString();
 
-        // Check for mandatory field
+        //Check for mandatory field
         if (TextUtils.isEmpty(event_name)) {
             mEventName.setError(getString(R.string.error_field_required));
-            focusView = mEventName;
             error = true;
         }
-        else if (TextUtils.isEmpty(address))
+
+        if (mEventLocationListItems.isEmpty())
         {
-            mEventLocation.setError(getString(R.string.error_field_required));
-            focusView = mEventLocation;
+            mEventLocation.setError(getString(R.string.error_add_address));
             error = true;
         }
-        else if (TextUtils.isEmpty(description))
+
+        if (mDateTimeListItems.isEmpty())
+        {
+            mDateTimeError.setError(getString(R.string.error_field_required));
+            error = true;
+        }
+
+        if (TextUtils.isEmpty(description))
         {
             mDescription.setError(getString(R.string.error_field_required));
-            focusView = mDescription;
             error = true;
         }
-        else if (TextUtils.isEmpty(maxPeople)) {
+
+        if (TextUtils.isEmpty(maxPeople)) {
             mMaxPeople.setError(getString(R.string.error_field_required));
-            focusView = mMaxPeople;
             error = true;
         }
-        else if (mDateTimeListItems.isEmpty())
-        {
-
+        else if (Integer.parseInt(maxPeople) < 2) {
+            mMaxPeople.setError(getString(R.string.error_max_people));
+            error = true;
         }
 
-        if (error) {
-            // There was an error; don't attempt to create event and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        }
-        else
+
+        // If there was an error; don't attempt to create event and focus the first
+        // form field with an error.
+//        if (error) {
+//            focusView.requestFocus();
+//        }
+        if(!error)
         {
-            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
-            {
-                GeocodingLocation location = new GeocodingLocation(this);
-                location.execute(address);
-            }
+            CreateEventTask createEventTask = new CreateEventTask();
+            createEventTask.execute();
         }
     }
 
-    public void showDateTimePickerDialog(final Time time) {
+    public void showDateTimePickerDialog(final Time time, final String startEnd) {
 
         mDateTimeDialog = new Dialog(this);
         mDateTimeDialog.setContentView(R.layout.date_time_layout);
-        mDateTimeDialog.setTitle(R.string.create_event_start_time);
+
+        if(startEnd.equalsIgnoreCase("start"))
+        {
+            mDateTimeDialog.setTitle(R.string.create_event_start_time);
+        }
+        else
+        {
+            mDateTimeDialog.setTitle(R.string.create_event_end_time);
+        }
+
         mDateTimeDialog.show();
 
         mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
@@ -234,6 +309,11 @@ public class CreateEventActivity extends FragmentActivity {
         mCancelTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(startEnd.equalsIgnoreCase("end"))
+                {
+                    //TODO: (Jobelle) Implement end time as optional
+                    //this should still create the start time
+                }
                 mDateTimeDialog.dismiss();
             }
         });
@@ -252,24 +332,91 @@ public class CreateEventActivity extends FragmentActivity {
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day, hour, minutes);
 
-                time.setStart(cal.getTime().getTime());
+                if(startEnd.equalsIgnoreCase("start"))
+                {
+                    time.setStart(cal.getTime().getTime());
+                    mDateTimeDialog.dismiss();
+                    if(checkTime(time))
+                    {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateEventActivity.this);
+                        alertDialog.setTitle("Error").setMessage(R.string.start_time_error).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        alertDialog.show();
+                    }
+                    else
+                    {
+                        //set end date if start time is set properly
+                        showDateTimePickerDialog(time, mEnd);
+                    }
 
-                mDateTimeListItems.add(convertToTimeToString(time));
-                mDateTimeListItemsUTC.add(time);
-                dateTimeAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
+                }
+                else
+                {
+                    time.setEnd(cal.getTime().getTime());
+                    mDateTimeDialog.dismiss();
+                    if(checkTime(time))
+                    {
 
-                mDateTimeDialog.dismiss();
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateEventActivity.this);
+                        alertDialog.setTitle("Error").setMessage(R.string.end_time_error).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        alertDialog.show();
+                    }
+                    else
+                    {
+                        mDateTimeListItems.add(convertToTimeToString(time));
+                        mDateTimeListItemsUTC.add(time);
+                        dateTimeAdapter.notifyDataSetChanged();
+                        ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
+
+                        int maxDateTime = MAX - mDateTimeListItems.size();
+                        mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + maxDateTime + "]");
+
+                        if(mDateTimeListItems.size() == MAX)
+                        {
+                            mDateTimeButton.setEnabled(false);
+                        }
+                    }
+                }
             }
         });
     }
 
+    private boolean checkTime(Time time)
+    {
+        boolean isError;
+
+        //get current date and date
+        Calendar c = Calendar.getInstance();
+
+        if(time.getEnd() == null)
+        {
+            isError = time.getStart() < c.getTime().getTime();
+        }
+        else
+        {
+            isError = time.getEnd() < time.getStart();
+        }
+
+        return isError;
+    }
+
     private String convertToTimeToString(Time time)
     {
-        long dateColumn = time.getStart();
-        Date d = new Date(dateColumn);
+        long startDate = time.getStart();
+        long endDate = time.getEnd();
+        Date d1 = new Date(startDate);
+        Date d2 = new Date(endDate);
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-        return dateFormat.format(d);  // formatted date in string
+        return "Start: " + dateFormat.format(d1) + "\nEnd  : " + dateFormat.format(d2);
     }
 
     //Add event tags
@@ -328,18 +475,17 @@ public class CreateEventActivity extends FragmentActivity {
         }
 
         //to remove unnecessary tags
-        for(int i=mTagsList.size(); i < TAGS; i++)
+        for(int i=mTagsList.size(); i < MAX; i++)
         {
             mTagArray.get(i).setVisibility(View.GONE);
         }
 
         checkMaxTags();
-        Log.d("Updated Remove:", mTagsList.toString());
     }
 
     private void checkMaxTags()
     {
-        if(mTagsList.size() == TAGS)
+        if(mTagsList.size() == MAX)
         {
             mTags.setHint(R.string.create_event_tags_hint);
             mTags.setClickable(false);
@@ -357,6 +503,9 @@ public class CreateEventActivity extends FragmentActivity {
     //TODO: Create event task
     class CreateEventTask extends AsyncTask<Void, Void, String>
     {
+        String message;
+        boolean error = false;
+
         @Override
         protected String doInBackground(Void... params)
         {
@@ -368,29 +517,49 @@ public class CreateEventActivity extends FragmentActivity {
             createEvent.setName(mEventName.getText().toString());
             createEvent.setDescription(mDescription.getText().toString());
             createEvent.setMax_attendees(Integer.parseInt(mMaxPeople.getText().toString()));
-            //createEvent.setCreator(IAppConstants.SESSION_ID);
+            createEvent.setCreator("744777067851");
             createEvent.setTagged_interests(mTagsList);
             createEvent.setSuggested_times(mDateTimeListItemsUTC);
             createEvent.setSuggested_locations(mEventLocationList);
-            //try {
-                //createEventApi.createActivity(createEvent);
+            try {
+                createEventApi.createActivity(createEvent);
+                message = "Event Created";
+            } catch (ApiException e) {
+                error = true;
+                return e.getMessage();
+            }
 
-//            } catch (ApiException e) {
-//                return e.getMessage();
-//            }
-
-            return null;
+            return message;
         }
 
         @Override
         protected void onPostExecute(String address) {
-            Toast.makeText(getBaseContext(), "Event Created", Toast.LENGTH_SHORT).show();
-            finish();
+
+            if(error)
+            {
+                address = address.replace("\"", "");
+                address = address.replace("{error:", "");
+                address = address.replace("}", "");
+
+                if(address.toLowerCase().contains("time"))
+                {
+                    mDateTimeError.setError(address);
+                }
+
+                Toast.makeText(getBaseContext(), address, Toast.LENGTH_SHORT).show();
+                //TODO: (Jobelle) delete an incomplete created events when error occurs
+            }
+            else
+            {
+                Toast.makeText(getBaseContext(), address, Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
 
     private class GeocodingLocation extends AsyncTask<String, Void, String>
     {
+        ProgressDialog progressDialog;
         Context mContext;
         List<Address> addressList = null;
         Address addr;
@@ -402,8 +571,14 @@ public class CreateEventActivity extends FragmentActivity {
         }
 
         @Override
+        protected void onPreExecute()
+        {
+            progressDialog= ProgressDialog.show(CreateEventActivity.this, getString(R.string.progress_dialog_title) + "...", getString(R.string.progress_dialog_text), true);
+        }
+
+        @Override
         protected String doInBackground(String... params) {
-            Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
+            Geocoder geocoder = new Geocoder(mContext, Locale.CANADA);
 
             // Get the current location from the input parameter list
             String loc = params[0];
@@ -434,14 +609,16 @@ public class CreateEventActivity extends FragmentActivity {
                  * city (if available), and country name.
                  */
                 String addressText = String.format(
-                        "%s, %s, %s",
+                        "%s, %s, %s %s",
                         // If there's a street address, add it
                         addr.getMaxAddressLineIndex() > 0 ?
                                 addr.getAddressLine(0) : "",
                         // Locality is usually a city
                         addr.getLocality() != null ? addr.getLocality() : "",
                         // The country of the address
-                        addr.getCountryName());
+                        addr.getCountryName(),
+                        // If there's a postal code, add it
+                        addr.getPostalCode() != null ? addr.getPostalCode() : "");
                 // Return the text
                 return addressText;
             } else {
@@ -451,20 +628,32 @@ public class CreateEventActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(String address) {
+
+            super.onPostExecute(address);
+
             // Display the results of the lookup.
             if(address != null)
             {
                 mEventLocationList.add(location);
-                mEventLocation.setText(address);
-                CreateEventTask createEventTask = new CreateEventTask();
-                createEventTask.execute();
+                mEventLocationListItems.add(address);
+                locationAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
+
+                if(mEventLocationListItems.size() == MAX)
+                {
+                    mEventLocation.setHint(R.string.create_event_max_location);
+                    mEventLocation.setClickable(false);
+                    mEventLocation.setEnabled(false);
+                }
+
+                mEventLocation.setText("");
             }
             else
             {
                 mEventLocation.setError(getString(R.string.error_address_not_found));
-                View focusView = mEventLocation;
-                focusView.requestFocus();
             }
+
+            progressDialog.dismiss();
         }
     }
 

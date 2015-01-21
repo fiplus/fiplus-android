@@ -2,6 +2,7 @@
 <resources>
     <string name="create_event_name_hint">Event Name</string>
     <string name="create_event_location_hint">Event Location</string>
+    <string name="create_event_max_location">Max location added</string>
     <string name="create_event_time_hint">Add Time</string>
     <string name="create_event_date_hint">Add Date</string>
     <string name="create_event_suggest_date_time">Suggest Date and Time</string>
@@ -11,6 +12,7 @@
     <string name="create_event_tags_label">Tags:</string>
     <string name="create_event_create_button_label">Create Event</string>
 
+    <string name="create_event_add_location">Add</string>
     <string name="create_event_set_button">Set</string>
     <string name="create_event_cancel_button">Cancel</string>
     <string name="create_event_start_time">Set Start Time</string>
@@ -20,4 +22,13 @@
     <string name="create_event_tags_hint">Max tags reached</string>
 
     <string name="error_address_not_found">Address not found</string>
+    <string name="error_add_address">Need to add an address</string>
+    <string name="error_max_people">Should be > 2</string>
+    <string name="error_time">Invalid time on the list</string>
+    <string name="end_time_error">End Time cannot be earlier than Start Time</string>
+    <string name="start_time_error">Start Time cannot be earlier than Current Time</string>
+
+    <string name="progress_dialog_title">Validating Address</string>
+    <string name="progress_dialog_text">Please Wait</string>
+
 </resources>
