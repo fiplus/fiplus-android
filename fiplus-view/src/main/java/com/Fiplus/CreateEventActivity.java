@@ -517,6 +517,8 @@ public class CreateEventActivity extends FragmentActivity {
             createEvent.setName(mEventName.getText().toString());
             createEvent.setDescription(mDescription.getText().toString());
             createEvent.setMax_attendees(Integer.parseInt(mMaxPeople.getText().toString()));
+
+            //TODO: (Jobelle) Remove hardcoded setCreator call
             createEvent.setCreator("744777067851");
             createEvent.setTagged_interests(mTagsList);
             createEvent.setSuggested_times(mDateTimeListItemsUTC);

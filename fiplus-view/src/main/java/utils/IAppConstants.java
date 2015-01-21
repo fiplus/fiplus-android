@@ -10,6 +10,8 @@ public interface IAppConstants {
 	public String LOGOUT = "logout";
 	public String APP_NAME = "ANDROID";
 	public String DSP_URL_SUFIX = "/rest";
+    public String DSP_URL_ARANGO_SUFFIX = "/rest/arango";
 	public String CONTAINER_NAME = "applications";
 	public String FOLDER_NAME = "uploaded_files";
 }
+//http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions

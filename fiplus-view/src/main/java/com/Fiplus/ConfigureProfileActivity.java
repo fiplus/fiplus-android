@@ -1,21 +1,31 @@
 package com.Fiplus;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.wordnik.client.api.UserfiApi;
+import com.wordnik.client.model.UserProfile;
+import com.wordnik.client.model.UserProfileDetailResponse;
 
 import java.util.ArrayList;
 
+import utils.IAppConstants;
 import utils.ListViewUtil;
+import utils.PrefUtil;
 
 
 public class ConfigureProfileActivity extends Activity {
@@ -24,6 +34,7 @@ public class ConfigureProfileActivity extends Activity {
     protected TextView mAddTextView;
     protected Spinner mInterestSpinner;
     protected ListView mInterestListView;
+    protected Button mSaveButton;
 
     protected EditText mProfileName;
     protected EditText mGender;
@@ -39,20 +50,28 @@ public class ConfigureProfileActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_profile);
 
-        mImageView = (ImageView)findViewById(R.id.imageView);
+        mSaveButton = (Button) findViewById(R.id.configure_save_button);
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SaveProfileTask saveProfileTask = new SaveProfileTask();
+                saveProfileTask.execute();
+            }
+        });
+
+        mImageView = (ImageView) findViewById(R.id.imageView);
         mImageView.setImageResource(R.drawable.fiplus);
 
-        mProfileName = (EditText)findViewById(R.id.configure_profile_name);
-        mGender = (EditText)findViewById(R.id.configure_gender);
-        mAge = (EditText)findViewById(R.id.configure_age);
+        mProfileName = (EditText) findViewById(R.id.configure_profile_name);
+        mGender = (EditText) findViewById(R.id.configure_gender);
+        mAge = (EditText) findViewById(R.id.configure_age);
 
-        mInterestSpinner = (Spinner)findViewById(R.id.interests_spinner);
+        mInterestSpinner = (Spinner) findViewById(R.id.interests_spinner);
 
-        mInterestListView = (ListView)findViewById(R.id.interests_list);
+        mInterestListView = (ListView) findViewById(R.id.interests_list);
         mInterestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mInterestListItems.remove(position);
                 listAdapter.notifyDataSetChanged();
                 ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
@@ -81,7 +100,7 @@ public class ConfigureProfileActivity extends Activity {
             }
         });
 
-        mAddTextView = (TextView)findViewById(R.id.add_interest_label);
+        mAddTextView = (TextView) findViewById(R.id.add_interest_label);
         setTitle(R.string.configure_profile);
 
         Spinner spinner = (Spinner) findViewById(R.id.interests_spinner);
@@ -104,14 +123,13 @@ public class ConfigureProfileActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             finish();
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    public void onAddClick(View view)
-    {
+    public void onAddClick(View view) {
         mInterestListItems.add(mInterestSpinner.getSelectedItem().toString());
         listAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
@@ -129,16 +147,76 @@ public class ConfigureProfileActivity extends Activity {
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
     }
 
-    private void getProfile()
-    {
-        // Dummy profile
-        mProfileName.setText("John Doe");
-        mGender.setText("M");
-        mAge.setText("22");
-
-        mInterestListItems.add(0, "Soccer");
-        mInterestListItems.add(1, "Basketball");
-        listAdapter.notifyDataSetChanged();
+    private void getProfile() {
+        GetProfileTask getProfileTask = new GetProfileTask();
+        getProfileTask.execute();
     }
 
+    class GetProfileTask extends AsyncTask<Void, Void, String> {
+
+        protected UserProfileDetailResponse response;
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            UserfiApi userfiApi = new UserfiApi();
+            userfiApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            userfiApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
+
+            try {
+                response = userfiApi.GetUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(String result){
+            mProfileName.setText(response.getUsername());
+            mGender.setText(response.getGender());
+            mAge.setText(response.getAge().toString());
+
+            for(int i = 0; i < response.getTagged_interests().size(); i++) {
+                mInterestListItems.add(response.getTagged_interests().get(i));
+            }
+            listAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    class SaveProfileTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            UserfiApi userfiApi = new UserfiApi();
+            userfiApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            userfiApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
+
+            UserProfile userProfile = new UserProfile();
+            userProfile.setUsername(mProfileName.getText().toString());
+            userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
+            userProfile.setAge(Integer.parseInt(mAge.getText().toString()));
+            userProfile.setGender(mGender.getText().toString());
+            userProfile.setTagged_interests(mInterestListItems);
+
+            try{
+                String response = userfiApi.saveUserProfile(userProfile);
+                System.out.println(response.toString());
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result){
+            Intent in= new Intent(ConfigureProfileActivity.this, MainScreenActivity.class);
+            startActivity(in);
+            Toast.makeText(getBaseContext(), "Profile Saved", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
 }
