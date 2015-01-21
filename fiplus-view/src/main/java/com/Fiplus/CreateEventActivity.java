@@ -511,7 +511,7 @@ public class CreateEventActivity extends FragmentActivity {
         {
             ActivityApi createEventApi = new ActivityApi();
             createEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            createEventApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
+            createEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             Activity createEvent = new Activity();
             createEvent.setName(mEventName.getText().toString());

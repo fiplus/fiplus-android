@@ -156,7 +156,9 @@
             android:hint="@string/create_event_check_in_question_hint"
             android:layout_below="@+id/create_event_number_of_people"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/create_event_cancel"
+            android:layout_alignEnd="@+id/create_event_cancel" />
 
         <LinearLayout
             android:id="@+id/tagsLinearLayout"

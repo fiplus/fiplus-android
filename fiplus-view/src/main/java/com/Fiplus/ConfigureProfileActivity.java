@@ -193,7 +193,7 @@ public class ConfigureProfileActivity extends Activity {
 
             UserfiApi userfiApi = new UserfiApi();
             userfiApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            userfiApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
+            userfiApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             UserProfile userProfile = new UserProfile();
             userProfile.setUsername(mProfileName.getText().toString());
@@ -204,7 +204,7 @@ public class ConfigureProfileActivity extends Activity {
 
             try{
                 String response = userfiApi.saveUserProfile(userProfile);
-                System.out.println(response.toString());
+                System.out.println(response);
             } catch (Exception e) {
                 return e.getMessage();
             }
