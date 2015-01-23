@@ -75,7 +75,7 @@ public class SignUpActivity extends Activity {
 
            UserApi userApi = new UserApi();
            userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-           userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+           userApi.setBasePath(IAppConstants.DSP_URL_AUTH + IAppConstants.DSP_URL_SUFIX_AUTH);
 
            Register register = new Register();
            register.setEmail(signUpEmail.getText().toString());
