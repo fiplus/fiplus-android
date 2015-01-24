@@ -1,9 +1,15 @@
 package com.Fiplus;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,9 +24,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wordnik.client.api.UsersApi;
+
+import com.wordnik.client.model.Location;
 import com.wordnik.client.model.UserProfile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import utils.IAppConstants;
 import utils.ListViewUtil;
@@ -31,23 +42,27 @@ public class ConfigureProfileActivity extends Activity {
 
     protected ImageView mImageView;
     protected TextView mAddTextView;
-    protected Spinner mInterestSpinner;
     protected ListView mInterestListView;
     protected Button mSaveButton;
 
     protected EditText mProfileName;
     protected EditText mGender;
     protected EditText mAge;
+    protected EditText mInterestInputField;
+    protected EditText mLocationInputField;
 
     protected ArrayList<String> mInterestListItems = new ArrayList<String>();
 
     protected ArrayAdapter<String> listAdapter;
-    protected ArrayAdapter<CharSequence> spinnerAdapter;
+
+    protected Location userLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_profile);
+
+        mLocationInputField = (EditText) findViewById(R.id.configure_location_field);
 
         mSaveButton = (Button) findViewById(R.id.configure_save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +80,7 @@ public class ConfigureProfileActivity extends Activity {
         mGender = (EditText) findViewById(R.id.configure_gender);
         mAge = (EditText) findViewById(R.id.configure_age);
 
-        mInterestSpinner = (Spinner) findViewById(R.id.interests_spinner);
+        mInterestInputField = (EditText) findViewById(R.id.interests_input_field);
 
         mInterestListView = (ListView) findViewById(R.id.interests_list);
         mInterestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -102,16 +117,6 @@ public class ConfigureProfileActivity extends Activity {
         mAddTextView = (TextView) findViewById(R.id.add_interest_label);
         setTitle(R.string.configure_profile);
 
-        Spinner spinner = (Spinner) findViewById(R.id.interests_spinner);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.interest_spinner_items, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(spinnerAdapter);
-
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mInterestListItems);
         mInterestListView.setAdapter(listAdapter);
 
@@ -128,10 +133,25 @@ public class ConfigureProfileActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
-    public void onAddClick(View view) {
-        mInterestListItems.add(mInterestSpinner.getSelectedItem().toString());
+    public void onAddInterestClick(View view) {
+        mInterestListItems.add(mInterestInputField.getText().toString());
+        mInterestInputField.setText("");
         listAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
+    }
+
+    public void onAddLocationClick(View v){
+        String address = mLocationInputField.getText().toString();
+
+        if(!address.isEmpty())
+        {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
+            {
+                GeocodingLocation location = new GeocodingLocation(getBaseContext());
+                location.execute(address);
+            }
+
+        }
     }
 
     @Override
@@ -173,16 +193,45 @@ public class ConfigureProfileActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result){
-            mProfileName.setText(response.getUsername());
-            mGender.setText(response.getGender());
-            mAge.setText(response.getAge().toString());
+            Address addr;
+            List<Address> addressList;
+            if(response.getUsername() != null) mProfileName.setText(response.getUsername());
+            if(response.getGender() != null) mGender.setText(response.getGender());
+            if(response.getAge() != null)mAge.setText(response.getAge().toString());
 
-            for(int i = 0; i < response.getTagged_interests().size(); i++) {
-                mInterestListItems.add(response.getTagged_interests().get(i));
+            if(response.getLatitude() != null && response.getLongitude() != null) {
+                try {
+                    Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
+                    addressList = geocoder.getFromLocation(response.getLatitude(), response.getLongitude(), 1);
+                    if (addressList != null && addressList.size() > 0) {
+                        addr = addressList.get(0);
+                        String addressText = String.format(
+                                "%s, %s, %s %s",
+                                // If there's a street address, add it
+                                addr.getMaxAddressLineIndex() > 0 ?
+                                        addr.getAddressLine(0) : "",
+                                // Locality is usually a city
+                                addr.getLocality() != null ? addr.getLocality() : "",
+                                // The country of the address
+                                addr.getCountryName(),
+                                // If there's a postal code, add it
+                                addr.getPostalCode() != null ? addr.getPostalCode() : "");
+                        // Return the text
+                        mLocationInputField.setText(addressText);
+                    }
+                } catch (IOException e) {
+                    Log.e("Configure Profile", e.getMessage());
+                }
             }
+
+            if(response.getTagged_interests() != null) {
+                for (int i = 0; i < response.getTagged_interests().size(); i++) {
+                    mInterestListItems.add(response.getTagged_interests().get(i));
+                }
+            }
+            ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
             listAdapter.notifyDataSetChanged();
         }
-
     }
 
     class SaveProfileTask extends AsyncTask<Void, Void, String> {
@@ -200,6 +249,9 @@ public class ConfigureProfileActivity extends Activity {
             userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
             userProfile.setGender(mGender.getText().toString());
             userProfile.setTagged_interests(mInterestListItems);
+            userProfile.setLocation(userLocation);
+            userProfile.setLatitude(userLocation.getLatitude());
+            userProfile.setLongitude(userLocation.getLongitude());
 
             try{
                 usersApi.saveUserProfile(userProfile);
@@ -215,6 +267,94 @@ public class ConfigureProfileActivity extends Activity {
             startActivity(in);
             Toast.makeText(getBaseContext(), "Profile Saved", Toast.LENGTH_SHORT).show();
             finish();
+        }
+    }
+
+    private class GeocodingLocation extends AsyncTask<String, Void, String>
+    {
+        ProgressDialog progressDialog;
+        Context mContext;
+        List<Address> addressList = null;
+        Address addr;
+        Location location = new Location();
+
+        public GeocodingLocation(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressDialog= ProgressDialog.show(ConfigureProfileActivity.this, getString(R.string.progress_dialog_title) + "...", getString(R.string.progress_dialog_text), true);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Geocoder geocoder = new Geocoder(mContext, Locale.CANADA);
+
+            // Get the current location from the input parameter list
+            String loc = params[0];
+
+            int i = 0;
+            try {
+                //try 3 times in case geocoder doesn't work the first time
+                do {
+                    addressList = geocoder.getFromLocationName(loc, 1);
+                    i++;
+                } while (addressList.size()==0 && i < 3);
+
+            } catch (IOException e1) {
+                Log.e("LocationSampleActivity",
+                        "IO Exception in getFromLocation()");
+                e1.printStackTrace();
+            }
+
+            // If the geocode returned an address
+            if (addressList != null && addressList.size() > 0) {
+
+                addr = addressList.get(0);
+                location.setLatitude(addr.getLatitude());
+                location.setLongitude(addr.getLongitude());
+                userLocation = location;
+
+                /*
+                 * Format the first line of address (if available),
+                 * city (if available), and country name.
+                 */
+                String addressText = String.format(
+                        "%s, %s, %s %s",
+                        // If there's a street address, add it
+                        addr.getMaxAddressLineIndex() > 0 ?
+                                addr.getAddressLine(0) : "",
+                        // Locality is usually a city
+                        addr.getLocality() != null ? addr.getLocality() : "",
+                        // The country of the address
+                        addr.getCountryName(),
+                        // If there's a postal code, add it
+                        addr.getPostalCode() != null ? addr.getPostalCode() : "");
+                // Return the text
+                return addressText;
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String address) {
+
+            super.onPostExecute(address);
+
+            // Display the results of the lookup.
+            if(address != null)
+            {
+                mLocationInputField.setText(address);
+            }
+            else
+            {
+                mLocationInputField.setError(getString(R.string.error_address_not_found));
+            }
+            progressDialog.dismiss();
         }
     }
 }
