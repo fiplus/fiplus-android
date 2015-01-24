@@ -27,7 +27,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.wordnik.client.ApiException;
-import com.wordnik.client.api.ActivityApi;
+import com.wordnik.client.api.ActsApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
@@ -332,9 +332,12 @@ public class CreateEventActivity extends FragmentActivity {
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day, hour, minutes);
 
+                Long lTime = cal.getTime().getTime();
+
                 if(startEnd.equalsIgnoreCase("start"))
                 {
-                    time.setStart(cal.getTime().getTime());
+
+                    time.setStart(lTime.doubleValue());
                     mDateTimeDialog.dismiss();
                     if(checkTime(time))
                     {
@@ -356,7 +359,7 @@ public class CreateEventActivity extends FragmentActivity {
                 }
                 else
                 {
-                    time.setEnd(cal.getTime().getTime());
+                    time.setEnd(lTime.doubleValue());
                     mDateTimeDialog.dismiss();
                     if(checkTime(time))
                     {
@@ -411,8 +414,8 @@ public class CreateEventActivity extends FragmentActivity {
 
     private String convertToTimeToString(Time time)
     {
-        long startDate = time.getStart();
-        long endDate = time.getEnd();
+        long startDate = Double.doubleToLongBits(time.getStart());
+        long endDate = Double.doubleToLongBits(time.getEnd());
         Date d1 = new Date(startDate);
         Date d2 = new Date(endDate);
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
@@ -509,14 +512,14 @@ public class CreateEventActivity extends FragmentActivity {
         @Override
         protected String doInBackground(Void... params)
         {
-            ActivityApi createEventApi = new ActivityApi();
+            ActsApi createEventApi = new ActsApi();
             createEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             createEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             Activity createEvent = new Activity();
             createEvent.setName(mEventName.getText().toString());
             createEvent.setDescription(mDescription.getText().toString());
-            createEvent.setMax_attendees(Integer.parseInt(mMaxPeople.getText().toString()));
+            createEvent.setMax_attendees(Double.parseDouble(mMaxPeople.getText().toString()));
 
             //TODO: (Jobelle) Remove hardcoded setCreator call
             createEvent.setCreator("744777067851");
