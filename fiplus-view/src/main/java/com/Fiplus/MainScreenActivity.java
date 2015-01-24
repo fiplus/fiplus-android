@@ -1,7 +1,9 @@
 package com.Fiplus;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -23,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -84,7 +87,6 @@ public class MainScreenActivity extends BaseFragmentActivity
         // that require it. Must be done for all onResume() and onCreate() methods for each Activity (Allan). If not available
         // must disable features or prompt the user to download the latest GooglePlayServices
 
-        // TODO: Write checkPlayServices() method (Allan)
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
@@ -328,9 +330,8 @@ public class MainScreenActivity extends BaseFragmentActivity
 
     /**
      * Gets the current registration ID for application on GCM service.
-     * <p>
      * If result is empty, the app needs to register.
-     * @return registration ID, or empty string if there is no existi registration ID.
+     * @return registration ID, or empty string if there is no existing registration ID.
      */
     private String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGCMPreferences(context);
@@ -355,9 +356,7 @@ public class MainScreenActivity extends BaseFragmentActivity
      * @return Application's {@code SharedPreferences}.
      */
     private SharedPreferences getGCMPreferences(Context context) {
-        // This sample app persists the registration ID in shared preferences, but
-        // how you store the regID in your app is up to you.
-        // TODO: Change Activity name accordingly (Allan)
+        // App persists the registration ID in shared preferences
         return getSharedPreferences(MainScreenActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
     }
@@ -378,13 +377,35 @@ public class MainScreenActivity extends BaseFragmentActivity
 
     /**
      * Registers the application with GCM servers asynchronously.
-     * <p>
-     * Stores the registration ID and app versionCode in the application's
-     * shared preferences.
-     * TODO: Implement (Allan)
+     * Stores the registration ID and app versionCode in the application's shared preferences.
      */
     private void registerInBackground() {
+        class RegisterInBackgroundTask extends AsyncTask<Void, Void, String>{
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(context);
+                    }
+                    regid = gcm.register(SENDER_ID);
+                    msg = "Device registered, registration ID=" + regid;
+                    sendRegistrationIdToBackend(regid);
+                    // Persist the regID - no need to register again.
+                    storeRegistrationId(context, regid);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform exponential back-off.
+                }
+                return msg;
+            }
 
+            @Override
+            protected void onPostExecute(String msg) {
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
         /**
@@ -392,10 +413,14 @@ public class MainScreenActivity extends BaseFragmentActivity
          * or CCS to send messages to your app. Not needed for this demo since the
          * device sends upstream messages to a server that echoes back the message
          * using the 'from' address in the message.
-         * TODO: Finish implementation of server interaction (Allan)
+         * TODO: Send regid to Loopback server application (Allan)
+         * You should send the registration ID to your server over HTTP,
+         * so it can use GCM/HTTP or CCS to send messages to your app.
+         * The request to your server should be authenticated if your app
+         * is using accounts.
          */
-        private void sendRegistrationIdToBackend() {
-            // Your implementation here.
+        private void sendRegistrationIdToBackend(String regid) {
+
         }
 
     /**
@@ -403,7 +428,6 @@ public class MainScreenActivity extends BaseFragmentActivity
      * {@code SharedPreferences}.
      * @param context application's context.
      * @param regId registration ID
-     * TODO: Choose appropriate storage of Registration ID (Allan)
      */
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGCMPreferences(context);
