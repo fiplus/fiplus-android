@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.wordnik.client.api.UsersApi;
 
 import com.wordnik.client.model.Location;
+import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.UserProfile;
 
 import java.io.IOException;
