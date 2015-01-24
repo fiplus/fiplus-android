@@ -1,12 +1,12 @@
 package com.Fiplus;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +16,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wordnik.client.api.ActivityApi;
-import com.wordnik.client.model.ActivityDetailResponse;
+import com.wordnik.client.api.ActsApi;
+import com.wordnik.client.model.Attendee;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 
@@ -30,7 +30,7 @@ import java.util.Locale;
 
 import utils.IAppConstants;
 
-public class ViewEventActivity extends Activity{
+public class ViewEventActivity extends FragmentActivity {
 
     static final String DATEFORMAT = "MMM-dd-yyyy HH:mm a";
 
@@ -101,8 +101,9 @@ public class ViewEventActivity extends Activity{
     class GetEventTask extends AsyncTask<Void, Void, String> {
 
         ProgressDialog progressDialog;
-        ActivityDetailResponse response;
-        String sEventID, sEventDetails, sAttendeesResponse;
+        com.wordnik.client.model.Activity response;
+        String sEventID, sEventDetails;
+        Attendee attendees;
 
         public GetEventTask (String s)
         {
@@ -118,14 +119,14 @@ public class ViewEventActivity extends Activity{
         @Override
         protected String doInBackground(Void... params) {
 
-            ActivityApi getEventApi = new ActivityApi();
+            ActsApi getEventApi = new ActsApi();
             getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
-                response = getEventApi.GetEvent(sEventID);
+                response = getEventApi.getActivity(sEventID);
                 sEventDetails = response.toString();
-                sAttendeesResponse = getEventApi.GetAttendees(sEventID, response.getMax_attendees());
+                attendees = getEventApi.getAttendees(sEventID);
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
             }
@@ -154,7 +155,7 @@ public class ViewEventActivity extends Activity{
         {
             //TODO: (Jobelle) View Event - Attendees
             TextView newAttendee = new TextView(getBaseContext());
-            newAttendee.setText(sAttendeesResponse + " - TO DO STILL");
+            newAttendee.setText(attendees.getParticipants() + " - TO DO STILL");
             newAttendee.setTextColor(Color.RED);
             mAttendeesList.addView(newAttendee);
         }
@@ -172,7 +173,8 @@ public class ViewEventActivity extends Activity{
 
                     try {
                         Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                        addressList = geocoder.getFromLocation(mSuggestedLocs.get(i).getLatitude(), mSuggestedLocs.get(i).getLongitude(), 1);
+                        addressList = geocoder.getFromLocation(mSuggestedLocs.get(i).getLatitude(),
+                                mSuggestedLocs.get(i).getLongitude(), 1);
                         if (addressList != null && addressList.size() > 0) {
                             addr = addressList.get(0);
 
@@ -225,8 +227,8 @@ public class ViewEventActivity extends Activity{
 
         private String convertToTimeToString(Time time)
         {
-            long startDate = time.getStart();
-            long endDate = time.getEnd();
+            long startDate = time.getStart().longValue();
+            long endDate = time.getEnd().longValue();
             Date d1 = new Date(startDate);
             Date d2 = new Date(endDate);
             SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
@@ -254,14 +256,12 @@ public class ViewEventActivity extends Activity{
         @Override
         protected String doInBackground(Void... params)
         {
-            ActivityApi getEventApi = new ActivityApi();
+            ActsApi getEventApi = new ActsApi();
             getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
-                //TODO: (Jobelle) Join Event - change hardcoded joiner ID
-                String sJoinerID = "580250447179";
-                response = getEventApi.joinActivity(null, sEventID, sJoinerID);
+                getEventApi.joinActivity(sEventID);
             } catch (Exception e) {
                 response = e.getMessage();
             }
