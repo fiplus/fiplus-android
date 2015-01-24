@@ -11,9 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.wordnik.client.api.UserApi;
-import com.wordnik.client.model.Register;
-import com.wordnik.client.model.Success;
+import com.wordnik.client.api.UsersApi;
+import com.wordnik.client.model.Credentials;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,18 +72,17 @@ public class SignUpActivity extends Activity {
        @Override
        protected String doInBackground(Void... params) {
 
-           UserApi userApi = new UserApi();
+           UsersApi userApi = new UsersApi();
            userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
            userApi.setBasePath(IAppConstants.DSP_URL_AUTH + IAppConstants.DSP_URL_SUFIX_AUTH);
 
-           Register register = new Register();
-           register.setEmail(signUpEmail.getText().toString());
-           register.setFirst_name(signUpName.getText().toString());
-           register.setNew_password(signUpPassword.getText().toString());
+           Credentials credentials = new Credentials();
+           credentials.setEmail(signUpEmail.getText().toString());
+           //credentials.setFirst_name(signUpName.getText().toString());
+           credentials.setPassword(signUpPassword.getText().toString());
 
            try{
-               Success success = userApi.register(true, register);
-               System.out.println(success.toString());
+               userApi.registerUser(credentials);
            } catch (Exception e) {
                return e.getMessage();
            }

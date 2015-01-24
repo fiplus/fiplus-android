@@ -26,9 +26,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.wordnik.client.api.UserApi;
-import com.wordnik.client.model.Login;
-import com.wordnik.client.model.Session;
+import com.wordnik.client.api.UsersApi;
+import com.wordnik.client.model.Credentials;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -269,18 +268,18 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
         @Override
         protected String doInBackground(Void... params) {
 
-            UserApi userApi = new UserApi();
+            UsersApi userApi = new UsersApi();
             userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             userApi.setBasePath(IAppConstants.DSP_URL_AUTH + IAppConstants.DSP_URL_SUFIX_AUTH);
-            Login login = new Login();
-            login.setEmail(mEmail);
-            login.setPassword(mPassword);
+            Credentials credentials = new Credentials();
+            credentials.setEmail(mEmail);
+            credentials.setPassword(mPassword);
             try {
-                Session session =	userApi.login(login);
-                String session_id = session.getSession_id();
+                userApi.login(credentials);
+                userApi.getInvoker().setContext(getApplicationContext());
+                //String session_id = userApi.getSession_id();
 
                 PrefUtil.putString(getApplicationContext(), IAppConstants.DSP_URL, IAppConstants.DSP_URL);
-                PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, session_id);
                 PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, mEmail);
                 PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, mPassword);
             } catch (Exception e) {

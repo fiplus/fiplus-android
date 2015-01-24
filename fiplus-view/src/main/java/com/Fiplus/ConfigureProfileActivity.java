@@ -23,10 +23,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wordnik.client.api.UserfiApi;
 import com.wordnik.client.model.Location;
+import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.UserProfile;
-import com.wordnik.client.model.UserProfileDetailResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -173,17 +172,17 @@ public class ConfigureProfileActivity extends Activity {
 
     class GetProfileTask extends AsyncTask<Void, Void, String> {
 
-        protected UserProfileDetailResponse response;
+        protected UserProfile response;
 
         @Override
         protected String doInBackground(Void... params) {
 
-            UserfiApi userfiApi = new UserfiApi();
-            userfiApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            userfiApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
 
             try {
-                response = userfiApi.GetUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
+                response = usersApi.getUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
             } catch (Exception e) {
                 return e.getMessage();
             }
@@ -239,24 +238,21 @@ public class ConfigureProfileActivity extends Activity {
         @Override
         protected String doInBackground(Void... params) {
 
-            UserfiApi userfiApi = new UserfiApi();
-            userfiApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            userfiApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             UserProfile userProfile = new UserProfile();
             userProfile.setUsername(mProfileName.getText().toString());
             userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
-            userProfile.setAge(Integer.parseInt(mAge.getText().toString()));
+            userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
             userProfile.setGender(mGender.getText().toString());
             userProfile.setTagged_interests(mInterestListItems);
             userProfile.setLatitude(userLocation.getLatitude());
             userProfile.setLongitude(userLocation.getLongitude());
 
             try{
-                String response = userfiApi.saveUserProfile(userProfile);
-                System.out.println(response);
-
-
+                usersApi.saveUserProfile(userProfile);
             } catch (Exception e) {
                 return e.getMessage();
             }
