@@ -270,7 +270,7 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
 
             UsersApi userApi = new UsersApi();
             userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            userApi.setBasePath(IAppConstants.DSP_URL_AUTH + IAppConstants.DSP_URL_SUFIX_AUTH);
+            userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
             Credentials credentials = new Credentials();
             credentials.setEmail(mEmail);
             credentials.setPassword(mPassword);
