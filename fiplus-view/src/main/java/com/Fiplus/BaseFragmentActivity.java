@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.wordnik.client.api.UsersApi;
+
 import utils.IAppConstants;
 import utils.PrefUtil;
 
@@ -12,7 +14,7 @@ import utils.PrefUtil;
  */
 public class BaseFragmentActivity extends FragmentActivity {
     protected String dsp_url;
-    protected String session_id;
+    //protected String session_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +31,7 @@ public class BaseFragmentActivity extends FragmentActivity {
 //        }
         dsp_url = PrefUtil.getString(getApplicationContext(), IAppConstants.DSP_URL);
         dsp_url += IAppConstants.DSP_URL_SUFIX;
-        session_id = PrefUtil.getString(getApplicationContext(), IAppConstants.SESSION_ID);
+        //session_id = PrefUtil.getString(getApplicationContext(), IAppConstants.SESSION_ID);
     }
 
     protected void log(String message){
@@ -37,7 +39,10 @@ public class BaseFragmentActivity extends FragmentActivity {
     }
 
     protected void logout(){
-        PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, "");
+
+        //TODO: Logout
+        UsersApi logout = new UsersApi();
+        //PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
