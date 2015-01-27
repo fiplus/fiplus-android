@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Credentials;
+import com.wordnik.client.model.WhoAmI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -277,11 +278,14 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
             try {
                 userApi.login(credentials);
                 userApi.getInvoker().setContext(getApplicationContext());
+
+                WhoAmI id = userApi.whoAmI();
                 //String session_id = userApi.getSession_id();
 
                 PrefUtil.putString(getApplicationContext(), IAppConstants.DSP_URL, IAppConstants.DSP_URL);
                 PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, mEmail);
                 PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, mPassword);
+                PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, id.getUser_id());
             } catch (Exception e) {
                 return e.getMessage();
             }
