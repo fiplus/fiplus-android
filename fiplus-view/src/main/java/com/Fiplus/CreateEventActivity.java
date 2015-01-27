@@ -42,6 +42,7 @@ import java.util.Locale;
 
 import utils.IAppConstants;
 import utils.ListViewUtil;
+import utils.PrefUtil;
 
 
 public class CreateEventActivity extends FragmentActivity {
@@ -521,12 +522,14 @@ public class CreateEventActivity extends FragmentActivity {
             createEvent.setDescription(mDescription.getText().toString());
             createEvent.setMax_attendees(Double.parseDouble(mMaxPeople.getText().toString()));
 
-            //TODO: (Jobelle) Remove hardcoded setCreator call
-            createEvent.setCreator("744777067851");
+            createEvent.setCreator(PrefUtil.getString(getApplicationContext(),
+                    IAppConstants.USER_ID,
+                    null));
             createEvent.setTagged_interests(mTagsList);
             createEvent.setSuggested_times(mDateTimeListItemsUTC);
             createEvent.setSuggested_locations(mEventLocationList);
             try {
+
                 createEventApi.createActivity(createEvent);
                 message = "Event Created";
             } catch (ApiException e) {

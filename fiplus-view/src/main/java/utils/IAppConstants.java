@@ -13,4 +13,5 @@ public interface IAppConstants {
     public String DSP_URL_SUFIX = "/api/";
 	public String CONTAINER_NAME = "applications";
 	public String FOLDER_NAME = "uploaded_files";
+    public String USER_ID = "user_id";
 }

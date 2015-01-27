@@ -3,7 +3,9 @@ package com.Fiplus;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
+import com.wordnik.client.ApiException;
 import com.wordnik.client.api.UsersApi;
 
 import utils.IAppConstants;
@@ -41,10 +43,18 @@ public class BaseFragmentActivity extends FragmentActivity {
     protected void logout(){
 
         //TODO: Logout
-        UsersApi logout = new UsersApi();
-        //PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, "");
+        UsersApi usersApi = new UsersApi();
+        usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+        usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+//        try{
+//            usersApi.logout();
+//        } catch (ApiException e){
+//            Log.e("BaseFragmentActivity", e.getMessage());
+//        }
         PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
+        PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, "");
+
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
