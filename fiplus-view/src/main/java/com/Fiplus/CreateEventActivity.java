@@ -522,14 +522,11 @@ public class CreateEventActivity extends FragmentActivity {
             createEvent.setDescription(mDescription.getText().toString());
             createEvent.setMax_attendees(Double.parseDouble(mMaxPeople.getText().toString()));
 
-            createEvent.setCreator(PrefUtil.getString(getApplicationContext(),
-                    IAppConstants.USER_ID,
-                    null));
+            createEvent.setCreator(PrefUtil.getString(getApplicationContext(),IAppConstants.USER_ID));
             createEvent.setTagged_interests(mTagsList);
             createEvent.setSuggested_times(mDateTimeListItemsUTC);
             createEvent.setSuggested_locations(mEventLocationList);
             try {
-
                 createEventApi.createActivity(createEvent);
                 message = "Event Created";
             } catch (ApiException e) {

@@ -280,7 +280,6 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
                 userApi.getInvoker().setContext(getApplicationContext());
 
                 WhoAmI id = userApi.whoAmI();
-                //String session_id = userApi.getSession_id();
 
                 PrefUtil.putString(getApplicationContext(), IAppConstants.DSP_URL, IAppConstants.DSP_URL);
                 PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, mEmail);
