@@ -47,13 +47,11 @@ public class SplashScreenActivity extends BaseFragmentActivity {
                     login.setPassword(userPass);
                     userApi.setBasePath(dspUrl + IAppConstants.DSP_URL_SUFIX);
                     userApi.login(login);
-                    //Session session = userApi.login(login);
-                    //PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, session.getSession_id());
                     validSession = true;
                 }catch(Exception e){
-                    //PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, "");
                     PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
                     PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
+                    PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, "");
                 }
             }
             return validSession;

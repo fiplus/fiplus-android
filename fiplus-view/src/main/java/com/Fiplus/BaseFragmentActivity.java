@@ -46,11 +46,11 @@ public class BaseFragmentActivity extends FragmentActivity {
         UsersApi usersApi = new UsersApi();
         usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
         usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
-//        try{
-//            usersApi.logout();
-//        } catch (ApiException e){
-//            Log.e("BaseFragmentActivity", e.getMessage());
-//        }
+        try{
+            usersApi.logout();
+        } catch (ApiException e){
+            Log.e("BaseFragmentActivity", e.getMessage());
+        }
         PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, "");
