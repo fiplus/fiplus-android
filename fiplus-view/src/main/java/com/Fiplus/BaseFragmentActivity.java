@@ -44,7 +44,7 @@ public class BaseFragmentActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        context = this;
         //TODO: handle versions with SDK version less than 11
 //        if (android.os.Build.VERSION.SDK_INT >= 11){
 //            try{
@@ -141,31 +141,34 @@ public class BaseFragmentActivity extends FragmentActivity {
      * Stores the registration ID and app versionCode in the application's shared preferences.
      */
     protected void registerInBackground() {
-        class RegisterInBackgroundTask extends AsyncTask<Void, Void, String> {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(context);
-                    }
-                    regid = gcm.register(SENDER_ID);
-                    msg = "Device registered, registration ID=" + regid;
-                    sendRegistrationIdToBackend(regid);
-                    // Persist the regID - no need to register again.
-                    storeRegistrationId(context, regid);
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-                    // If there is an error, don't just keep trying to register.
-                    // Require the user to click a button again, or perform exponential back-off.
-                }
-                return msg;
-            }
+        RegisterInBackgroundTask gcmRegistration = new RegisterInBackgroundTask();
+        gcmRegistration.execute();
+    }
 
-            @Override
-            protected void onPostExecute(String msg) {
-                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+    class RegisterInBackgroundTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            String msg = "";
+            try {
+                if (gcm == null) {
+                    gcm = GoogleCloudMessaging.getInstance(context);
+                }
+                regid = gcm.register(SENDER_ID);
+                msg = "Device registered, registration ID=" + regid;
+                sendRegistrationIdToBackend(regid);
+                // Persist the regID - no need to register again.
+                storeRegistrationId(context, regid);
+            } catch (IOException ex) {
+                msg = "Error :" + ex.getMessage();
+                // If there is an error, don't just keep trying to register.
+                // Require the user to click a button again, or perform exponential back-off.
             }
+            return msg;
+        }
+
+        @Override
+        protected void onPostExecute(String msg) {
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
         }
     }
 
