@@ -194,16 +194,20 @@ public class ConfigureProfileActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result){
+            if(response == null)
+                return;
             Address addr;
             List<Address> addressList;
             if(response.getUsername() != null) mProfileName.setText(response.getUsername());
             if(response.getGender() != null) mGender.setText(response.getGender());
             if(response.getAge() != null)mAge.setText(response.getAge().toString());
 
-            if(response.getLatitude() != null && response.getLongitude() != null) {
+            if(response.getLocation().getLongitude() != null) {
                 try {
                     Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                    addressList = geocoder.getFromLocation(response.getLatitude(), response.getLongitude(), 1);
+                    addressList = geocoder.getFromLocation(response.getLocation().getLatitude(),
+                            response.getLocation().getLongitude(),
+                            1);
                     if (addressList != null && addressList.size() > 0) {
                         addr = addressList.get(0);
                         String addressText = String.format(
@@ -246,13 +250,11 @@ public class ConfigureProfileActivity extends Activity {
 
             UserProfile userProfile = new UserProfile();
             userProfile.setUsername(mProfileName.getText().toString());
-            userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
+            userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL));
             userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
             userProfile.setGender(mGender.getText().toString());
             userProfile.setTagged_interests(mInterestListItems);
             userProfile.setLocation(userLocation);
-            userProfile.setLatitude(userLocation.getLatitude());
-            userProfile.setLongitude(userLocation.getLongitude());
 
             try{
                 usersApi.saveUserProfile(userProfile);

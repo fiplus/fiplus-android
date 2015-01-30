@@ -283,8 +283,8 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
             credentials.setEmail(mEmail);
             credentials.setPassword(mPassword);
             try {
-                userApi.login(credentials);
                 userApi.getInvoker().setContext(getApplicationContext());
+                userApi.login(credentials);
 
                 WhoAmI id = userApi.whoAmI();
 
