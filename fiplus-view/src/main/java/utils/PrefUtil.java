@@ -26,7 +26,6 @@ public class PrefUtil {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(key, value);
         editor.commit();
-        //editor.apply();
-    } 
+    }
 }
 

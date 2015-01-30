@@ -12,6 +12,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+
+import com.wordnik.client.ApiException;
+import com.wordnik.client.api.UsersApi;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -25,7 +28,7 @@ import utils.PrefUtil;
  */
 public class BaseFragmentActivity extends FragmentActivity {
     protected String dsp_url;
-    protected String session_id;
+    //protected String session_id;
     // GCM items
     GoogleCloudMessaging gcm;
     String replacedregid;
@@ -54,7 +57,7 @@ public class BaseFragmentActivity extends FragmentActivity {
 //        }
         dsp_url = PrefUtil.getString(getApplicationContext(), IAppConstants.DSP_URL);
         dsp_url += IAppConstants.DSP_URL_SUFIX;
-        session_id = PrefUtil.getString(getApplicationContext(), IAppConstants.SESSION_ID);
+        //session_id = PrefUtil.getString(getApplicationContext(), IAppConstants.SESSION_ID);
     }
 
     protected void log(String message){
@@ -62,9 +65,20 @@ public class BaseFragmentActivity extends FragmentActivity {
     }
 
     protected void logout(){
-        PrefUtil.putString(getApplicationContext(), IAppConstants.SESSION_ID, "");
+
+        //TODO: Logout
+        UsersApi usersApi = new UsersApi();
+        usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+        usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+        try{
+            usersApi.logout();
+        } catch (ApiException e){
+            Log.e("BaseFragmentActivity", e.getMessage());
+        }
         PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
+        PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, "");
+
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
