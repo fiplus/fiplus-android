@@ -17,6 +17,7 @@ import com.wordnik.client.ApiException;
 import com.wordnik.client.api.UsersApi;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.wordnik.client.model.SetDeviceId;
 
 import java.io.IOException;
 
@@ -184,7 +185,21 @@ public class BaseFragmentActivity extends FragmentActivity {
      * is using accounts.
      */
     private void sendRegistrationIdToBackend(String regid) {
-    Log.i("My tag", "The regID is:" + regid);
+        Log.i("My tag", "The regID is:" + regid);
+
+        UsersApi userApi = new UsersApi();
+        userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+        userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+        SetDeviceId DeviceID = new SetDeviceId();
+        // TODO: Make setCurrent_device_id return the current id, and setNew return the latest ID from GCM in case the ID changes
+        DeviceID.setNew_device_id(regid);
+
+        try{
+            userApi.setDeviceId(DeviceID);
+        } catch (Exception e) {
+            Log.i(TAG, "", e);
+        }
     }
 
     /**
