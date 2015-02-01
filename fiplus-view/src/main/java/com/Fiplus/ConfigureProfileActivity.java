@@ -181,7 +181,7 @@ public class ConfigureProfileActivity extends Activity {
 
             UsersApi usersApi = new UsersApi();
             usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            usersApi.setBasePath("http://dev-fiplus.bitnamiapp.com:8529/_db/fiplus/extensions");
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
                 response = usersApi.getUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
