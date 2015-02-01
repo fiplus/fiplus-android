@@ -17,6 +17,12 @@
 
     <uses-permission android:name="com.Fiplus.gcm.permission.C2D_MESSAGE" />
 
+    <!--
+     The following two permissions are not required to use
+     Google Maps Android API v2, but are recommended.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- <uses-sdk android:minSdkVersion="20" /> -->
     <application
         android:allowBackup="true"
@@ -95,10 +101,9 @@
             android:name=".CreateEventActivity"
             android:label="@string/create_event_activity_title"
             android:theme="@style/Theme.Mainscreen" >
-
             <meta-data
                 android:name="com.google.android.maps.v2.AIzaSyDwbfeTyVbI1GvMh0JLNyweaNhSbqbgMzI"
-                android:value="AIzaSyDwbfeTyVbI1GvMh0JLNyweaNhSbqbgMzI"/>
+                android:value="AIzaSyDwbfeTyVbI1GvMh0JLNyweaNhSbqbgMzI" />
         </activity>
         <activity
             android:name=".ViewProfileActivity"
@@ -126,25 +131,20 @@
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:enabled="true"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.Fiplus.gcm" />
             </intent-filter>
         </receiver>
-        <!-- Required for Push Notifications  TODO: Finish creating GcmIntentService (Allan) -->
         <service
-            android:name=".GcmIntentService"
-            android:exported="false" />
+            android:name=".GcmMessageProcessor"
+            android:exported="false" >
+        </service>
         <!-- Required for Google Play Services -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
     </application>
 
-    <!-- The following two permissions are not required to use
-     Google Maps Android API v2, but are recommended. -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 </manifest>
