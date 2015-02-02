@@ -81,7 +81,6 @@
             android:id="@+id/view_event_attendees_list"
             android:layout_below="@+id/view_event_attendees_label"
             android:orientation="horizontal">
-
         </LinearLayout>
 
         <TextView
@@ -127,8 +126,7 @@
             android:layout_centerVertical="true"
             android:orientation="vertical"
             android:layout_below="@+id/view_event_time_label"
-            android:background="#ffdddddd"
-            />
+            android:background="#ffdddddd"/>
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -143,7 +141,6 @@
                 android:text="@string/view_event_join_btn"
                 android:id="@+id/view_event_join_btn"
                 android:layout_weight="0.5"
-
                 />
 
             <Button
@@ -153,9 +150,6 @@
                 android:id="@+id/view_event_not_interested_btn"
                 android:layout_weight="0.5"
                 />
-
         </LinearLayout>
-
-
     </RelativeLayout>
 </ScrollView>

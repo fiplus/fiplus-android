@@ -189,11 +189,11 @@ public class ViewEventActivity extends FragmentActivity {
             List<Address> addressList;
 
             for (int row = 0; row < 1; row++) {
-                for (int i = 0; i < mSuggestedLocs.size(); i++) {
+                for (int i = 0; i < mSuggestedLocs.size(); i++)
+                {
                     RadioButton addrRadioList = new RadioButton(getBaseContext());
                     addrRadioList.setTextColor(Color.BLACK);
                     addrRadioList.setId((row * 2) + i);
-
                     try {
                         Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
                         addressList = geocoder.getFromLocation(mSuggestedLocs.get(i).getLatitude(),
