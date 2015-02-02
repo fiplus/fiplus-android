@@ -17,9 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wordnik.client.api.ActsApi;
+import com.wordnik.client.api.UsersApi;
+import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Attendee;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
+import com.wordnik.client.model.UserProfile;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -101,7 +104,7 @@ public class ViewEventActivity extends FragmentActivity {
     class GetEventTask extends AsyncTask<Void, Void, String> {
 
         ProgressDialog progressDialog;
-        com.wordnik.client.model.Activity response;
+        Activity response;
         String sEventID, sEventDetails;
         Attendee attendees;
 
@@ -126,9 +129,26 @@ public class ViewEventActivity extends FragmentActivity {
             try {
                 response = getEventApi.getActivity(sEventID);
                 sEventDetails = response.toString();
-                attendees = getEventApi.getAttendees(sEventID);
+                attendees = getEventApi.getAttendees(sEventID, 5.0);
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
+            }
+
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            UserProfile sUserProfile;
+
+            for(int i=0; i < attendees.getJoiners().size(); i++)
+            {
+                try {
+                    //TODO: (Jobelle) View Event - Get Joiners Profile
+                    //sUserProfile = usersApi.getUserProfile(attendees.getJoiners().get(i));
+                    //mAttendees.add(sUserProfile.getUsername());
+                    mAttendees.add(attendees.getJoiners().get(i));
+                } catch (Exception e) {
+                    sEventDetails = e.getMessage();
+                }
             }
 
             return sEventDetails;
@@ -143,7 +163,7 @@ public class ViewEventActivity extends FragmentActivity {
             mEventDesc.setText(response.getDescription());
             mSuggestedTimes = response.getSuggested_times();
             mSuggestedLocs = response.getSuggested_locations();
-            mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees() + ")");
+            mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
             addAttendees();
             addLocation();
             addTime();
@@ -153,11 +173,14 @@ public class ViewEventActivity extends FragmentActivity {
 
         private void addAttendees()
         {
-            //TODO: (Jobelle) View Event - Attendees
-            TextView newAttendee = new TextView(getBaseContext());
-            newAttendee.setText(attendees.getParticipants() + " - TO DO STILL");
-            newAttendee.setTextColor(Color.RED);
-            mAttendeesList.addView(newAttendee);
+            //TODO: (Jobelle) View Event - Attendees Profile Pic
+            for(int i=0; i < mAttendees.size(); i++) {
+                View joiner = getLayoutInflater().inflate(R.layout.joiners_layout, mAttendeesList, false);
+                LinearLayout joinersList = (LinearLayout) joiner.findViewById(R.id.joiner_layout);
+                TextView joinerName = (TextView) joinersList.findViewById(R.id.joiner_name);
+                joinerName.setText(mAttendees.get(i));
+                mAttendeesList.addView(joinersList);
+            }
         }
 
         private void addLocation()
@@ -167,9 +190,9 @@ public class ViewEventActivity extends FragmentActivity {
 
             for (int row = 0; row < 1; row++) {
                 for (int i = 0; i < mSuggestedLocs.size(); i++) {
-                    RadioButton rdbtn = new RadioButton(getBaseContext());
-                    rdbtn.setTextColor(Color.BLACK);
-                    rdbtn.setId((row * 2) + i);
+                    RadioButton addrRadioList = new RadioButton(getBaseContext());
+                    addrRadioList.setTextColor(Color.BLACK);
+                    addrRadioList.setId((row * 2) + i);
 
                     try {
                         Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
@@ -190,9 +213,9 @@ public class ViewEventActivity extends FragmentActivity {
                                     // If there's a postal code, add it
                                     addr.getPostalCode() != null ? addr.getPostalCode() : "");
 
-                            rdbtn.setText(addressText);
+                            addrRadioList.setText(addressText);
 
-                            mLocationList.addView(rdbtn);
+                            mLocationList.addView(addrRadioList);
                         }
                     } catch (IOException e) {
                         Log.e("View Event", e.getMessage());
@@ -236,7 +259,7 @@ public class ViewEventActivity extends FragmentActivity {
         }
     }
 
-    //TODO: Join event task
+    //TODO: (Jobelle) Join Event - Voting for a suggestion
     class JoinEventTask extends AsyncTask<Void, Void, String>
     {
         String sEventID, response;
