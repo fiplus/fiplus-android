@@ -11,7 +11,9 @@ import android.widget.ListView;
 
 import com.Fiplus.R;
 import com.wordnik.client.api.MatchesApi;
+import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
+import com.wordnik.client.model.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +70,8 @@ public class FragmentBeFit extends Fragment{
             eventList.add(new EventListItem(
                     R.drawable.ic_configure,
                     activities.get(i).getName(),
-                    "Placeholder",
-                    "Time placeholder",
+                    activities.get(i).getSuggested_locations(),
+                    activities.get(i).getSuggested_times(),
                     activities.get(i).getMax_attendees().toString()));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
@@ -96,13 +98,18 @@ public class FragmentBeFit extends Fragment{
             matchesApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             matchesApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
             try{
+                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.EMAIL, null));
                 response = matchesApi.matchActivities(
                         PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.EMAIL),
                         10.0,
                         true,
-                        0.0,
-                        null);
+                        1.0,
+                        profile.getLocation());
             } catch (Exception e) {
                 return e.getMessage();
             }
