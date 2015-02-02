@@ -28,10 +28,7 @@ import android.widget.TextView;
 
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Credentials;
-<<<<<<< HEAD
 import com.wordnik.client.model.WhoAmI;
-=======
->>>>>>> Initial Changes using the new sdk
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -274,11 +271,7 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
 
             UsersApi userApi = new UsersApi();
             userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-<<<<<<< HEAD
             userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
-=======
-            userApi.setBasePath(IAppConstants.DSP_URL_AUTH + IAppConstants.DSP_URL_SUFIX_AUTH);
->>>>>>> Initial Changes using the new sdk
             Credentials credentials = new Credentials();
             credentials.setEmail(mEmail);
             credentials.setPassword(mPassword);
