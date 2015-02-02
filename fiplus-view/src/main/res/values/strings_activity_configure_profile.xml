@@ -3,6 +3,7 @@
     <string name="configure_name_hint">Name</string>
     <string name="configure_gender_hint">M/F</string>
     <string name="configure_age_hint">Age</string>
+    <string name="configure_location_button_text">Add</string>
     <string name="interests_label">Interests:</string>
     <string name="add_interest_label">Add</string>
     <string name="save_button_text">Save</string>
