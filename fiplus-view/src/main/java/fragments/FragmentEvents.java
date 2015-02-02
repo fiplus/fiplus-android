@@ -47,8 +47,8 @@ public class FragmentEvents extends Fragment {
     {
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
-        eventList.add(new EventListItem(R.drawable.ic_configure, "My Recent Event 1", "Saint John", "4:30PM", "4 Attendees"));
-        eventList.add(new EventListItem(R.drawable.ic_activities, "My Recent Event 2", "Calgary", "10:30PM", "4 Attendees"));
+        //eventList.add(new EventListItem(R.drawable.ic_configure, "My Recent Event 1", "Saint John", "4:30PM", "4 Attendees"));
+        //eventList.add(new EventListItem(R.drawable.ic_activities, "My Recent Event 2", "Calgary", "10:30PM", "4 Attendees"));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);

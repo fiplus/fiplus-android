@@ -1,5 +1,10 @@
 package model;
 
+import com.wordnik.client.model.Location;
+import com.wordnik.client.model.Time;
+
+import java.util.List;
+
 public class EventListItem {
 
     // TODO: EventListItem
@@ -12,13 +17,20 @@ public class EventListItem {
 
     public EventListItem(){}
 
-    public EventListItem(int mEventPic, String mEventName, String mEventLocation, String mEventTime, String mEventAttendee)
+    public EventListItem(int mEventPic, String mEventName, List<Location> eventLocations, List<Time> eventTimes, String mEventAttendee)
     {
         this.mEventName = mEventName;
         this.mEventPic = mEventPic;
-        this.mEventLocation = mEventLocation;
-        this.mEventTime = mEventTime;
         this.mEventAttendee = mEventAttendee;
+        if(eventLocations.size() == 1)
+            mEventLocation = eventLocations.get(0).toString();
+        else
+            mEventLocation = "Multiple Locations";
+
+        if(eventTimes.size() == 1)
+            mEventTime = eventTimes.get(0).toString();
+        else
+            mEventTime = "Multiple Times";
     }
 
     public String getEventName()
