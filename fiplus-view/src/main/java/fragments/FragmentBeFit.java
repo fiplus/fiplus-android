@@ -10,11 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.Fiplus.R;
-import com.wordnik.client.api.ActivityApi;
-import com.wordnik.client.api.MatchApi;
-import com.wordnik.client.model.ActivitiesResponse;
+import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.model.Activity;
-import com.wordnik.client.model.ActivityDetailResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +52,10 @@ public class FragmentBeFit extends Fragment{
     }
 
     //TODO: Remove DUMMY EVENTS
-    private void setEventList(List<ActivityDetailResponse> activities)
+    private void setEventList(List<Activity> activities)
     {
+        if (activities == null)
+            return;
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 //
 //        eventList.add(new EventListItem(R.drawable.ic_configure, "First Be Fi+! Event", "Calgary", "4:30PM", "10 Attendees"));
@@ -88,21 +87,21 @@ public class FragmentBeFit extends Fragment{
 
     private class GetEvents extends AsyncTask<Void, Void, String>
     {
-        protected ActivitiesResponse response;
+        protected List<Activity> response;
 
         @Override
         protected String doInBackground(Void... params)
         {
-            MatchApi matchApi = new MatchApi();
-            matchApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            matchApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            MatchesApi matchesApi = new MatchesApi();
+            matchesApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            matchesApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try{
-                response = matchApi.matchActivities(
+                response = matchesApi.matchActivities(
                         PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.EMAIL),
-                        10,
+                        10.0,
                         true,
-                        0,
+                        0.0,
                         null);
             } catch (Exception e) {
                 return e.getMessage();
@@ -112,7 +111,7 @@ public class FragmentBeFit extends Fragment{
 
         @Override
         protected void onPostExecute(String result){
-            setEventList(response.getActivities());
+            setEventList(response);
         }
     }
 }
