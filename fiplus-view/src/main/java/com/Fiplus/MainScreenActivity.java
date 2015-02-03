@@ -263,10 +263,6 @@ public class MainScreenActivity extends BaseFragmentActivity
                 startActivity(intent);
                 break;
             case 3: //Settings
-                String sEventID = "946705823964";
-                intent = new Intent(this, ViewEventActivity.class);
-                intent.putExtra("eventID", sEventID); //add in the event id
-                startActivity(intent);
                 break;
             case 4: //logout
                 logout();
