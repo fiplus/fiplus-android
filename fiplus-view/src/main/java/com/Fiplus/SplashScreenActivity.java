@@ -41,7 +41,7 @@ public class SplashScreenActivity extends BaseFragmentActivity {
             }else{ // previously logged in, check if still valid
                 UsersApi userApi = new UsersApi();
                 userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-                userApi.setBasePath(dspUrl + IAppConstants.DSP_URL_SUFIX);
+                userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
                 try{
                     Credentials login = new Credentials();
                     login.setEmail(userID);
@@ -54,7 +54,6 @@ public class SplashScreenActivity extends BaseFragmentActivity {
                     }catch(Exception e1){
                         return false;
                     }
-
                     PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
                     PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
                     PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, "");

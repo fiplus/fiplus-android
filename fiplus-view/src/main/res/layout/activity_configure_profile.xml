@@ -58,6 +58,30 @@
             android:layout_alignRight="@+id/interests_linear_layout"
             android:layout_alignEnd="@+id/interests_linear_layout" />
 
+        <EditText
+            android:paddingTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/configure_location_field"
+            android:hint="Location"
+            android:editable="true"
+            android:layout_below="@+id/configure_age"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/configure_location_button"
+            android:layout_toLeftOf="@+id/configure_location_button"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/configure_location_button"
+            android:text="@string/configure_location_button_text"
+            android:layout_below="@+id/configure_age"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:onClick="onAddLocationClick"/>
+
         <TextView
             android:paddingTop="20dp"
             android:layout_width="wrap_content"
@@ -65,7 +89,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/add_schedule_text"
             android:id="@+id/add_schedule_label"
-            android:layout_below="@+id/configure_gender"
+            android:layout_below="@+id/configure_location_field"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:clickable="true" />
@@ -91,12 +115,12 @@
                 android:text="@string/interests_label"
                 android:id="@+id/interests_label" />
 
-            <Spinner
+            <EditText
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:layout_width="150dp"
                 android:layout_height="41dp"
-                android:id="@+id/interests_spinner"
+                android:id="@+id/interests_input_field"
                 android:layout_weight="0.66" />
 
             <TextView
@@ -108,7 +132,7 @@
                 android:text="@string/add_interest_label"
                 android:id="@+id/add_interest_label"
                 android:clickable="true"
-                android:onClick="onAddClick"
+                android:onClick="onAddInterestClick"
                 android:enabled="true" />
 
         </LinearLayout>

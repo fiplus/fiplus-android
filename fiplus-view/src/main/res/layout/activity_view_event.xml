@@ -76,11 +76,12 @@
             android:textColor="#ff8d54f4" />
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/view_event_attendees_list"
             android:layout_below="@+id/view_event_attendees_label"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1">
         </LinearLayout>
 
         <TextView
@@ -133,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/view_event_time_radiogroup"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:weightSum="1">
+            >
 
             <Button
                 android:layout_width="0dp"
