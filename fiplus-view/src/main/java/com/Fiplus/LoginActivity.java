@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wordnik.client.api.UsersApi;
@@ -54,11 +55,15 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private ImageView mFitLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mFitLogo = (ImageView)findViewById(R.id.login_fit_logo);
+        mFitLogo.setImageResource(R.drawable.fiplus);
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
