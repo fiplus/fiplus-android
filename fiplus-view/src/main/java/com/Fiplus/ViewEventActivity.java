@@ -1,6 +1,7 @@
 package com.Fiplus;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -48,7 +49,7 @@ public class ViewEventActivity extends FragmentActivity {
 
     protected List<Time> mSuggestedTimes = new ArrayList<Time>();
     protected List<Location> mSuggestedLocs = new ArrayList<Location>();
-    protected List<String> mAttendees = new ArrayList<String>();
+    protected List<UserProfile> mAttendees = new ArrayList<UserProfile>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -142,10 +143,8 @@ public class ViewEventActivity extends FragmentActivity {
             for(int i=0; i < attendees.getJoiners().size(); i++)
             {
                 try {
-                    //TODO: (Jobelle) View Event - Get Joiners Profile
-                    //sUserProfile = usersApi.getUserProfile(attendees.getJoiners().get(i));
-                    //mAttendees.add(sUserProfile.getUsername());
-                    mAttendees.add(attendees.getJoiners().get(i));
+                    sUserProfile = usersApi.getUserProfile(attendees.getJoiners().get(i));
+                    mAttendees.add(sUserProfile);
                 } catch (Exception e) {
                     sEventDetails = e.getMessage();
                 }
@@ -178,15 +177,30 @@ public class ViewEventActivity extends FragmentActivity {
                 View joiner = getLayoutInflater().inflate(R.layout.joiners_layout, mAttendeesList, false);
                 LinearLayout joinersList = (LinearLayout) joiner.findViewById(R.id.joiner_layout);
                 TextView joinerName = (TextView) joinersList.findViewById(R.id.joiner_name);
-                joinerName.setText(mAttendees.get(i));
+                joinerName.setText(mAttendees.get(i).getUsername());
+                final String sUserID = mAttendees.get(i).getUser_id();
+
+                //add on click listener
+                joinersList.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getBaseContext(), ViewProfileActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                        intent.putExtra("userID", sUserID); //add in the user id
+                        startActivity(intent);
+                    }
+                });
+
                 mAttendeesList.addView(joinersList);
             }
         }
 
         private void addLocation()
         {
+
             Address addr;
             List<Address> addressList;
+            int numOfVotes;
 
             for (int row = 0; row < 1; row++) {
                 for (int i = 0; i < mSuggestedLocs.size(); i++)
@@ -212,6 +226,15 @@ public class ViewEventActivity extends FragmentActivity {
                                     addr.getCountryName(),
                                     // If there's a postal code, add it
                                     addr.getPostalCode() != null ? addr.getPostalCode() : "");
+
+                            //add votes
+                            try {
+                                numOfVotes = mSuggestedLocs.get(i).getSuggestion_votes().intValue();
+                            } catch(NullPointerException e)
+                            {
+                                numOfVotes= -1;
+                            }
+                            addressText += "\n(" + numOfVotes + " vote(s))";
 
                             addrRadioList.setText(addressText);
 
@@ -252,22 +275,38 @@ public class ViewEventActivity extends FragmentActivity {
         {
             long startDate = time.getStart().longValue();
             long endDate = time.getEnd().longValue();
+            int numOfVotes;
+            String s;
+
+            //add votes
+            try {
+                numOfVotes = time.getSuggestion_votes().intValue();
+            } catch (NullPointerException e)
+            {
+                numOfVotes = -1;
+            }
+
+            s = "     (" + numOfVotes + " vote(s))";
+
             Date d1 = new Date(startDate);
             Date d2 = new Date(endDate);
             SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-            return "Start: " + dateFormat.format(d1) + "\nEnd  : " + dateFormat.format(d2);
+            return "Start: " + dateFormat.format(d1) + s + "\nEnd  : " + dateFormat.format(d2);
         }
     }
 
-    //TODO: (Jobelle) Join Event - Voting for a suggestion
     class JoinEventTask extends AsyncTask<Void, Void, String>
     {
         String sEventID, response;
         ProgressDialog progressDialog;
+        int addressIndex;
+        int timeIndex;
 
         public JoinEventTask (String s)
         {
             sEventID = s;
+            addressIndex = mLocationList.indexOfChild(mLocationList.findViewById(mLocationList.getCheckedRadioButtonId()));
+            timeIndex = mTimeList.indexOfChild(mTimeList.findViewById(mTimeList.getCheckedRadioButtonId()));
         }
 
         @Override
@@ -285,6 +324,8 @@ public class ViewEventActivity extends FragmentActivity {
 
             try {
                 getEventApi.joinActivity(sEventID);
+                getEventApi.voteForSuggestion(mSuggestedLocs.get(addressIndex).getSuggestion_id());
+                getEventApi.voteForSuggestion(mSuggestedTimes.get(timeIndex).getSuggestion_id());
             } catch (Exception e) {
                 response = e.getMessage();
             }

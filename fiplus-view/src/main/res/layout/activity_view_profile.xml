@@ -16,37 +16,63 @@
 
     <!--TODO: View Profile - Circle Image View, Fix Fonts, Change Star Color-->
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="80dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/profileImage"
+            android:src="@drawable/ic_nopic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="50dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"/>
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+            android:text="Name"
             android:id="@+id/profileName"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignRight="@+id/profileImage"
+            android:typeface="serif"
+            android:textStyle="bold"
+            android:layout_alignTop="@+id/profileImage"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Gender"
+            android:id="@+id/profileGender"
+            android:layout_below="@+id/profileName"
+            android:layout_alignLeft="@+id/profileName"
+            android:layout_alignStart="@+id/profileName"
             android:layout_marginEnd="100dp"
             android:layout_marginRight="100dp"
-            android:layout_marginTop="40dp"
             android:typeface="serif"
-            android:textStyle="bold"/>
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Address"
+            android:id="@+id/profileCountry"
+            android:layout_below="@+id/profileGender"
+            android:layout_alignLeft="@+id/profileName"
+            android:layout_alignStart="@+id/profileName"
+            android:layout_marginEnd="100dp"
+            android:layout_marginRight="100dp"
+            android:typeface="serif"
+            />
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/checkBox"
-            android:layout_below="@+id/profileName"
+            android:layout_below="@+id/profileCountry"
             android:layout_alignLeft="@+id/profileName"
             android:layout_alignStart="@+id/profileName"
             style="?android:attr/starStyle"
