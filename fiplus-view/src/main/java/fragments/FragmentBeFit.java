@@ -1,5 +1,6 @@
 package fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.Fiplus.MainScreenActivity;
 import com.Fiplus.R;
+import com.Fiplus.ViewEventActivity;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
@@ -58,32 +61,37 @@ public class FragmentBeFit extends Fragment{
     {
         if (activities == null)
             return;
-        ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
-//
-//        eventList.add(new EventListItem(R.drawable.ic_configure, "First Be Fi+! Event", "Calgary", "4:30PM", "10 Attendees"));
-//        eventList.add(new EventListItem(R.drawable.ic_help, "Second Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
-//        eventList.add(new EventListItem(R.drawable.ic_configure, "Third Be Fi+! Event", "Toronto", "10:30PM", "2 Attendees"));
-//        eventList.add(new EventListItem(R.drawable.ic_configure, "Fourth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
-//        eventList.add(new EventListItem(R.drawable.ic_configure, "Fifth Be Fi+! Event", "Calgary", "10:30PM", "11 Attendees"));
-//
+        ArrayList<EventListItem> eventList = new ArrayList<>();
+
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(
                     R.drawable.ic_configure,
                     activities.get(i).getName(),
                     activities.get(i).getSuggested_locations(),
                     activities.get(i).getSuggested_times(),
-                    activities.get(i).getMax_attendees().toString()));
+                    activities.get(i).getMax_attendees().toString(),
+                    activities.get(i).getActivity_id()));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);
+    }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        GetEvents getEvents = new GetEvents();
+        getEvents.execute();
     }
 
     protected class EventItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         {
-            // TODO: Put implementation
+            String sEventID = mEventListAdapter.getItem(position).getEventId();
+            Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+            intent.putExtra("eventID", sEventID);
+            startActivity(intent);
         }
     }
 
@@ -103,12 +111,12 @@ public class FragmentBeFit extends Fragment{
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try{
-                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.EMAIL, null));
+                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
-                        PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.EMAIL),
+                        "",
                         10.0,
                         true,
-                        1.0,
+                        10.0,
                         profile.getLocation());
             } catch (Exception e) {
                 return e.getMessage();
@@ -117,8 +125,10 @@ public class FragmentBeFit extends Fragment{
         }
 
         @Override
-        protected void onPostExecute(String result){
-            setEventList(response);
+        protected void onPostExecute(String result)
+        {
+            if (response != null)
+                setEventList(response);
         }
     }
 }

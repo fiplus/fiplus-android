@@ -13,13 +13,15 @@ public class EventListItem {
     private String mEventLocation;
     private String mEventTime;
     private String mEventAttendee;
+    private String mEventId;
 
 
     public EventListItem(){}
 
-    public EventListItem(int mEventPic, String mEventName, List<Location> eventLocations, List<Time> eventTimes, String mEventAttendee)
+    public EventListItem(int mEventPic, String mEventName, List<Location> eventLocations, List<Time> eventTimes, String mEventAttendee, String mEventId)
     {
         this.mEventName = mEventName;
+        this.mEventId = mEventId;
         this.mEventPic = mEventPic;
         this.mEventAttendee = mEventAttendee;
         if(eventLocations.size() == 1)
@@ -57,5 +59,7 @@ public class EventListItem {
     {
         return this.mEventAttendee;
     }
+
+    public String getEventId() {return this.mEventId; }
 
 }

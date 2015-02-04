@@ -183,7 +183,7 @@ public class ConfigureProfileActivity extends Activity {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
-                response = usersApi.getUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
+                response = usersApi.getUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
             } catch (Exception e) {
                 return e.getMessage();
             }
