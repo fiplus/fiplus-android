@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="recent_activities">Recent Activities:</string>
+    <string name="view_profile_progress_bar_title">Getting Profile</string>
 </resources>
