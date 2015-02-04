@@ -61,7 +61,7 @@ public class FragmentMyEvents extends Fragment {
     {
         if (activities == null)
             return;
-        ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
+        ArrayList<EventListItem> eventList = new ArrayList<>();
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(
@@ -69,8 +69,8 @@ public class FragmentMyEvents extends Fragment {
                     activities.get(i).getName(),
                     activities.get(i).getSuggested_locations(),
                     activities.get(i).getSuggested_times(),
-                    activities.get(i).getMax_attendees().toString(),
-                    activities.get(i).getActivity_id().toString()));
+                    ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
+                    activities.get(i).getActivity_id()));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);

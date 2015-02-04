@@ -69,7 +69,7 @@ public class FragmentBeFit extends Fragment{
                     activities.get(i).getName(),
                     activities.get(i).getSuggested_locations(),
                     activities.get(i).getSuggested_times(),
-                    activities.get(i).getMax_attendees().toString(),
+                    ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);

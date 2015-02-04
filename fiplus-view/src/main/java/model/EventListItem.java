@@ -23,7 +23,7 @@ public class EventListItem {
         this.mEventName = mEventName;
         this.mEventId = mEventId;
         this.mEventPic = mEventPic;
-        this.mEventAttendee = mEventAttendee;
+        this.mEventAttendee = mEventAttendee + " people going!";
         if(eventLocations.size() == 1)
             mEventLocation = eventLocations.get(0).toString();
         else
