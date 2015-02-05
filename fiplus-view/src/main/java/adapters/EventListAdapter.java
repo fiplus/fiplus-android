@@ -46,7 +46,7 @@ public class EventListAdapter extends BaseAdapter
     }
 
     @Override
-    public Object getItem(int position)
+    public EventListItem getItem(int position)
     {
         return mEventItems.get(position);
     }
