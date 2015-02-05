@@ -44,6 +44,16 @@
             android:theme="@style/Theme.Mainscreen" >
         </activity>
         <activity
+            android:name=".ViewEventActivity"
+            android:label="@string/view_profile"
+            android:parentActivityName=".MainScreenActivity"
+            android:theme="@style/Theme.Mainscreen" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainScreenActivity" />
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme" >

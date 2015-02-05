@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="view_event_join_btn">Be Fi+!</string>
+    <string name="view_event_not_interested_btn">Not Interested</string>
+    <string name="view_event_cancel_event_btn">Cancel Event</string>
+    <string name="view_event_joiner">Joiner</string>
+
+    <string name="view_event_name_label">Event Name:</string>
+    <string name="view_event_desc_label">Description:</string>
+    <string name="view_event_attendees_label">Fi+ Buddies:</string>
+    <string name="view_event_suggested_loc_label">Suggested Location(s):</string>
+    <string name="view_event_suggested_time_label">Suggested Time(s):</string>
+
+    <string name="view_event_progress_bar_title">Getting Event</string>
+    <string name="join_event_progress_bar_title">Joining Event</string>
+
+
+</resources>

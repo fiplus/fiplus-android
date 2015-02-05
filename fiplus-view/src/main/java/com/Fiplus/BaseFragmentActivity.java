@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -67,15 +66,9 @@ public class BaseFragmentActivity extends FragmentActivity {
 
     protected void logout(){
 
-        //TODO: Logout
-        UsersApi usersApi = new UsersApi();
-        usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-        usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
-        try{
-            usersApi.logout();
-        } catch (ApiException e){
-            Log.e("BaseFragmentActivity", e.getMessage());
-        }
+        LogOut logoutTask = new LogOut();
+        logoutTask.execute();
+
         PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, "");
@@ -86,6 +79,29 @@ public class BaseFragmentActivity extends FragmentActivity {
         intent.putExtra("EXIT", true);
         startActivity(intent);
         finish();
+    }
+
+    class LogOut extends AsyncTask<Void, Void, String> {
+
+        protected String doInBackground(Void... params)
+        {
+            //TODO: Logout
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            try
+            {
+                usersApi.logout();
+            } catch (ApiException e) {
+                return e.getMessage();
+            }
+
+            return null;
+        }
+
+        protected void onPostExecute(String s) {
+
+        }
     }
 
     /**

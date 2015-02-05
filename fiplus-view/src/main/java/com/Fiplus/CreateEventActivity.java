@@ -20,7 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -51,7 +51,7 @@ public class CreateEventActivity extends FragmentActivity {
     final String btnInnerHTML = "<font color='gray'>\"%s\"    </font>";
     final Integer MAX = 3;
 
-    protected ImageView mImageView;
+    //protected ImageView mImageView;
     protected EditText mEventName;
     protected EditText mEventLocation;
     protected Button mAddLocationBtn;
@@ -75,7 +75,7 @@ public class CreateEventActivity extends FragmentActivity {
     protected ArrayAdapter<String> dateTimeAdapter;
 
     protected List<String> mTagsList = new ArrayList<String>();
-    protected ArrayList<TextView> mTagArray = new ArrayList<TextView>();
+    protected LinearLayout mTagsLinearLayout;
 
     protected Button mSetTimeButton;
     protected Button mCancelTimeButton;
@@ -92,8 +92,8 @@ public class CreateEventActivity extends FragmentActivity {
 
         setTitle(R.string.create_event_activity_title);
 
-        mImageView = (ImageView)findViewById(R.id.createEventImageView);
-        mImageView.setImageResource(R.drawable.fiplus);
+//        mImageView = (ImageView)findViewById(R.id.createEventImageView);
+//        mImageView.setImageResource(R.drawable.fiplus);
 
         mEventName = (EditText) findViewById(R.id.create_event_name);
         mDescription = (EditText) findViewById(R.id.create_event_description);
@@ -148,12 +148,7 @@ public class CreateEventActivity extends FragmentActivity {
         //for tags
         mTags = (EditText) findViewById(R.id.create_event_tags);
         mAddTags = (TextView) findViewById(R.id.create_event_tags_label);
-        mTagArray.add((TextView) findViewById(R.id.create_event_tag1));
-        mTagArray.get(0).setVisibility(View.GONE);
-        mTagArray.add((TextView) findViewById(R.id.create_event_tag2));
-        mTagArray.get(1).setVisibility(View.GONE);
-        mTagArray.add((TextView) findViewById(R.id.create_event_tag3));
-        mTagArray.get(2).setVisibility(View.GONE);
+        mTagsLinearLayout = (LinearLayout) findViewById(R.id.create_event_tags_list);
 
         mDateTimeError = (EditText) findViewById(R.id.create_event_datetime_error);
         mDateTimeButton = (Button) findViewById(R.id.create_event_suggest_date_time);
@@ -376,7 +371,7 @@ public class CreateEventActivity extends FragmentActivity {
                     }
                     else
                     {
-                        mDateTimeListItems.add(convertToTimeToString(time));
+                        mDateTimeListItems.add(convertTimeToString(time));
                         mDateTimeListItemsUTC.add(time);
                         dateTimeAdapter.notifyDataSetChanged();
                         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
@@ -413,7 +408,7 @@ public class CreateEventActivity extends FragmentActivity {
         return isError;
     }
 
-    private String convertToTimeToString(Time time)
+    private String convertTimeToString(Time time)
     {
         long startDate = Double.doubleToLongBits(time.getStart());
         long endDate = Double.doubleToLongBits(time.getEnd());
@@ -428,60 +423,47 @@ public class CreateEventActivity extends FragmentActivity {
     {
         String tag;
         tag = mTags.getText().toString();
+        int tagsAdded = mTagsList.size();
         mTags.setText("");
 
-        if(!tag.isEmpty() && mTagsList.size() < 3)
+        if(!tag.isEmpty() && tagsAdded < 3)
         {
             mTagsList.add(tag);
-            int i = mTagsList.size();
-            switch(i)
-            {
-                case 1: mTagArray.get(0).setText(Html.fromHtml(String.format(btnInnerHTML, mTagsList.get(i - 1))));
-                    mTagArray.get(0).setVisibility(View.VISIBLE);
-                    break;
-                case 2: mTagArray.get(1).setText(Html.fromHtml(String.format(btnInnerHTML, mTagsList.get(i - 1))));
-                    mTagArray.get(1).setVisibility(View.VISIBLE);
-                    break;
-                case 3:
-                    checkMaxTags();
-                    mTagArray.get(2).setText(Html.fromHtml(String.format(btnInnerHTML, mTagsList.get(i - 1))));
-                    mTagArray.get(2).setVisibility(View.VISIBLE);
-                    break;
-            }
+            tagsAdded = mTagsList.size();
+
+            final TextView createEventTag = new TextView(getBaseContext());
+            createEventTag.setText(Html.fromHtml(String.format(btnInnerHTML, mTagsList.get(tagsAdded - 1))));
+            createEventTag.setBackgroundResource(R.drawable.button_tags);
+            createEventTag.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tags_delete, 0);
+
+            createEventTag.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removeTag(view, createEventTag.getText().toString());
+                }
+            });
+
+            int padding = getResources().getDimensionPixelOffset(R.dimen.tags_padding);
+            createEventTag.setPadding(padding, 0, padding, 0);
+
+            mTagsLinearLayout.addView(createEventTag);
+            checkMaxTags();
         }
 
-        Log.d("Updated Add:", mTagsList.toString());
     }
 
-
     //to remove tag and update the list
-    public void removeTag(View v)
+    public void removeTag(View v, String tag)
     {
         v.setVisibility(View.GONE);
-        switch (v.getId())
-        {
-            case R.id.create_event_tag1:
-                mTagsList.remove(0);
-                break;
-            case R.id.create_event_tag2:
-                mTagsList.remove(1);
-                break;
-            case R.id.create_event_tag3:
-                mTagsList.remove(2);
-                break;
-        }
+        tag = tag.replace("\"", "");
+        tag = tag.replace(" ", "");
 
-        //to move the array
-        for(int i=0; i < mTagsList.size(); i++)
-        {
-            mTagArray.get(i).setText(Html.fromHtml(String.format(btnInnerHTML, mTagsList.get(i))));
-            mTagArray.get(i).setVisibility(View.VISIBLE);
-        }
-
-        //to remove unnecessary tags
-        for(int i=mTagsList.size(); i < MAX; i++)
-        {
-            mTagArray.get(i).setVisibility(View.GONE);
+        for(int i = 0; i < mTagsList.size(); i++) {
+            if (mTagsList.get(i).contains(tag)) {
+                mTagsList.remove(i);
+                break;
+            }
         }
 
         checkMaxTags();
