@@ -178,15 +178,17 @@ public class ViewEventActivity extends FragmentActivity {
                 LinearLayout joinersList = (LinearLayout) joiner.findViewById(R.id.joiner_layout);
                 TextView joinerName = (TextView) joinersList.findViewById(R.id.joiner_name);
                 joinerName.setText(mAttendees.get(i).getUsername());
-                final String sUserID = mAttendees.get(i).getUser_id();
+                final UserProfile profile = mAttendees.get(i);
 
                 //add on click listener
                 joinersList.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getBaseContext(), ViewProfileActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                        intent.putExtra("userID", sUserID); //add in the user id
+                        intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                        intent.putExtra("userName", profile.getUsername()); //add in the user name
+                        intent.putExtra("userProfile", profile.getProfile_pic());
+                        intent.putStringArrayListExtra("userInterest", (ArrayList<String>)profile.getTagged_interests());
                         startActivity(intent);
                     }
                 });

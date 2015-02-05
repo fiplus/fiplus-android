@@ -2,30 +2,16 @@ package com.Fiplus;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.location.Address;
-import android.location.Geocoder;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.wordnik.client.api.UsersApi;
-import com.wordnik.client.model.UserProfile;
+import org.apmem.tools.layouts.FlowLayout;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
-import adapters.EventListAdapter;
 import model.EventListItem;
-import utils.IAppConstants;
 
 public class ViewProfileActivity extends Activity
 {
@@ -34,11 +20,16 @@ public class ViewProfileActivity extends Activity
 
     private ImageView mImageView;
     private TextView mProfileName;
-    private TextView mProfileGender;
-    private TextView mProfileCountry;
-    private ListView mEventsList;
-    private EventListAdapter mEventListAdapter ;
+    //private TextView mProfileGender;
+    //private TextView mProfileCountry;
+    //private ListView mEventsList;
+    //private EventListAdapter mEventListAdapter ;
+    private FlowLayout mInterestList;
     ArrayList<EventListItem> eventList;
+
+    private String userName;
+    private ArrayList<String> userInterest;
+    protected ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -48,50 +39,51 @@ public class ViewProfileActivity extends Activity
 
         overridePendingTransition(R.anim.activity_in_from_right, R.anim.activity_out_to_left);
 
-        Bundle b = getIntent().getExtras();
-        final String mUserID = b.getString("userID");
+        userName = getIntent().getExtras().getString("userName");
+        userInterest = getIntent().getExtras().getStringArrayList("userInterest");
+
+        progressDialog= ProgressDialog.show(ViewProfileActivity.this, getString(R.string.view_profile_progress_bar_title) + "...",
+                getString(R.string.progress_dialog_text), true);
 
         //initialize
         mImageView = (ImageView)findViewById(R.id.profileImage);
         mProfileName = (TextView)findViewById(R.id.profileName);
-        mProfileGender = (TextView)findViewById(R.id.profileGender);
-        mProfileCountry = (TextView)findViewById(R.id.profileCountry);
+        mInterestList = (FlowLayout)findViewById(R.id.profileInterestLayout);
 
-        mEventsList = (ListView)findViewById(R.id.profileEventListView);
+        //TODO: View Other Profile - Recent Activities
+//        mEventsList = (ListView)findViewById(R.id.profileEventListView);
+//        mEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+//            {
+//
+//            }
+//        });
+
+//        mEventsList.setOnTouchListener(new ListView.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                int action = event.getAction();
+//                switch (action) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        // Disallow ScrollView to intercept touch events.
+//                        v.getParent().requestDisallowInterceptTouchEvent(true);
+//                        break;
+//
+//                    case MotionEvent.ACTION_UP:
+//                        // Allow ScrollView to intercept touch events.
+//                        v.getParent().requestDisallowInterceptTouchEvent(false);
+//                        break;
+//                }
+//
+//                // Handle ListView touch events.
+//                v.onTouchEvent(event);
+//                return true;
+//            }
+//        });
+
+        setProfile();
         setEventList();
-
-        mEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                //TODO: Add item click listener for view profile list
-            }
-        });
-
-        mEventsList.setOnTouchListener(new ListView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disallow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        // Allow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
-            }
-        });
-
-        GetOtherProfileTask profileView = new GetOtherProfileTask(mUserID);
-        profileView.execute();
     }
 
     @Override
@@ -106,93 +98,49 @@ public class ViewProfileActivity extends Activity
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
     }
 
-    // TODO: layout for view profile event list
+    // TODO: layout for view profile recent event list
     private void setEventList()
     {
-        eventList = new ArrayList<EventListItem>();
-
-        eventList.add(new EventListItem(R.drawable.ic_configure, "First Near You Event", "Saint John", "4:30PM", "4 Attendees"));
-        eventList.add(new EventListItem(R.drawable.ic_activities, "Second Near You Event", "Calgary", "10:30PM", "4 Attendees"));
-
-        mEventListAdapter = new EventListAdapter(this, eventList, TAG);
-        mEventsList.setAdapter(mEventListAdapter);
+//        EventListAdapter mEventListAdapter ;
+//
+//        eventList = new ArrayList<EventListItem>();
+//
+//        eventList.add(new EventListItem(R.drawable.ic_configure, "Dummy Event", "Saint John", "4:30PM", "4 Attendees"));
+//        eventList.add(new EventListItem(R.drawable.ic_activities, "Second Near You Event", "Calgary", "10:30PM", "4 Attendees"));
+//
+//        mEventListAdapter = new EventListAdapter(this, eventList, TAG);
+//        mEventsList.setAdapter(mEventListAdapter);
     }
 
-    class GetOtherProfileTask extends AsyncTask<Void, Void, String> {
+    private void setProfile()
+    {
+        int padding = getResources().getDimensionPixelOffset(R.dimen.tags_padding);
+        int size = userInterest.size();
 
-        protected ProgressDialog progressDialog;
-        protected UserProfile response;
-        protected String sUserID;
+        progressDialog.dismiss();
 
-        public GetOtherProfileTask (String s)
+        mProfileName.setText(userName);
+
+        if(size == 0)
         {
-            sUserID = s;
+            TextView interest = new TextView(getBaseContext());
+            interest.setText("No Interest Listed");
+            interest.setPadding(padding, 0, 0, 0);
+            interest.setTextColor(Color.GRAY);
+            mInterestList.addView(interest);
         }
-
-        @Override
-        protected void onPreExecute()
+        else
         {
-            progressDialog= ProgressDialog.show(ViewProfileActivity.this, getString(R.string.view_profile_progress_bar_title) + "...", getString(R.string.progress_dialog_text), true);
+            for(int i= 0; i < size; i++)
+            {
+                TextView interest = new TextView(getBaseContext());
+                interest.setText(userInterest.get(i));
+                interest.setTextColor(Color.BLACK);
+                interest.setBackgroundResource(R.drawable.button_tags);
+                interest.setPadding(padding, 0, padding, 0);
+                mInterestList.addView(interest);
+            }
         }
 
-        @Override
-        protected String doInBackground(Void... params) {
-
-            UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
-            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
-
-            try {
-                response = usersApi.getUserProfile(sUserID);
-            } catch (Exception e) {
-                return e.getMessage();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            Address addr;
-            List<Address> addressList;
-
-            progressDialog.dismiss();
-
-            if(response == null)
-            {
-                Toast.makeText(getBaseContext(), "User id = {" + sUserID + "}", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if(response.getUsername() != null)
-            {
-                mProfileName.setText(response.getUsername());
-            }
-
-            if(response.getGender() != null)
-            {
-                mProfileGender.setText(response.getGender());
-            }
-
-            if(response.getLocation().getLongitude() != null)
-            {
-                try {
-                    Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                    addressList = geocoder.getFromLocation(response.getLocation().getLatitude(),
-                            response.getLocation().getLongitude(),
-                            1);
-                    if (addressList != null && addressList.size() > 0)
-                    {
-                        addr = addressList.get(0);
-                        String addressText = addr.getCountryName();
-                        // Return the text
-                        mProfileCountry.setText(addressText);
-                    }
-                } catch (IOException e) {
-                    Log.e("View Other Profile", e.getMessage());
-                }
-            }
-
-        }
     }
 }

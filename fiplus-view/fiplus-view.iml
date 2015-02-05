@@ -92,6 +92,7 @@
     <orderEntry type="library" exported="" name="play-services-base-6.5.87" level="project" />
     <orderEntry type="library" exported="" name="joda-time-2.3" level="project" />
     <orderEntry type="library" exported="" name="jackson-databind-2.1.4" level="project" />
+    <orderEntry type="library" exported="" name="layouts-1.8" level="project" />
     <orderEntry type="library" exported="" name="jackson-annotations-2.1.4" level="project" />
     <orderEntry type="module" module-name="android-client" exported="" />
   </component>
