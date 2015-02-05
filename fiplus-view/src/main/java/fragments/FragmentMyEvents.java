@@ -1,5 +1,8 @@
 package fragments;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,18 +15,17 @@ import android.widget.ListView;
 
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
-import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
-import com.wordnik.client.model.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
+import utils.AlertFragmentDialog;
 import utils.IAppConstants;
-import utils.PrefUtil;
+import utils.LocationUtil;
 
 
 public class FragmentMyEvents extends Fragment {
@@ -60,14 +62,24 @@ public class FragmentMyEvents extends Fragment {
     private void setEventList(List<Activity> activities)
     {
         if (activities == null)
+        {
             return;
+        }
+        else if(activities.size() == 0)
+        {
+            FragmentManager fm = getActivity().getFragmentManager();
+            DialogFragment alertDialog = AlertFragmentDialog.newInstance("Be Fi+!");
+            alertDialog.setCancelable(false);
+            alertDialog.show(fm, "fragment_alert");
+        }
+
         ArrayList<EventListItem> eventList = new ArrayList<>();
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(
                     R.drawable.ic_configure,
                     activities.get(i).getName(),
-                    activities.get(i).getSuggested_locations(),
+                    LocationUtil.getLocationStrings(activities.get(i).getSuggested_locations(), getActivity().getBaseContext()),
                     activities.get(i).getSuggested_times(),
                     ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));
@@ -100,6 +112,13 @@ public class FragmentMyEvents extends Fragment {
     private class GetJoinedEvents extends AsyncTask<Void, Void, String>
     {
         protected List<Activity> response;
+        protected ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressDialog= ProgressDialog.show(getActivity(), getString(R.string.view_event_progress_bar_title) + "s...", getString(R.string.progress_dialog_text), true);
+        }
 
         @Override
         protected String doInBackground(Void... params)
@@ -119,6 +138,7 @@ public class FragmentMyEvents extends Fragment {
         @Override
         protected void onPostExecute(String result)
         {
+            progressDialog.dismiss();
             if (response != null)
                 setEventList(response);
         }

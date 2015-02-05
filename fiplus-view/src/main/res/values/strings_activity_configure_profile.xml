@@ -7,5 +7,7 @@
     <string name="interests_label">Interests:</string>
     <string name="add_interest_label">Add</string>
     <string name="save_button_text">Save</string>
+    <string name="cancel_button_text">Cancel</string>
     <string name="add_schedule_text">+ Add Schedule</string>
+    <string name="change_address">Update</string>
 </resources>

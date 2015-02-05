@@ -1,35 +1,37 @@
 package fragments;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.Fiplus.MainScreenActivity;
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
+import com.wordnik.client.model.Location;
 import com.wordnik.client.model.UserProfile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.MatchResult;
+import java.util.Locale;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
 import utils.IAppConstants;
+import utils.LocationUtil;
 import utils.PrefUtil;
 
-/**
- * Created by jsfirme on 14-12-03.
- */
 public class FragmentBeFit extends Fragment{
 
     public static final String TAG = FragmentBeFit.class
@@ -67,7 +69,7 @@ public class FragmentBeFit extends Fragment{
             eventList.add(new EventListItem(
                     R.drawable.ic_configure,
                     activities.get(i).getName(),
-                    activities.get(i).getSuggested_locations(),
+                    LocationUtil.getLocationStrings(activities.get(i).getSuggested_locations(), getActivity().getBaseContext()),
                     activities.get(i).getSuggested_times(),
                     ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));

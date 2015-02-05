@@ -81,6 +81,7 @@
             android:id="@+id/view_event_attendees_list"
             android:layout_below="@+id/view_event_attendees_label"
             android:orientation="horizontal"
+            android:clickable="true"
             android:weightSum="1">
         </LinearLayout>
 

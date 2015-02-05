@@ -16,31 +16,31 @@
 
     <!--TODO: View Profile - Circle Image View, Fix Fonts, Change Star Color-->
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="80dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/profileImage"
+            android:src="@drawable/ic_nopic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="50dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"/>
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+            android:text="Name"
             android:id="@+id/profileName"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignRight="@+id/profileImage"
-            android:layout_marginEnd="100dp"
-            android:layout_marginRight="100dp"
-            android:layout_marginTop="40dp"
             android:typeface="serif"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:layout_alignTop="@+id/profileImage"
+            android:layout_toRightOf="@+id/profileImage"
+            />
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -56,26 +56,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/recent_activities"
-            android:id="@+id/recentActivitiesText"
+            android:text="@string/profile_interest"
+            android:id="@+id/interestText"
             android:layout_below="@+id/profileImage"
             android:layout_marginTop="50dp"
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp"
             android:textStyle="italic"
-            android:textSize="20sp"/>
+            />
 
-        <ListView
-            android:layout_width="wrap_content"
+        <org.apmem.tools.layouts.FlowLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/profileEventListView"
-            android:layout_below="@+id/recentActivitiesText"
-            android:layout_centerHorizontal="true"
-            android:divider="@color/list_divider"
+            android:id="@+id/profileInterestLayout"
+            android:layout_below="@+id/interestText"
+            android:orientation="horizontal"
             android:listSelector="@drawable/list_selector"
-            android:dividerHeight="2dp"
-            android:scrollbars="none"
-            android:smoothScrollbar="true"/>
+            android:layout_marginStart="@dimen/tags_padding"
+            android:layout_marginLeft="@dimen/tags_padding"
+        />
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="@string/recent_activities"-->
+            <!--android:id="@+id/recentActivitiesText"-->
+            <!--android:layout_below="@+id/profileInterestLayout"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:layout_marginLeft="15dp"-->
+            <!--android:layout_marginStart="15dp"-->
+            <!--android:textStyle="italic"-->
+            <!--/>-->
+
+        <!--<ListView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/profileEventListView"-->
+            <!--android:layout_below="@+id/recentActivitiesText"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:divider="@color/list_divider"-->
+            <!--android:listSelector="@drawable/list_selector"-->
+            <!--android:dividerHeight="2dp"-->
+            <!--android:scrollbars="none"-->
+            <!--android:smoothScrollbar="true"/>-->
 
     </RelativeLayout>
 </ScrollView>

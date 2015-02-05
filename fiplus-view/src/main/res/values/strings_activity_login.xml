@@ -13,4 +13,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_log_in">Authentication Failed!</string>
+    <string name="error_password_length">Password must be > 5</string>
+
+    <string name="login_policy">By using Fi+, you agree to our Privacy Policy and Terms of Use</string>
+    <string name="sign_up_policy">By clicking Sign Up, you agree to Fi+\'s Privacy Policy and Terms of Use</string>
 </resources>

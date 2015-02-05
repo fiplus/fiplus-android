@@ -68,12 +68,22 @@
                     android:textColor="#fff8a426"
                     android:textIsSelectable="true" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/login_policy"
+                    android:id="@+id/loginPolicy"
+                    android:layout_marginTop="25dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal" />
+
                 <Button
                     android:id="@+id/email_sign_in_button"
                     style="?android:textAppearanceSmall"
                     android:layout_width="302dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/action_sign_in"
                     android:textStyle="bold"
                     android:layout_gravity="center_horizontal" />
@@ -81,7 +91,7 @@
                 <Button
                     android:id="@+id/sign_up_button1"
                     style="?android:textAppearanceSmall"
-                    android:layout_width="299dp"
+                    android:layout_width="302dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="@string/sign_up"

@@ -1,6 +1,7 @@
 package com.Fiplus;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -48,7 +49,7 @@ public class ViewEventActivity extends FragmentActivity {
 
     protected List<Time> mSuggestedTimes = new ArrayList<Time>();
     protected List<Location> mSuggestedLocs = new ArrayList<Location>();
-    protected List<String> mAttendees = new ArrayList<String>();
+    protected List<UserProfile> mAttendees = new ArrayList<UserProfile>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -105,7 +106,7 @@ public class ViewEventActivity extends FragmentActivity {
 
         ProgressDialog progressDialog;
         Activity response;
-        String sEventID, sEventDetails;
+        String sEventID, sEventDetails = "";
         Attendee attendees;
 
         public GetEventTask (String s)
@@ -129,9 +130,10 @@ public class ViewEventActivity extends FragmentActivity {
             try {
                 response = getEventApi.getActivity(sEventID);
                 sEventDetails = response.toString();
-                attendees = getEventApi.getAttendees(sEventID, 5.0);
+                attendees = getEventApi.getAttendees(sEventID, null);
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
+                Log.e("Error - Get Activity", sEventDetails);
             }
 
             UsersApi usersApi = new UsersApi();
@@ -139,16 +141,25 @@ public class ViewEventActivity extends FragmentActivity {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
             UserProfile sUserProfile;
 
-            for(int i=0; i < attendees.getJoiners().size(); i++)
+            // to handle bad events
+            try
             {
-                try {
-                    //TODO: (Jobelle) View Event - Get Joiners Profile
-                    //sUserProfile = usersApi.getUserProfile(attendees.getJoiners().get(i));
-                    //mAttendees.add(sUserProfile.getUsername());
-                    mAttendees.add(attendees.getJoiners().get(i));
-                } catch (Exception e) {
-                    sEventDetails = e.getMessage();
+                for(int i=0; i < attendees.getJoiners().size(); i++)
+                {
+                    try {
+                        String sID = attendees.getJoiners().get(i);
+                        sUserProfile = usersApi.getUserProfile(sID);
+                        mAttendees.add(sUserProfile);
+                    } catch (Exception e) {
+                        sEventDetails = e.getMessage();
+                        Log.e("Error - User Profile", sEventDetails);
+                    }
                 }
+            }
+            catch(NullPointerException e)
+            {
+                sEventDetails = e.getMessage();
+                Log.e("Error - Get Joiners", sEventDetails);
             }
 
             return sEventDetails;
@@ -158,17 +169,24 @@ public class ViewEventActivity extends FragmentActivity {
         protected void onPostExecute(String result)
         {
             super.onPostExecute(result);
-
-            mEventName.setText(response.getName());
-            mEventDesc.setText(response.getDescription());
-            mSuggestedTimes = response.getSuggested_times();
-            mSuggestedLocs = response.getSuggested_locations();
-            mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
-            addAttendees();
-            addLocation();
-            addTime();
-
             progressDialog.dismiss();
+
+            //handle badly created events
+            if(result.contains("error"))
+            {
+                Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                mEventName.setText(response.getName());
+                mEventDesc.setText(response.getDescription());
+                mSuggestedTimes = response.getSuggested_times();
+                mSuggestedLocs = response.getSuggested_locations();
+                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
+                addAttendees();
+                addLocation();
+                addTime();
+            }
         }
 
         private void addAttendees()
@@ -178,15 +196,32 @@ public class ViewEventActivity extends FragmentActivity {
                 View joiner = getLayoutInflater().inflate(R.layout.joiners_layout, mAttendeesList, false);
                 LinearLayout joinersList = (LinearLayout) joiner.findViewById(R.id.joiner_layout);
                 TextView joinerName = (TextView) joinersList.findViewById(R.id.joiner_name);
-                joinerName.setText(mAttendees.get(i));
+                joinerName.setText(mAttendees.get(i).getUsername());
+                final UserProfile profile = mAttendees.get(i);
+
+                //add on click listener
+                joinersList.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getBaseContext(), ViewProfileActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                        intent.putExtra("userName", profile.getUsername()); //add in the user name
+                        intent.putExtra("userProfile", profile.getProfile_pic());
+                        intent.putStringArrayListExtra("userInterest", (ArrayList<String>)profile.getTagged_interests());
+                        startActivity(intent);
+                    }
+                });
+
                 mAttendeesList.addView(joinersList);
             }
         }
 
         private void addLocation()
         {
+
             Address addr;
             List<Address> addressList;
+            int numOfVotes;
 
             for (int row = 0; row < 1; row++) {
                 for (int i = 0; i < mSuggestedLocs.size(); i++)
@@ -212,6 +247,15 @@ public class ViewEventActivity extends FragmentActivity {
                                     addr.getCountryName(),
                                     // If there's a postal code, add it
                                     addr.getPostalCode() != null ? addr.getPostalCode() : "");
+
+                            //add votes
+                            try {
+                                numOfVotes = mSuggestedLocs.get(i).getSuggestion_votes().intValue();
+                            } catch(NullPointerException e)
+                            {
+                                numOfVotes= -1;
+                            }
+                            addressText += "\n(" + numOfVotes + " vote(s))";
 
                             addrRadioList.setText(addressText);
 
@@ -252,22 +296,38 @@ public class ViewEventActivity extends FragmentActivity {
         {
             long startDate = time.getStart().longValue();
             long endDate = time.getEnd().longValue();
+            int numOfVotes;
+            String s;
+
+            //add votes
+            try {
+                numOfVotes = time.getSuggestion_votes().intValue();
+            } catch (NullPointerException e)
+            {
+                numOfVotes = -1;
+            }
+
+            s = "     (" + numOfVotes + " vote(s))";
+
             Date d1 = new Date(startDate);
             Date d2 = new Date(endDate);
             SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-            return "Start: " + dateFormat.format(d1) + "\nEnd  : " + dateFormat.format(d2);
+            return "Start: " + dateFormat.format(d1) + s + "\nEnd  : " + dateFormat.format(d2);
         }
     }
 
-    //TODO: (Jobelle) Join Event - Voting for a suggestion
     class JoinEventTask extends AsyncTask<Void, Void, String>
     {
         String sEventID, response;
         ProgressDialog progressDialog;
+        int addressIndex;
+        int timeIndex;
 
         public JoinEventTask (String s)
         {
             sEventID = s;
+            addressIndex = mLocationList.indexOfChild(mLocationList.findViewById(mLocationList.getCheckedRadioButtonId()));
+            timeIndex = mTimeList.indexOfChild(mTimeList.findViewById(mTimeList.getCheckedRadioButtonId()));
         }
 
         @Override
@@ -285,6 +345,8 @@ public class ViewEventActivity extends FragmentActivity {
 
             try {
                 getEventApi.joinActivity(sEventID);
+                getEventApi.voteForSuggestion(mSuggestedLocs.get(addressIndex).getSuggestion_id());
+                getEventApi.voteForSuggestion(mSuggestedTimes.get(timeIndex).getSuggestion_id());
             } catch (Exception e) {
                 response = e.getMessage();
             }
