@@ -86,7 +86,12 @@
         <activity
             android:name=".CreateEventActivity"
             android:label="@string/create_event_activity_title"
+            android:parentActivityName=".MainScreenActivity"
             android:theme="@style/Theme.Mainscreen" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainScreenActivity" />
             <meta-data
                 android:name="com.google.android.maps.v2.AIzaSyDwbfeTyVbI1GvMh0JLNyweaNhSbqbgMzI"
                 android:value="AIzaSyDwbfeTyVbI1GvMh0JLNyweaNhSbqbgMzI"/>
@@ -96,6 +101,10 @@
             android:label="@string/view_profile"
             android:parentActivityName=".MainScreenActivity"
             android:theme="@style/Theme.Mainscreen" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainScreenActivity" />
         </activity>
         <activity
             android:name=".FavouriteUsersActivity"

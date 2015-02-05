@@ -106,7 +106,7 @@ public class ViewEventActivity extends FragmentActivity {
 
         ProgressDialog progressDialog;
         Activity response;
-        String sEventID, sEventDetails;
+        String sEventID, sEventDetails = "";
         Attendee attendees;
 
         public GetEventTask (String s)
@@ -130,9 +130,10 @@ public class ViewEventActivity extends FragmentActivity {
             try {
                 response = getEventApi.getActivity(sEventID);
                 sEventDetails = response.toString();
-                attendees = getEventApi.getAttendees(sEventID, 5.0);
+                attendees = getEventApi.getAttendees(sEventID, null);
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
+                Log.e("Error - Get Activity", sEventDetails);
             }
 
             UsersApi usersApi = new UsersApi();
@@ -140,14 +141,25 @@ public class ViewEventActivity extends FragmentActivity {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
             UserProfile sUserProfile;
 
-            for(int i=0; i < attendees.getJoiners().size(); i++)
+            // to handle bad events
+            try
             {
-                try {
-                    sUserProfile = usersApi.getUserProfile(attendees.getJoiners().get(i));
-                    mAttendees.add(sUserProfile);
-                } catch (Exception e) {
-                    sEventDetails = e.getMessage();
+                for(int i=0; i < attendees.getJoiners().size(); i++)
+                {
+                    try {
+                        String sID = attendees.getJoiners().get(i);
+                        sUserProfile = usersApi.getUserProfile(sID);
+                        mAttendees.add(sUserProfile);
+                    } catch (Exception e) {
+                        sEventDetails = e.getMessage();
+                        Log.e("Error - User Profile", sEventDetails);
+                    }
                 }
+            }
+            catch(NullPointerException e)
+            {
+                sEventDetails = e.getMessage();
+                Log.e("Error - Get Joiners", sEventDetails);
             }
 
             return sEventDetails;
@@ -157,17 +169,24 @@ public class ViewEventActivity extends FragmentActivity {
         protected void onPostExecute(String result)
         {
             super.onPostExecute(result);
-
-            mEventName.setText(response.getName());
-            mEventDesc.setText(response.getDescription());
-            mSuggestedTimes = response.getSuggested_times();
-            mSuggestedLocs = response.getSuggested_locations();
-            mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
-            addAttendees();
-            addLocation();
-            addTime();
-
             progressDialog.dismiss();
+
+            //handle badly created events
+            if(result.contains("error"))
+            {
+                Toast.makeText(getBaseContext(), result, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                mEventName.setText(response.getName());
+                mEventDesc.setText(response.getDescription());
+                mSuggestedTimes = response.getSuggested_times();
+                mSuggestedLocs = response.getSuggested_locations();
+                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
+                addAttendees();
+                addLocation();
+                addTime();
+            }
         }
 
         private void addAttendees()
@@ -178,15 +197,17 @@ public class ViewEventActivity extends FragmentActivity {
                 LinearLayout joinersList = (LinearLayout) joiner.findViewById(R.id.joiner_layout);
                 TextView joinerName = (TextView) joinersList.findViewById(R.id.joiner_name);
                 joinerName.setText(mAttendees.get(i).getUsername());
-                final String sUserID = mAttendees.get(i).getUser_id();
+                final UserProfile profile = mAttendees.get(i);
 
                 //add on click listener
                 joinersList.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getBaseContext(), ViewProfileActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-                        intent.putExtra("userID", sUserID); //add in the user id
+                        intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+                        intent.putExtra("userName", profile.getUsername()); //add in the user name
+                        intent.putExtra("userProfile", profile.getProfile_pic());
+                        intent.putStringArrayListExtra("userInterest", (ArrayList<String>)profile.getTagged_interests());
                         startActivity(intent);
                     }
                 });

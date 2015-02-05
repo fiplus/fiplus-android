@@ -4,20 +4,30 @@
     android:layout_height="100dp"
     android:descendantFocusability="blocksDescendants">
 
-    <ImageView
+    <!--<ImageView-->
+        <!--android:id="@+id/event_pic"-->
+        <!--android:layout_width="25dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_marginLeft="12dp"-->
+        <!--android:layout_marginRight="12dp"-->
+        <!--android:contentDescription="@string/desc_list_item_icon"-->
+        <!--android:layout_centerVertical="true" />-->
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/event_pic"
-        android:layout_width="25dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_configure"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:contentDescription="@string/desc_list_item_icon"
-        android:layout_centerVertical="true" />
+        android:layout_marginTop="15dp"
+        />
 
     <TextView
         android:id="@+id/event_name"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout="@id/event_pic"
         android:layout_toEndOf="@id/event_pic"
         android:layout_toRightOf="@id/event_pic"
@@ -26,14 +36,13 @@
         android:layout_margin="10dp"
         android:gravity="center_vertical"
         android:textSize="20sp"
-        android:textStyle="italic"
         android:text="Event 1"
         />
 
     <TextView
         android:id="@+id/event_location"
         android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/list_item_title"
         android:gravity="center_vertical"
@@ -47,7 +56,7 @@
     <TextView
         android:id="@+id/event_time"
         android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/list_item_title"
         android:gravity="center_vertical"
@@ -61,12 +70,11 @@
     <TextView
         android:id="@+id/event_attendees"
         android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/list_item_title"
         android:gravity="center_vertical"
         android:textSize="14sp"
-        android:textStyle="italic"
         android:text="Number of attendees"
         android:layout_below="@+id/event_location"
         android:layout_alignLeft="@+id/event_location"

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.Fiplus.MainScreenActivity;
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
 import com.wordnik.client.api.MatchesApi;
@@ -20,16 +19,12 @@ import com.wordnik.client.model.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.MatchResult;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
 import utils.IAppConstants;
 import utils.PrefUtil;
 
-/**
- * Created by jsfirme on 14-12-03.
- */
 public class FragmentBeFit extends Fragment{
 
     public static final String TAG = FragmentBeFit.class
