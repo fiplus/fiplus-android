@@ -25,6 +25,7 @@ import adapters.EventListAdapter;
 import model.EventListItem;
 import utils.AlertFragmentDialog;
 import utils.IAppConstants;
+import utils.LocationUtil;
 
 
 public class FragmentMyEvents extends Fragment {
@@ -78,7 +79,7 @@ public class FragmentMyEvents extends Fragment {
             eventList.add(new EventListItem(
                     R.drawable.ic_configure,
                     activities.get(i).getName(),
-                    activities.get(i).getSuggested_locations(),
+                    LocationUtil.getLocationStrings(activities.get(i).getSuggested_locations(), getActivity().getBaseContext()),
                     activities.get(i).getSuggested_times(),
                     ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));

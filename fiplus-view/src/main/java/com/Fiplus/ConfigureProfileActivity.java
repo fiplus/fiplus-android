@@ -8,6 +8,7 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -32,6 +33,7 @@ import java.util.Locale;
 
 import utils.IAppConstants;
 import utils.ListViewUtil;
+import utils.LocationUtil;
 import utils.PrefUtil;
 
 
@@ -67,8 +69,10 @@ public class ConfigureProfileActivity extends Activity {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SaveProfileTask saveProfileTask = new SaveProfileTask();
-                saveProfileTask.execute();
+                if (checkForValidInputs()) {
+                    SaveProfileTask saveProfileTask = new SaveProfileTask();
+                    saveProfileTask.execute();
+                }
             }
         });
 
@@ -181,6 +185,19 @@ public class ConfigureProfileActivity extends Activity {
         getProfileTask.execute();
     }
 
+    private boolean checkForValidInputs()
+    {
+        View focusView;
+
+        if (TextUtils.isEmpty(mProfileName.getText())) {
+            mProfileName.setError(getString(R.string.error_field_required));
+            focusView = mProfileName;
+            focusView.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
     class GetProfileTask extends AsyncTask<Void, Void, String> {
 
         protected UserProfile response;
@@ -212,34 +229,9 @@ public class ConfigureProfileActivity extends Activity {
             if(response.getAge() != null)mAge.setText(String.valueOf(response.getAge().intValue()));
 
             if(response.getLocation().getLongitude() != null) {
-
                 //change the button text to "Change"
                 mLocationButton.setText(R.string.change_address);
-
-                try {
-                    Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                    addressList = geocoder.getFromLocation(response.getLocation().getLatitude(),
-                            response.getLocation().getLongitude(),
-                            1);
-                    if (addressList != null && addressList.size() > 0) {
-                        addr = addressList.get(0);
-                        String addressText = String.format(
-                                "%s, %s, %s %s",
-                                // If there's a street address, add it
-                                addr.getMaxAddressLineIndex() > 0 ?
-                                        addr.getAddressLine(0) : "",
-                                // Locality is usually a city
-                                addr.getLocality() != null ? addr.getLocality() : "",
-                                // The country of the address
-                                addr.getCountryName(),
-                                // If there's a postal code, add it
-                                addr.getPostalCode() != null ? addr.getPostalCode() : "");
-                        // Return the text
-                        mLocationInputField.setText(addressText);
-                    }
-                } catch (IOException e) {
-                    Log.e("Configure Profile", e.getMessage());
-                }
+                mLocationInputField.setText(LocationUtil.getLocationString(response.getLocation(), getBaseContext()));
             }
             else
             {
@@ -269,7 +261,8 @@ public class ConfigureProfileActivity extends Activity {
             UserProfile userProfile = new UserProfile();
             userProfile.setUsername(mProfileName.getText().toString());
             userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL));
-            userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
+            if (!TextUtils.isEmpty(mAge.getText()))
+                userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
             userProfile.setGender(mGender.getText().toString());
             userProfile.setTagged_interests(mInterestListItems);
             userProfile.setLocation(userLocation);

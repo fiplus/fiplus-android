@@ -32,11 +32,11 @@
         android:layout_toEndOf="@id/event_pic"
         android:layout_toRightOf="@id/event_pic"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/list_item_title"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
         android:gravity="center_vertical"
         android:textSize="20sp"
         android:text="Event 1"
+        android:textColor="@color/list_item_title"
         />
 
     <TextView
@@ -44,41 +44,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/list_item_title"
         android:gravity="center_vertical"
         android:textSize="14sp"
         android:textStyle="italic"
         android:text="Location"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/event_name"
-        android:layout_alignStart="@+id/event_name" />
+        android:layout_alignStart="@+id/event_name"
+        android:textColor="@color/list_item_title" />
 
     <TextView
         android:id="@+id/event_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/list_item_title"
         android:gravity="center_vertical"
         android:textSize="14sp"
         android:textStyle="italic"
         android:text="Time"
-        android:layout_marginLeft="10dp"
-        android:layout_alignTop="@+id/event_location"
-        android:layout_toRightOf="@+id/event_location" />
+        android:textColor="@color/list_item_title"
+        android:layout_below="@+id/event_location"
+        android:layout_alignLeft="@+id/event_name"
+        android:layout_alignStart="@+id/event_name"/>
+
 
     <TextView
         android:id="@+id/event_attendees"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/list_item_title"
         android:gravity="center_vertical"
         android:textSize="14sp"
         android:text="Number of attendees"
-        android:layout_below="@+id/event_location"
+        android:layout_below="@+id/event_time"
         android:layout_alignLeft="@+id/event_location"
-        android:layout_alignStart="@+id/event_location" />
+        android:layout_alignStart="@+id/event_location"
+        android:textColor="@color/list_item_title" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
