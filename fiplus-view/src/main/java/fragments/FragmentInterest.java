@@ -50,8 +50,8 @@ public class FragmentInterest extends Fragment {
     {
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
-        eventList.add(new EventListItem(R.drawable.ic_activities, "First Interest Event", "Calgary", "4:30PM", "10 Attendees"));
-        eventList.add(new EventListItem(R.drawable.ic_configure, "Second Interest Event", "Calgary", "10:30PM", "11 Attendees"));
+        //eventList.add(new EventListItem(R.drawable.ic_activities, "First Interest Event", "Calgary", "4:30PM", "10 Attendees"));
+        //eventList.add(new EventListItem(R.drawable.ic_configure, "Second Interest Event", "Calgary", "10:30PM", "11 Attendees"));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);

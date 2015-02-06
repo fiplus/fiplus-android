@@ -5,6 +5,7 @@
     <string name="sign_up_activity">Sign Up</string>
     <string name="mainscreen_activity">What\'s happening?</string>
     <string name="forgot_pw">Forgot Password?</string>
+    <string name="view_event">Event</string>
     <string name="configure_profile">Configure Profile</string>
     <string name="recent_activities_activity">Recent Activities</string>
     <string name="view_profile">View Profile</string>

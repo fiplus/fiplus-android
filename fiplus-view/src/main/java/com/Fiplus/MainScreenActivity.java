@@ -276,19 +276,19 @@ public class MainScreenActivity extends BaseFragmentActivity
     {
         Intent intent;
 
-        // TODO: Options fragments/intents here
+        // TODO: Add drawer items once implemented
         switch(position) {
             case 0: //Configure Profile
                 intent = new Intent(this, ConfigureProfileActivity.class);
                 startActivity(intent);
                 break;
             case 1: //Recent Activities
-                intent = new Intent(this, RecentActivitiesActivity.class);
-                startActivity(intent);
+//                intent = new Intent(this, RecentActivitiesActivity.class);
+//                startActivity(intent);
                 break;
             case 2: //Favorites
-                intent = new Intent(this, FavouriteUsersActivity.class);
-                startActivity(intent);
+//                intent = new Intent(this, FavouriteUsersActivity.class);
+//                startActivity(intent);
                 break;
             case 3: //Settings
                 break;

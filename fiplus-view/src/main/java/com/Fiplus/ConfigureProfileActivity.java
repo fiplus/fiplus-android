@@ -3,12 +3,12 @@ package com.Fiplus;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -19,13 +19,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Location;
-import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.UserProfile;
 
 import java.io.IOException;
@@ -35,6 +33,7 @@ import java.util.Locale;
 
 import utils.IAppConstants;
 import utils.ListViewUtil;
+import utils.LocationUtil;
 import utils.PrefUtil;
 
 
@@ -44,6 +43,8 @@ public class ConfigureProfileActivity extends Activity {
     protected TextView mAddTextView;
     protected ListView mInterestListView;
     protected Button mSaveButton;
+    protected Button mCancelButton;
+    protected Button mLocationButton;
 
     protected EditText mProfileName;
     protected EditText mGender;
@@ -68,17 +69,30 @@ public class ConfigureProfileActivity extends Activity {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SaveProfileTask saveProfileTask = new SaveProfileTask();
-                saveProfileTask.execute();
+                if (checkForValidInputs()) {
+                    SaveProfileTask saveProfileTask = new SaveProfileTask();
+                    saveProfileTask.execute();
+                }
             }
         });
 
+        mCancelButton = (Button) findViewById(R.id.configure_cancel_button);
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        //TODO: (Nick) Configure Profile - Upload Profile Photo
         mImageView = (ImageView) findViewById(R.id.imageView);
         mImageView.setImageResource(R.drawable.fiplus);
 
         mProfileName = (EditText) findViewById(R.id.configure_profile_name);
         mGender = (EditText) findViewById(R.id.configure_gender);
         mAge = (EditText) findViewById(R.id.configure_age);
+        mLocationButton = (Button) findViewById(R.id.configure_location_button);
+
 
         mInterestInputField = (EditText) findViewById(R.id.interests_input_field);
 
@@ -171,6 +185,19 @@ public class ConfigureProfileActivity extends Activity {
         getProfileTask.execute();
     }
 
+    private boolean checkForValidInputs()
+    {
+        View focusView;
+
+        if (TextUtils.isEmpty(mProfileName.getText())) {
+            mProfileName.setError(getString(R.string.error_field_required));
+            focusView = mProfileName;
+            focusView.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
     class GetProfileTask extends AsyncTask<Void, Void, String> {
 
         protected UserProfile response;
@@ -183,7 +210,7 @@ public class ConfigureProfileActivity extends Activity {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
-                response = usersApi.getUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL, null));
+                response = usersApi.getUserProfile(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
             } catch (Exception e) {
                 return e.getMessage();
             }
@@ -199,33 +226,17 @@ public class ConfigureProfileActivity extends Activity {
             List<Address> addressList;
             if(response.getUsername() != null) mProfileName.setText(response.getUsername());
             if(response.getGender() != null) mGender.setText(response.getGender());
-            if(response.getAge() != null)mAge.setText(response.getAge().toString());
+            if(response.getAge() != null)mAge.setText(String.valueOf(response.getAge().intValue()));
 
             if(response.getLocation().getLongitude() != null) {
-                try {
-                    Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                    addressList = geocoder.getFromLocation(response.getLocation().getLatitude(),
-                            response.getLocation().getLongitude(),
-                            1);
-                    if (addressList != null && addressList.size() > 0) {
-                        addr = addressList.get(0);
-                        String addressText = String.format(
-                                "%s, %s, %s %s",
-                                // If there's a street address, add it
-                                addr.getMaxAddressLineIndex() > 0 ?
-                                        addr.getAddressLine(0) : "",
-                                // Locality is usually a city
-                                addr.getLocality() != null ? addr.getLocality() : "",
-                                // The country of the address
-                                addr.getCountryName(),
-                                // If there's a postal code, add it
-                                addr.getPostalCode() != null ? addr.getPostalCode() : "");
-                        // Return the text
-                        mLocationInputField.setText(addressText);
-                    }
-                } catch (IOException e) {
-                    Log.e("Configure Profile", e.getMessage());
-                }
+                //change the button text to "Change"
+                mLocationButton.setText(R.string.change_address);
+                mLocationInputField.setText(LocationUtil.getLocationString(response.getLocation(), getBaseContext()));
+            }
+            else
+            {
+                //since location is empty, change location button to "Add"
+                mLocationButton.setText(R.string.add_interest_label);
             }
 
             if(response.getTagged_interests() != null) {
@@ -250,7 +261,8 @@ public class ConfigureProfileActivity extends Activity {
             UserProfile userProfile = new UserProfile();
             userProfile.setUsername(mProfileName.getText().toString());
             userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL));
-            userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
+            if (!TextUtils.isEmpty(mAge.getText()))
+                userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
             userProfile.setGender(mGender.getText().toString());
             userProfile.setTagged_interests(mInterestListItems);
             userProfile.setLocation(userLocation);
@@ -265,10 +277,8 @@ public class ConfigureProfileActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result){
-            Intent in= new Intent(ConfigureProfileActivity.this, MainScreenActivity.class);
-            startActivity(in);
-            Toast.makeText(getBaseContext(), "Profile Saved", Toast.LENGTH_SHORT).show();
             finish();
+            Toast.makeText(getBaseContext(), "Profile Saved", Toast.LENGTH_SHORT).show();
         }
     }
 
