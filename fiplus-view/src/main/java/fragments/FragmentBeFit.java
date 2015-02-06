@@ -1,5 +1,6 @@
 package fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -71,7 +72,7 @@ public class FragmentBeFit extends Fragment{
                     activities.get(i).getName(),
                     LocationUtil.getLocationStrings(activities.get(i).getSuggested_locations(), getActivity().getBaseContext()),
                     activities.get(i).getSuggested_times(),
-                    ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
+                    ((Integer)activities.get(i).getNum_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
@@ -99,7 +100,14 @@ public class FragmentBeFit extends Fragment{
 
     private class GetEvents extends AsyncTask<Void, Void, String>
     {
+        ProgressDialog progressDialog;
         protected List<Activity> response;
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressDialog= ProgressDialog.show(getActivity(), "Getting events...", getString(R.string.progress_dialog_text), true);
+        }
 
         @Override
         protected String doInBackground(Void... params)
@@ -115,7 +123,6 @@ public class FragmentBeFit extends Fragment{
             try{
                 UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
-                        "",
                         10.0,
                         true,
                         10.0,
@@ -131,6 +138,7 @@ public class FragmentBeFit extends Fragment{
         {
             if (response != null)
                 setEventList(response);
+            progressDialog.dismiss();
         }
     }
 }
