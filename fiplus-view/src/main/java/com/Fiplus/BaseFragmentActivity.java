@@ -32,7 +32,7 @@ public class BaseFragmentActivity extends FragmentActivity {
     //protected String session_id;
     // GCM items
     GoogleCloudMessaging gcm;
-    String replacedregid;
+    String prevregid;
     String regid;
     Context context;
     // Google API Project ID
@@ -114,9 +114,9 @@ public class BaseFragmentActivity extends FragmentActivity {
     protected String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGCMPreferences(context);
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-        replacedregid = null;
         if (registrationId.isEmpty()) {
             Log.i(TAG, "Registration not found.");
+            prevregid = null;
             return "";
         }
         // Check if app was updated; if so, it must clear the registration ID
@@ -126,6 +126,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
             Log.i(TAG, "App version changed.");
+            prevregid = registrationId;
             return "";
         }
         return registrationId;
@@ -163,6 +164,9 @@ public class BaseFragmentActivity extends FragmentActivity {
         gcmRegistration.execute();
     }
 
+    /**
+     * If the regid has been found to be empty the App will register with GCM in the background.
+     */
     class RegisterInBackgroundTask extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {
@@ -211,6 +215,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         SetDeviceId DeviceID = new SetDeviceId();
         // TODO: Make setCurrent_device_id return the current id, and setNew return the latest ID from GCM in case the ID changes
         DeviceID.setNew_device_id(regid);
+        DeviceID.setCurrent_device_id(prevregid);
 
         try{
             userApi.setDeviceId(DeviceID);

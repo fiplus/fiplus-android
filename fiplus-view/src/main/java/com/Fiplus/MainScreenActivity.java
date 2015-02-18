@@ -70,22 +70,6 @@ public class MainScreenActivity extends BaseFragmentActivity
         super.onCreate(savedInstancesState);
         setContentView(R.layout.activity_mainscreen);
 
-        // Check device for Play Services APK. TODO: Check that GooglePlayServices is available on the device before calling methods
-        // that require it. Must be done for all onResume() and onCreate() methods for each Activity (Allan). If not available
-        // must disable features or prompt the user to download the latest GooglePlayServices
-
-        // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
-        if (checkPlayServices()) {
-            gcm = GoogleCloudMessaging.getInstance(this);
-            regid = getRegistrationId(context);
-
-            if (regid.isEmpty()) {
-                registerInBackground();
-            }
-        } else {
-            Log.i(TAG, "No valid Google Play Services APK found.");
-        }
-
         /**
          * Create Event Button
          */
