@@ -301,7 +301,11 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
                     if (regid.isEmpty()) {
                         registerInBackground();
                     }
-                } else {
+                    else{
+                        sendRegistrationIdToBackend(regid);
+                    }
+                }
+                else {
                     Log.i(TAG, "No valid Google Play Services APK found.");
                 }
 

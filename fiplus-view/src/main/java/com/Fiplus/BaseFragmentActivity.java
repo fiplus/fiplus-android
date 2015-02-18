@@ -205,7 +205,7 @@ public class BaseFragmentActivity extends FragmentActivity {
      * The request to your server should be authenticated if your app
      * is using accounts.
      */
-    private void sendRegistrationIdToBackend(String regid) {
+    protected void sendRegistrationIdToBackend(String regid) {
         Log.i("My tag", "The regID is:" + regid);
 
         UsersApi userApi = new UsersApi();
