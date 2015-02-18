@@ -67,15 +67,10 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
         // Check device for Play Services APK. TODO: Check that GooglePlayServices is available on the device before calling methods
         // that require it. Must be done for all onResume() and onCreate() methods for each Activity (Allan). If not available
         // must disable features or prompt the user to download the latest GooglePlayServices
-
-        // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
-            if (regid.isEmpty()) {
-                registerInBackground();
-            }
-        } else {
+        }else{
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
 
@@ -300,6 +295,15 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
             try {
                 userApi.getInvoker().setContext(getApplicationContext());
                 userApi.login(credentials);
+
+
+                if (checkPlayServices()) {
+                    if (regid.isEmpty()) {
+                        registerInBackground();
+                    }
+                } else {
+                    Log.i(TAG, "No valid Google Play Services APK found.");
+                }
 
                 WhoAmI id = userApi.whoAmI();
 
