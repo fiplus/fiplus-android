@@ -3,7 +3,9 @@ package com.Fiplus;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Credentials;
 
@@ -48,6 +50,20 @@ public class SplashScreenActivity extends BaseFragmentActivity {
                     login.setPassword(userPass);
                     userApi.login(login);
                     validSession = true;
+                    // check if the app was updated and send the new and current regid when the app is resumed
+                    if (checkPlayServices()) {
+                        gcm = GoogleCloudMessaging.getInstance(this);
+                        regid = getRegistrationId(context);
+                        if (regid.isEmpty()) {
+                            registerInBackground();
+                        }
+                        else{
+                            sendRegistrationIdToBackend(regid);
+                        }
+                    }
+                    else {
+                        Log.i(TAG, "No valid Google Play Services APK found.");
+                    }
                 }catch(Exception e){
                     try{
                         userApi.logout();
