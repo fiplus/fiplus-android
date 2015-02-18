@@ -20,6 +20,13 @@ public class SplashScreenActivity extends BaseFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        // check for google play services and obtain the current regid
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(this);
+            regid = getRegistrationId(context);
+        }else{
+            Log.i(TAG, "No valid Google Play Services APK found.");
+        }
         new StartLogin().execute();
     }
 
@@ -52,8 +59,6 @@ public class SplashScreenActivity extends BaseFragmentActivity {
                     validSession = true;
                     // check if the app was updated and send the new and current regid when the app is resumed
                     if (checkPlayServices()) {
-                        gcm = GoogleCloudMessaging.getInstance(this);
-                        regid = getRegistrationId(context);
                         if (regid.isEmpty()) {
                             registerInBackground();
                         }
