@@ -21,6 +21,8 @@ dependencies {
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'de.hdodenhof:circleimageview:1.2.1' //for circle image
     compile 'org.apmem.tools:layouts:1.8@aar'   // for flowlayout
+    compile 'com.google.android.gms:play-services-location:6.5.87'
+    compile 'com.google.android.gms:play-services-base:6.5.87'
     compile project(':android-client')
     compile ('com.google.android.gms:play-services-maps:6.5.87')
 }
