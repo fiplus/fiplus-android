@@ -27,35 +27,56 @@
             android:layout_height="wrap_content"
             android:id="@+id/create_event_name"
             android:hint="@string/create_event_name_hint"
+            android:background="@android:drawable/edit_text"
+            android:textColor="@android:color/primary_text_light"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:singleLine="true"/>
             <!--android:layout_toRightOf="@+id/createEventImageView"-->
             <!--android:layout_toEndOf="@+id/createEventImageView"-->
             <!--android:inputType="text" />-->
 
         <EditText
-            android:paddingTop="20dp"
+            android:paddingTop="10dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_event_description"
+            android:gravity="start"
+            android:hint="@string/create_event_description_hint"
+            android:background="@android:drawable/edit_text"
+            android:textColor="@android:color/primary_text_light"
+            android:layout_below="@+id/create_event_name"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:singleLine="true"/>
+
+        <AutoCompleteTextView
+            android:paddingTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/create_event_location"
             android:hint="@string/create_event_location_hint"
-            android:layout_below="@+id/create_event_name"
+            android:background="@android:drawable/edit_text"
+            android:textColor="@android:color/primary_text_light"
+            android:layout_below="@+id/create_event_description"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_toLeftOf="@+id/create_event_add_location"
-            android:layout_toStartOf="@+id/create_event_add_location" />
+            android:singleLine="true"/>
             <!--android:inputType="text|textMultiLine|textPostalAddress" />-->
 
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/create_event_add_location"
             android:id="@+id/create_event_add_location"
+            android:layout_below="@+id/create_event_description"
             android:layout_above="@+id/create_event_address_list"
-            android:layout_alignRight="@+id/create_event_cancel"
-            android:layout_alignEnd="@+id/create_event_cancel" />
+            android:background="@android:drawable/ic_input_add"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            />
 
         <ListView
             android:layout_width="wrap_content"
@@ -74,8 +95,6 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/createEventImageView"
-            android:layout_toEndOf="@+id/createEventImageView"
             android:layout_below="@+id/create_event_address_list"
             android:id="@+id/dateTimeLinearLayout"
             android:layout_alignParentLeft="true"
@@ -89,7 +108,8 @@
                 android:clickable="true"
                 android:enabled="true"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                style="?android:attr/buttonStyleSmall"/>
 
             <ListView
                 android:layout_width="wrap_content"
@@ -126,45 +146,48 @@
 
         </RelativeLayout>
 
-        <EditText
-            android:paddingTop="20dp"
-            android:layout_width="fill_parent"
+        <TextView
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/create_event_description"
-            android:gravity="start"
-            android:hint="@string/create_event_description_hint"
             android:layout_below="@+id/dateTimeLinearLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:text="@string/create_event_attendees_label"
+            android:id="@+id/create_event_attendees_label"
+            />
 
         <EditText
-            android:paddingTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:id="@+id/create_event_number_of_people"
-            android:hint="@string/create_event_number_of_people_hint"
-            android:layout_below="@+id/create_event_description"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:background="@android:drawable/edit_text"
+            android:textColor="@android:color/primary_text_light"
+            android:layout_below="@+id/dateTimeLinearLayout"
+            android:layout_toRightOf="@+id/create_event_attendees_label"
+            android:ems="4"
+            android:maxLength="3"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse"
+            />
 
-        <EditText
-            android:paddingTop="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/create_event_check_in_question"
-            android:hint="@string/create_event_check_in_question_hint"
-            android:layout_below="@+id/create_event_number_of_people"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignRight="@+id/create_event_cancel"
-            android:layout_alignEnd="@+id/create_event_cancel" />
+        <!--<EditText-->
+            <!--android:paddingTop="20dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/create_event_check_in_question"-->
+            <!--android:hint="@string/create_event_check_in_question_hint"-->
+            <!--android:layout_below="@+id/create_event_number_of_people"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_alignRight="@+id/create_event_cancel"-->
+            <!--android:layout_alignEnd="@+id/create_event_cancel" />-->
 
         <LinearLayout
             android:id="@+id/tagsLinearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/create_event_check_in_question"
+            android:layout_below="@+id/create_event_number_of_people"
             >
 
             <TextView
@@ -208,28 +231,32 @@
             android:orientation="horizontal">
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/create_event_buttons"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/create_event_create_button_label"
-            android:id="@+id/create_event_create__button"
             android:layout_below="@+id/create_event_tags_list"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="25dp"
-            android:layout_alignRight="@+id/create_event_number_of_people"
-            android:layout_alignEnd="@+id/create_event_number_of_people" />
+            android:weightSum="1"
+            android:layout_marginTop="25dp">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/create_event_cancel_button"
-            android:id="@+id/create_event_cancel"
-            android:layout_alignTop="@+id/create_event_create__button"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_toRightOf="@+id/create_event_create__button"
-            android:layout_toEndOf="@+id/create_event_create__button" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_event_create_button_label"
+                android:id="@+id/create_event_create__button"
+                android:layout_weight="0.5"
+                android:background="@drawable/rounded_corners"
+                android:textColor="#fc050401" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_event_cancel_button"
+                android:id="@+id/create_event_cancel"
+                android:layout_weight="0.5"
+                android:background="@drawable/rounded_corners"
+                android:textColor="#fc050401" />
+        </LinearLayout>
 
     </RelativeLayout>
 </ScrollView>

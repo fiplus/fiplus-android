@@ -21,6 +21,7 @@ dependencies {
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'de.hdodenhof:circleimageview:1.2.1' //for circle image
     compile 'org.apmem.tools:layouts:1.8@aar'   // for flowlayout
+    compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final' //for time
     compile project(':android-client')
     compile ('com.google.android.gms:play-services-maps:6.5.87')
 }

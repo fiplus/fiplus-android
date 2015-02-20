@@ -9,28 +9,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SignUpActivity">
 
-    <EditText
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="@string/prompt_name"
-        android:ems="10"
-        android:id="@+id/sign_up_name"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_height="100dp"
+        android:id="@+id/sign_up_fit_logo"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/be_fit"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/edit_text"
+        android:textColor="@android:color/primary_text_light"
         android:inputType="textEmailAddress"
         android:hint="@string/prompt_email"
         android:ems="10"
         android:id="@+id/sign_up_email"
-        android:layout_below="@+id/sign_up_name"
+        android:layout_below="@+id/sign_up_fit_logo"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
@@ -39,6 +37,8 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/edit_text"
+        android:textColor="@android:color/primary_text_light"
         android:inputType="textPassword"
         android:hint="@string/prompt_password"
         android:ems="10"

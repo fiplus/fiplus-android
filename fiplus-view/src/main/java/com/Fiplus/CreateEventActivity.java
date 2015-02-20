@@ -2,10 +2,7 @@ package com.Fiplus;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,10 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -32,14 +29,14 @@ import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+import utils.GeocodingLocation;
 import utils.IAppConstants;
 import utils.ListViewUtil;
 import utils.PrefUtil;
@@ -53,7 +50,7 @@ public class CreateEventActivity extends FragmentActivity {
 
     //protected ImageView mImageView;
     protected EditText mEventName;
-    protected EditText mEventLocation;
+    protected AutoCompleteTextView mEventLocation;
     protected Button mAddLocationBtn;
     protected ListView mLocationListView;
     protected EditText mDescription;
@@ -97,7 +94,7 @@ public class CreateEventActivity extends FragmentActivity {
 
         mEventName = (EditText) findViewById(R.id.create_event_name);
         mDescription = (EditText) findViewById(R.id.create_event_description);
-        mEventLocation = (EditText) findViewById(R.id.create_event_location);
+        mEventLocation = (AutoCompleteTextView) findViewById(R.id.create_event_location);
         mAddLocationBtn = (Button) findViewById(R.id.create_event_add_location);
         mAddLocationBtn.setOnClickListener(new View.OnClickListener()
         {
@@ -110,7 +107,7 @@ public class CreateEventActivity extends FragmentActivity {
                 {
                     if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
                     {
-                        GeocodingLocation location = new GeocodingLocation(getBaseContext());
+                        GeocodingLocation location = new GeocodingLocation(getBaseContext(), CreateEventActivity.this);
                         location.execute(address);
                     }
 
@@ -226,13 +223,11 @@ public class CreateEventActivity extends FragmentActivity {
 
         // Reset errors.
         mEventName.setError(null);
-        mDescription.setError(null);
         mMaxPeople.setError(null);
         mDateTimeError.setError(null);
 
         // Store values at the time of the create event attempt.
         String event_name = mEventName.getText().toString();
-        String description = mDescription.getText().toString();
         String maxPeople = mMaxPeople.getText().toString();
 
         //Check for mandatory field
@@ -250,12 +245,6 @@ public class CreateEventActivity extends FragmentActivity {
         if (mDateTimeListItems.isEmpty())
         {
             mDateTimeError.setError(getString(R.string.error_field_required));
-            error = true;
-        }
-
-        if (TextUtils.isEmpty(description))
-        {
-            mDescription.setError(getString(R.string.error_field_required));
             error = true;
         }
 
@@ -414,8 +403,15 @@ public class CreateEventActivity extends FragmentActivity {
         long endDate = Double.doubleToLongBits(time.getEnd());
         Date d1 = new Date(startDate);
         Date d2 = new Date(endDate);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-        return "Start: " + dateFormat.format(d1) + "\nEnd  : " + dateFormat.format(d2);
+
+        //SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
+        PrettyTime t1 = new PrettyTime(new Date(0));
+        PrettyTime t2 = new PrettyTime(new Date(0));
+        return "Start: " + t1.format(d1) + "\nEnd  : " + t2.format(d2);
+        //return "Start: " + dateFormat.format(d1) + "\nEnd  : " + dateFormat.format(d2);
+//        String s1 = DateFormat.getDateTimeInstance().format(d1);
+//        String s2 = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(d2);
+//        return "From " + s1 + " to " + s2;
     }
 
     //Add event tags
@@ -486,6 +482,32 @@ public class CreateEventActivity extends FragmentActivity {
         }
     }
 
+    public void populateLocation(Location location, String address)
+    {
+
+        // Display the results of the lookup.
+        if(address != null)
+        {
+            mEventLocationList.add(location);
+            mEventLocationListItems.add(address);
+            locationAdapter.notifyDataSetChanged();
+            ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
+
+            if(mEventLocationListItems.size() == MAX)
+            {
+                mEventLocation.setHint(R.string.create_event_max_location);
+                mEventLocation.setClickable(false);
+                mEventLocation.setEnabled(false);
+            }
+
+            mEventLocation.setText("");
+        }
+        else
+        {
+            mEventLocation.setError(getString(R.string.error_address_not_found));
+        }
+    }
+
     //TODO: Create event task
     class CreateEventTask extends AsyncTask<Void, Void, String>
     {
@@ -544,104 +566,6 @@ public class CreateEventActivity extends FragmentActivity {
         }
     }
 
-    private class GeocodingLocation extends AsyncTask<String, Void, String>
-    {
-        ProgressDialog progressDialog;
-        Context mContext;
-        List<Address> addressList = null;
-        Address addr;
-        Location location = new Location();
 
-        public GeocodingLocation(Context context) {
-            super();
-            mContext = context;
-        }
-
-        @Override
-        protected void onPreExecute()
-        {
-            progressDialog= ProgressDialog.show(CreateEventActivity.this, getString(R.string.progress_dialog_title) + "...", getString(R.string.progress_dialog_text), true);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            Geocoder geocoder = new Geocoder(mContext, Locale.CANADA);
-
-            // Get the current location from the input parameter list
-            String loc = params[0];
-
-            int i = 0;
-            try {
-                //try 3 times in case geocoder doesn't work the first time
-                do {
-                    addressList = geocoder.getFromLocationName(loc, 1);
-                    i++;
-                } while (addressList.size()==0 && i < 3);
-
-            } catch (IOException e1) {
-                Log.e("LocationSampleActivity",
-                        "IO Exception in getFromLocation()");
-                e1.printStackTrace();
-            }
-
-            // If the geocode returned an address
-            if (addressList != null && addressList.size() > 0) {
-
-                addr = addressList.get(0);
-                location.setLatitude(addr.getLatitude());
-                location.setLongitude(addr.getLongitude());
-
-                /*
-                 * Format the first line of address (if available),
-                 * city (if available), and country name.
-                 */
-                String addressText = String.format(
-                        "%s, %s, %s %s",
-                        // If there's a street address, add it
-                        addr.getMaxAddressLineIndex() > 0 ?
-                                addr.getAddressLine(0) : "",
-                        // Locality is usually a city
-                        addr.getLocality() != null ? addr.getLocality() : "",
-                        // The country of the address
-                        addr.getCountryName(),
-                        // If there's a postal code, add it
-                        addr.getPostalCode() != null ? addr.getPostalCode() : "");
-                // Return the text
-                return addressText;
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String address) {
-
-            super.onPostExecute(address);
-
-            // Display the results of the lookup.
-            if(address != null)
-            {
-                mEventLocationList.add(location);
-                mEventLocationListItems.add(address);
-                locationAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
-
-                if(mEventLocationListItems.size() == MAX)
-                {
-                    mEventLocation.setHint(R.string.create_event_max_location);
-                    mEventLocation.setClickable(false);
-                    mEventLocation.setEnabled(false);
-                }
-
-                mEventLocation.setText("");
-            }
-            else
-            {
-                mEventLocation.setError(getString(R.string.error_address_not_found));
-            }
-
-            progressDialog.dismiss();
-        }
-    }
 
 }

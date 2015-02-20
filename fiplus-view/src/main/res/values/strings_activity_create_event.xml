@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="create_event_name_hint">Event Name</string>
-    <string name="create_event_location_hint">Event Location</string>
+    <string name="create_event_location_hint">Add Event Location</string>
     <string name="create_event_max_location">Max location added</string>
     <string name="create_event_time_hint">Add Time</string>
     <string name="create_event_date_hint">Add Date</string>
     <string name="create_event_suggest_date_time">Suggest Date and Time</string>
-    <string name="create_event_number_of_people_hint">How many people?</string>
+    <string name="create_event_attendees_label">Max Attendees</string>
     <string name="create_event_check_in_question_hint">Check in question</string>
     <string name="create_event_description_hint">Description</string>
     <string name="create_event_tags_label">Tags:</string>
