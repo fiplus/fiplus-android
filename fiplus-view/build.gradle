@@ -11,8 +11,7 @@ android {
 
     buildTypes {
         release {
-            // Enable ProGuard to prevent required classes from being stripped for GooglePlayServices
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }

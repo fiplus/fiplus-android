@@ -3,12 +3,13 @@ package com.Fiplus;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -23,6 +24,9 @@ public class GcmMessageProcessor extends IntentService {
     public static final String TAG = GcmMessageProcessor.class.getSimpleName();
 
     NotificationCompat.Builder mBuilder;
+    private static int sNotificationId = 1;
+
+    private static final String NEW_ACTIVITY_GROUP = "new_activity_group";
 
     public GcmMessageProcessor() {
         super(GcmMessageProcessor.class.getSimpleName());
@@ -39,7 +43,7 @@ public class GcmMessageProcessor extends IntentService {
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
-                sendNotification(extras.getString("message"));
+                sendActivityCreatedNotification(extras.getString("message"), extras.getString("activityId"));
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }
@@ -48,26 +52,17 @@ public class GcmMessageProcessor extends IntentService {
     }
 
 
-    private void sendNotification(String msg) {
-        mBuilder = new NotificationCompat.Builder(this)
-                        // TODO: Set icon (Allan)
-                        .setSmallIcon(R.drawable.fiplus)
-                        .setContentTitle("Fi+")
-                        .setContentText(msg);
+    private void sendActivityCreatedNotification(String msg, String activityId) {
 
-        NotificationManager mNotificationManager =
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        // TODO: Change 1 to private int mId if required. mId allows you to update the notification later on. (Allan)
-        mNotificationManager.notify(1, mBuilder.build());
-        /*
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, MainScreenActivity.class);
+        Intent resultIntent = new Intent(this, ViewEventActivity.class);
+        resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
 
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainScreenActivity.class);
+        stackBuilder.addParentStack(ViewEventActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
@@ -75,7 +70,18 @@ public class GcmMessageProcessor extends IntentService {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
-        */
+
+
+        mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.fiplus)
+                .setContentTitle("Fi+")
+                .setContentText(msg)
+                .setContentIntent(resultPendingIntent)
+                .setAutoCancel(true)
+                .setGroup(NEW_ACTIVITY_GROUP)
+                .setGroupSummary(true);
+
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(sNotificationId++, mBuilder.build());
     }
 }

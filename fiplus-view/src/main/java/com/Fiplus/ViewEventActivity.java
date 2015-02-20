@@ -37,6 +37,7 @@ import utils.IAppConstants;
 public class ViewEventActivity extends FragmentActivity {
 
     static final String DATEFORMAT = "MMM-dd-yyyy HH:mm a";
+    public static final String EXTRA_EVENT_ID = "eventID";
 
     protected TextView mEventName;
     protected TextView mEventDesc;
@@ -58,7 +59,7 @@ public class ViewEventActivity extends FragmentActivity {
         setContentView(R.layout.activity_view_event);
 
         Bundle b = getIntent().getExtras();
-        final String mEventID = b.getString("eventID");
+        final String mEventID = b.getString(EXTRA_EVENT_ID);
 
         mEventName = (TextView) findViewById(R.id.view_event_name);
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
