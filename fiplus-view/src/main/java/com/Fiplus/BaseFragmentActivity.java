@@ -190,7 +190,6 @@ public class BaseFragmentActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(String msg) {
-            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -206,8 +205,6 @@ public class BaseFragmentActivity extends FragmentActivity {
      * is using accounts.
      */
     protected void sendRegistrationIdToBackend(String regid) {
-        Log.i("My tag", "The regID is:" + regid);
-
         UsersApi userApi = new UsersApi();
         userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
         userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
