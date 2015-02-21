@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.ocpsoft.prettytime.PrettyTime;
 import utils.IAppConstants;
 
 public class ViewEventActivity extends FragmentActivity {
@@ -39,14 +40,14 @@ public class ViewEventActivity extends FragmentActivity {
     static final String DATEFORMAT = "MMM-dd-yyyy HH:mm a";
     public static final String EXTRA_EVENT_ID = "eventID";
 
-    protected TextView mEventName;
+//    protected TextView mEventName;
     protected TextView mEventDesc;
     protected Button mJoinEventBtn;
     protected Button mCancelBtn;
     protected RadioGroup mLocationList;
     protected RadioGroup mTimeList;
     protected LinearLayout mAttendeesList;
-    protected TextView mAttendeesLabel;
+//    protected TextView mAttendeesLabel;
 
     protected List<Time> mSuggestedTimes = new ArrayList<Time>();
     protected List<Location> mSuggestedLocs = new ArrayList<Location>();
@@ -61,12 +62,12 @@ public class ViewEventActivity extends FragmentActivity {
         Bundle b = getIntent().getExtras();
         final String mEventID = b.getString(EXTRA_EVENT_ID);
 
-        mEventName = (TextView) findViewById(R.id.view_event_name);
+      //  mEventName = (TextView) findViewById(R.id.view_event_name);
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
         mLocationList = (RadioGroup) findViewById(R.id.view_event_loc_radiogroup);
         mTimeList = (RadioGroup) findViewById(R.id.view_event_time_radiogroup);
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
-        mAttendeesLabel = (TextView) findViewById(R.id.view_event_attendees_label);
+  //      mAttendeesLabel = (TextView) findViewById(R.id.view_event_attendees_label);
 
         GetEventTask getEventTask = new GetEventTask(mEventID);
         getEventTask.execute();
@@ -179,11 +180,12 @@ public class ViewEventActivity extends FragmentActivity {
             }
             else
             {
-                mEventName.setText(response.getName());
+                setTitle(response.getName());
+         //       mEventName.setText(response.getName());
                 mEventDesc.setText(response.getDescription());
                 mSuggestedTimes = response.getSuggested_times();
                 mSuggestedLocs = response.getSuggested_locations();
-                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
+         //       mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
                 addLocation();
                 addTime();
@@ -276,12 +278,14 @@ public class ViewEventActivity extends FragmentActivity {
 
         private void addTime()
         {
+            PrettyTime p = new PrettyTime();
             for (int row = 0; row < 1; row++) {
 
                 for (int i = 0; i < mSuggestedTimes.size(); i++) {
                     RadioButton rdbtn = new RadioButton(getBaseContext());
                     rdbtn.setTextColor(Color.BLACK);
                     rdbtn.setId((row * 2) + i);
+                    rdbtn.setPadding(5, 5, 5, 5);
                     rdbtn.setText(convertToTimeToString(mSuggestedTimes.get(i)));
                     mTimeList.addView(rdbtn);
                 }
