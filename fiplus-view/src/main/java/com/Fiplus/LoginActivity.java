@@ -328,17 +328,14 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
             showProgress(false);
 
             if (result !=null){
-                String errorMsg = "";
                 try {
                     JSONObject jObj = new JSONObject(result);
                     JSONArray jArray = jObj.getJSONArray("error");
                     JSONObject obj = jArray.getJSONObject(0);
-                    errorMsg = obj.getString("message");
                 } catch (JSONException e) {
-                    errorMsg = result;
                 }
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
-                alertDialog.setTitle("Error").setMessage(errorMsg).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                alertDialog.setTitle("Error").setMessage("Invalid username/password.").setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();

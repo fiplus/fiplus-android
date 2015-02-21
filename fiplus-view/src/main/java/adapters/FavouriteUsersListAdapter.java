@@ -33,7 +33,7 @@ public class FavouriteUsersListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public FavouriteUsersListItem getItem(int position) {
         return mFavouriteUserListItems.get(position);
     }
 

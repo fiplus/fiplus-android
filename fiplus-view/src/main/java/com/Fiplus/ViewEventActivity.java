@@ -208,6 +208,7 @@ public class ViewEventActivity extends FragmentActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                         intent.putExtra("userName", profile.getUsername()); //add in the user name
                         intent.putExtra("userProfile", profile.getProfile_pic());
+                        intent.putExtra("userId", profile.getUser_id());
                         intent.putStringArrayListExtra("userInterest", (ArrayList<String>)profile.getTagged_interests());
                         startActivity(intent);
                     }
@@ -219,7 +220,6 @@ public class ViewEventActivity extends FragmentActivity {
 
         private void addLocation()
         {
-
             Address addr;
             List<Address> addressList;
             int numOfVotes;
