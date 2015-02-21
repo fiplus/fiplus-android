@@ -117,6 +117,7 @@
                 android:id="@+id/create_event_datetimelist"
                 android:layout_below="@+id/create_event_suggest_date_time"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:footerDividersEnabled="true"
                 android:headerDividersEnabled="true"
                 android:layout_alignParentRight="true"

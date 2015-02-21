@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class GeocodingLocation extends AsyncTask<String, Void, String>
+public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
 {
     //ProgressDialog progressDialog;
     Context mContext;
@@ -21,11 +21,13 @@ public class GeocodingLocation extends AsyncTask<String, Void, String>
     Address addr;
     Location location = new Location();
     CreateEventActivity callerActivity;
+    int max_location;
 
-    public GeocodingLocation(Context context, CreateEventActivity activity) {
+    public GeocodingLocation(Context context, CreateEventActivity activity, int num) {
         super();
         mContext = context;
         callerActivity = activity;
+        max_location = num;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class GeocodingLocation extends AsyncTask<String, Void, String>
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected List<Address> doInBackground(String... params) {
         Geocoder geocoder = new Geocoder(mContext, Locale.CANADA);
 
         // Get the current location from the input parameter list
@@ -46,7 +48,7 @@ public class GeocodingLocation extends AsyncTask<String, Void, String>
         try {
             //try 3 times in case geocoder doesn't work the first time
             do {
-                addressList = geocoder.getFromLocationName(loc, 1);
+                addressList = geocoder.getFromLocationName(loc, max_location);
                 i++;
             } while (addressList.size()==0 && i < 3);
 
@@ -56,39 +58,48 @@ public class GeocodingLocation extends AsyncTask<String, Void, String>
             e1.printStackTrace();
         }
 
-        // If the geocode returned an address
-        if (addressList != null && addressList.size() > 0) {
+        // If adding the final address (not from autocomplete)
+        if (addressList != null && addressList.size() > 0 && max_location == 1) {
 
             addr = addressList.get(0);
             location.setLatitude(addr.getLatitude());
             location.setLongitude(addr.getLongitude());
 
-                /*
-                 * Format the first line of address (if available),
-                 * city (if available), and country name.
-                 */
-            String addressText = String.format(
-                    "%s, %s, %s %s",
-                    // If there's a street address, add it
-                    addr.getMaxAddressLineIndex() > 0 ?
-                            addr.getAddressLine(0) : "",
-                    // Locality is usually a city
-                    addr.getLocality() != null ? addr.getLocality() : "",
-                    // The country of the address
-                    addr.getCountryName(),
-                    // If there's a postal code, add it
-                    addr.getPostalCode() != null ? addr.getPostalCode() : "");
-            // Return the text
-            return addressText;
-        } else {
-            return null;
+            //only have one address
+            addressList.clear();
+            addressList.add(addr);
         }
+
+        return addressList;
     }
 
     @Override
-    protected void onPostExecute(String address) {
+    protected void onPostExecute(List<Address> address) {
 
+        String temp = null;
         super.onPostExecute(address);
-        callerActivity.populateLocation(location, address);
+
+        if(max_location == 1 )
+        {
+            if(addressList != null && addressList.size() > 0)
+            {
+                Address a = address.get(0);
+                temp = (a.getMaxAddressLineIndex() > 0 ? a.getAddressLine(0) : "")+" "+
+                        a.getLocality()+" "+a.getCountryName();
+            }
+
+            callerActivity.populateLocation(location, temp);
+        }
+        else
+        {
+            callerActivity.getAutoComplete().clear();
+            for (Address a : addressList) {
+                //String temp = ""+ a.getFeatureName()+" "+a.getCountryName()+" "+a.getPostalCode();
+                temp = (a.getMaxAddressLineIndex() > 0 ? a.getAddressLine(0) : "")+" "+
+                        a.getLocality()+" "+a.getCountryName();
+                callerActivity.getAutoComplete().add(temp);
+            }
+            callerActivity.getAutoComplete().notifyDataSetChanged();
+        }
     }
 }

@@ -97,7 +97,6 @@
                     style="?android:textAppearanceSmall"
                     android:layout_width="302dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:text="@string/sign_up"
                     android:textStyle="bold"
                     android:onClick="signUpFunction"

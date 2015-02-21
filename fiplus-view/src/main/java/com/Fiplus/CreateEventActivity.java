@@ -1,15 +1,15 @@
 package com.Fiplus;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,22 +29,22 @@ import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 
-import org.ocpsoft.prettytime.PrettyTime;
-
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
+import adapters.LocationArrayAdapterNoFilter;
+import utils.DateTimePicker;
 import utils.GeocodingLocation;
 import utils.IAppConstants;
 import utils.ListViewUtil;
 import utils.PrefUtil;
 
 
-public class CreateEventActivity extends FragmentActivity {
+public class CreateEventActivity extends FragmentActivity implements TextWatcher {
 
-    static final String DATEFORMAT = "MM-dd-yyyy HH:mm a";
+    private static final int MAX_CHARS = 3; //max chars before suggesting locations
+    private static final int AUTOCOMPLETE = 5; //number of suggestions
+    private static final int FINAL_LOC = 1; //when adding the location
     final String btnInnerHTML = "<font color='gray'>\"%s\"    </font>";
     final Integer MAX = 3;
 
@@ -66,6 +66,7 @@ public class CreateEventActivity extends FragmentActivity {
     protected List<Location> mEventLocationList = new ArrayList<Location>();
     protected List<String> mEventLocationListItems = new ArrayList<String>();
     protected ArrayAdapter<String> locationAdapter;
+    protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
     protected List<Time> mDateTimeListItemsUTC = new ArrayList<Time>();
     protected List<String> mDateTimeListItems = new ArrayList<String>();
@@ -80,7 +81,12 @@ public class CreateEventActivity extends FragmentActivity {
     protected TimePicker mTimePicker;
 
     private Dialog mDateTimeDialog;
-    private String mStart = "start", mEnd = "end";
+
+    //zero argument constructor
+    public CreateEventActivity()
+    {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +100,16 @@ public class CreateEventActivity extends FragmentActivity {
 
         mEventName = (EditText) findViewById(R.id.create_event_name);
         mDescription = (EditText) findViewById(R.id.create_event_description);
+
         mEventLocation = (AutoCompleteTextView) findViewById(R.id.create_event_location);
+        autoCompleteLocationAdapter = new LocationArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);
+        autoCompleteLocationAdapter.setNotifyOnChange(false);
+        mEventLocation.addTextChangedListener(this);
+        //mEventLocation.setOnItemSelectedListener(this);
+        mEventLocation.setThreshold(MAX_CHARS);
+        mEventLocation.setAdapter(autoCompleteLocationAdapter);
+
+
         mAddLocationBtn = (Button) findViewById(R.id.create_event_add_location);
         mAddLocationBtn.setOnClickListener(new View.OnClickListener()
         {
@@ -107,7 +122,7 @@ public class CreateEventActivity extends FragmentActivity {
                 {
                     if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
                     {
-                        GeocodingLocation location = new GeocodingLocation(getBaseContext(), CreateEventActivity.this);
+                        GeocodingLocation location = new GeocodingLocation(getBaseContext(), CreateEventActivity.this, FINAL_LOC);
                         location.execute(address);
                     }
 
@@ -156,8 +171,10 @@ public class CreateEventActivity extends FragmentActivity {
             public void onClick(View v)
             {
                 mDateTimeError.setError(null);
-                Time time = new Time();
-                showDateTimePickerDialog(time, mStart);
+                Time time = null;
+                DateTimePicker getDateTime = new DateTimePicker(CreateEventActivity.this);
+                //DateTimePicker getDateTime = new DateTimePicker(mDateTimeListItemsUTC,mDateTimeListItems, dateTimeAdapter );
+                getDateTime.showDateTimePickerDialog();
             }
         });
 
@@ -270,148 +287,85 @@ public class CreateEventActivity extends FragmentActivity {
         }
     }
 
-    public void showDateTimePickerDialog(final Time time, final String startEnd) {
+    //gets called from DateTimePicker
+    public void addDateTime(Time time, String sTime)
+    {
+        //getDateTime.convertTimeToString(time)
+        mDateTimeListItems.add(sTime);
+        mDateTimeListItemsUTC.add(time);
+        dateTimeAdapter.notifyDataSetChanged();
+        ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
-        mDateTimeDialog = new Dialog(this);
-        mDateTimeDialog.setContentView(R.layout.date_time_layout);
+        int maxDateTime = MAX - mDateTimeListItems.size();
+        mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + maxDateTime + "]");
 
-        if(startEnd.equalsIgnoreCase("start"))
+        if(mDateTimeListItems.size() == MAX)
         {
-            mDateTimeDialog.setTitle(R.string.create_event_start_time);
+            mDateTimeButton.setEnabled(false);
+        }
+    }
+
+    /**
+     *
+     * This is for text listener in the address textbox
+     */
+
+    @Override
+    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+        final String address = arg0.toString();
+
+        if(!address.isEmpty() && address.length() >= MAX_CHARS)
+        {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
+            {
+                GeocodingLocation location = new GeocodingLocation(getBaseContext(), CreateEventActivity.this, AUTOCOMPLETE);
+                location.execute(address);
+            }
         }
         else
         {
-            mDateTimeDialog.setTitle(R.string.create_event_end_time);
+            autoCompleteLocationAdapter.clear();
         }
-
-        mDateTimeDialog.show();
-
-        mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
-        mTimePicker = (TimePicker) mDateTimeDialog.findViewById(R.id.timePicker);
-
-        //for cancel button
-        mCancelTimeButton = (Button) mDateTimeDialog.findViewById(R.id.cancelPicker);
-        mCancelTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(startEnd.equalsIgnoreCase("end"))
-                {
-                    //TODO: (Jobelle) Implement end time as optional
-                    //this should still create the start time
-                }
-                mDateTimeDialog.dismiss();
-            }
-        });
-
-        //for set button
-        mSetTimeButton = (Button) mDateTimeDialog.findViewById(R.id.setPicker);
-        mSetTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int month = mDatePicker.getMonth();
-                int year = mDatePicker.getYear();
-                int day = mDatePicker.getDayOfMonth();
-                int hour = mTimePicker.getCurrentHour();
-                int minutes = mTimePicker.getCurrentMinute();
-
-                Calendar cal = Calendar.getInstance();
-                cal.set(year, month, day, hour, minutes);
-
-                Long lTime = cal.getTime().getTime();
-
-                if(startEnd.equalsIgnoreCase("start"))
-                {
-
-                    time.setStart(lTime.doubleValue());
-                    mDateTimeDialog.dismiss();
-                    if(checkTime(time))
-                    {
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateEventActivity.this);
-                        alertDialog.setTitle("Error").setMessage(R.string.start_time_error).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                        alertDialog.show();
-                    }
-                    else
-                    {
-                        //set end date if start time is set properly
-                        showDateTimePickerDialog(time, mEnd);
-                    }
-
-                }
-                else
-                {
-                    time.setEnd(lTime.doubleValue());
-                    mDateTimeDialog.dismiss();
-                    if(checkTime(time))
-                    {
-
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateEventActivity.this);
-                        alertDialog.setTitle("Error").setMessage(R.string.end_time_error).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                        alertDialog.show();
-                    }
-                    else
-                    {
-                        mDateTimeListItems.add(convertTimeToString(time));
-                        mDateTimeListItemsUTC.add(time);
-                        dateTimeAdapter.notifyDataSetChanged();
-                        ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
-
-                        int maxDateTime = MAX - mDateTimeListItems.size();
-                        mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + maxDateTime + "]");
-
-                        if(mDateTimeListItems.size() == MAX)
-                        {
-                            mDateTimeButton.setEnabled(false);
-                        }
-                    }
-                }
-            }
-        });
     }
 
-    private boolean checkTime(Time time)
+    @Override
+    public void afterTextChanged(Editable arg0) {
+    }
+
+    public ArrayAdapter<String> getAutoComplete()
     {
-        boolean isError;
+        return autoCompleteLocationAdapter;
+    }
 
-        //get current date and date
-        Calendar c = Calendar.getInstance();
+    public void populateLocation(Location location, String address)
+    {
 
-        if(time.getEnd() == null)
+        // Display the results of the lookup.
+        if(address != null)
         {
-            isError = time.getStart() < c.getTime().getTime();
+            mEventLocationList.add(location);
+            mEventLocationListItems.add(address);
+            locationAdapter.notifyDataSetChanged();
+            ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
+
+            if(mEventLocationListItems.size() == MAX)
+            {
+                mEventLocation.setHint(R.string.create_event_max_location);
+                mEventLocation.setClickable(false);
+                mEventLocation.setEnabled(false);
+            }
+
+            mEventLocation.setText("");
         }
         else
         {
-            isError = time.getEnd() < time.getStart();
+            mEventLocation.setError(getString(R.string.error_address_not_found));
         }
-
-        return isError;
-    }
-
-    private String convertTimeToString(Time time)
-    {
-        long startDate = Double.doubleToLongBits(time.getStart());
-        long endDate = Double.doubleToLongBits(time.getEnd());
-        Date d1 = new Date(startDate);
-        Date d2 = new Date(endDate);
-
-        //SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-        PrettyTime t1 = new PrettyTime(new Date(0));
-        PrettyTime t2 = new PrettyTime(new Date(0));
-        return "Start: " + t1.format(d1) + "\nEnd  : " + t2.format(d2);
-        //return "Start: " + dateFormat.format(d1) + "\nEnd  : " + dateFormat.format(d2);
-//        String s1 = DateFormat.getDateTimeInstance().format(d1);
-//        String s2 = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(d2);
-//        return "From " + s1 + " to " + s2;
     }
 
     //Add event tags
@@ -479,32 +433,6 @@ public class CreateEventActivity extends FragmentActivity {
             mTags.setHint("");
             mTags.setClickable(true);
             mTags.setEnabled(true);
-        }
-    }
-
-    public void populateLocation(Location location, String address)
-    {
-
-        // Display the results of the lookup.
-        if(address != null)
-        {
-            mEventLocationList.add(location);
-            mEventLocationListItems.add(address);
-            locationAdapter.notifyDataSetChanged();
-            ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
-
-            if(mEventLocationListItems.size() == MAX)
-            {
-                mEventLocation.setHint(R.string.create_event_max_location);
-                mEventLocation.setClickable(false);
-                mEventLocation.setEnabled(false);
-            }
-
-            mEventLocation.setText("");
-        }
-        else
-        {
-            mEventLocation.setError(getString(R.string.error_address_not_found));
         }
     }
 
