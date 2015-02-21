@@ -3,6 +3,7 @@ package com.Fiplus;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +59,7 @@ public class ConfigureProfileActivity extends Activity {
     protected ArrayAdapter<String> listAdapter;
 
     protected Location userLocation;
+    protected boolean signUpActivity = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,19 @@ public class ConfigureProfileActivity extends Activity {
                 finish();
             }
         });
+
+        //if first sign in, setup the UI to be different
+        Bundle checkActivity = getIntent().getExtras();
+        if(checkActivity!=null) //this means the calling activity is sign up
+        {
+            signUpActivity = true;
+            getActionBar().setDisplayHomeAsUpEnabled(false);
+            mCancelButton.setVisibility(View.GONE);
+            //mSaveButton.setGravity(Gravity.CENTER);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            p.weight = 1;
+            mSaveButton.setLayoutParams(p);
+        }
 
         //TODO: (Nick) Configure Profile - Upload Profile Photo
         mImageView = (ImageView) findViewById(R.id.imageView);
@@ -277,8 +293,17 @@ public class ConfigureProfileActivity extends Activity {
 
         @Override
         protected void onPostExecute(String result){
+
             finish();
-            Toast.makeText(getBaseContext(), "Profile Saved", Toast.LENGTH_SHORT).show();
+            if(signUpActivity)
+            {
+                Intent in= new Intent(ConfigureProfileActivity.this,MainScreenActivity.class);
+                startActivity(in);
+            }
+            else
+            {
+                Toast.makeText(getBaseContext(), "Profile Saved", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

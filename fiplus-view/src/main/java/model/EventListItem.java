@@ -1,17 +1,11 @@
 package model;
 
-import android.location.Address;
-import android.location.Geocoder;
-import android.util.Log;
-
-import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class EventListItem {
 
@@ -74,9 +68,9 @@ public class EventListItem {
 
     private String getStartTime(Time time)
     {
+        PrettyTime t1 = new PrettyTime(new Date());
         long startDate = time.getStart().longValue();
         Date d1 = new Date(startDate);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-        return dateFormat.format(d1);
+        return t1.format(d1);
     }
 }

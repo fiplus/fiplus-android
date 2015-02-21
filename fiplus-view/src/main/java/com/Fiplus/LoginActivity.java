@@ -15,7 +15,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,7 +30,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wordnik.client.api.UsersApi;
@@ -59,6 +61,7 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
     private View mProgressView;
     private View mLoginFormView;
     private ImageView mFitLogo;
+    private TextView mFitTerms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,44 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        mFitTerms = (TextView) findViewById(R.id.loginPolicy);
+        setPrivacyTerms();
+
+    }
+
+    private void setPrivacyTerms()
+    {
+        String text = mFitTerms.getText().toString();
+        int privacy1 = text.indexOf("Privacy");
+        int privacy2 = privacy1 + 13;
+
+        int terms1 = text.indexOf("Terms");
+        int terms2 = terms1 + 11;
+
+        mFitTerms.setMovementMethod(LinkMovementMethod.getInstance());
+        mFitTerms.setText(text, TextView.BufferType.SPANNABLE);
+
+        Spannable mySpannable = (Spannable)mFitTerms.getText();
+        ClickableSpan privacySpan = new ClickableSpan()
+        {
+            @Override
+            public void onClick(View widget) {
+                Intent intent = new Intent(getBaseContext(), PrivacyPolicyActivity.class);
+                startActivity(intent);
+            }
+        };
+
+        ClickableSpan termsSpan = new ClickableSpan()
+        {
+            @Override
+            public void onClick(View widget) {
+                Intent intent = new Intent(getBaseContext(), TermsOfUseActivity.class);
+                startActivity(intent);
+            }
+        };
+        mySpannable.setSpan(privacySpan, privacy1, privacy2 + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mySpannable.setSpan(termsSpan, terms1, terms2 + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void populateAutoComplete() {

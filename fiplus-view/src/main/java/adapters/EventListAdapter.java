@@ -87,7 +87,8 @@ public class EventListAdapter extends BaseAdapter
                     confirmEvent.setVisibility(convertView.GONE);
                     break;
                 default:
-                    eventButton.setText(R.string.join_button);
+//                    eventButton.setText(R.string.join_button);
+                    eventButton.setVisibility(convertView.GONE);
                     confirmEvent.setVisibility(convertView.GONE);
                     break;
             }

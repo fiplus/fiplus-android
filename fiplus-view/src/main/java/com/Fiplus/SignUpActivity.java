@@ -7,31 +7,37 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Credentials;
+import com.wordnik.client.model.WhoAmI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import utils.IAppConstants;
+import utils.PrefUtil;
 
 /**
  * Sign up activity
  */
 public class SignUpActivity extends Activity {
 
-    protected EditText signUpName;
     protected EditText signUpEmail;
     protected EditText signUpPassword;
     protected Button signUpButton;
     protected Button cancelButton;
+    private TextView mFitTerms;
 
     private ProgressDialog progressDialog;
 
@@ -41,10 +47,7 @@ public class SignUpActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        progressDialog = new ProgressDialog(SignUpActivity.this);
-
         //initialize
-        signUpName = (EditText)findViewById(R.id.sign_up_name);
         signUpEmail = (EditText)findViewById(R.id.sign_up_email);
         signUpPassword = (EditText)findViewById(R.id.sign_up_password);
         signUpButton = (Button)findViewById(R.id.sign_up_button2);
@@ -62,6 +65,9 @@ public class SignUpActivity extends Activity {
                 finish();
             }
         });
+
+        mFitTerms = (TextView) findViewById(R.id.signUpPolicy);
+        setPrivacyTerms();
     }
 
     @Override
@@ -76,28 +82,54 @@ public class SignUpActivity extends Activity {
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
     }
 
+    private void setPrivacyTerms()
+    {
+        String text = mFitTerms.getText().toString();
+        int privacy1 = text.indexOf("Privacy");
+        int privacy2 = privacy1 + 13;
+
+        int terms1 = text.indexOf("Terms");
+        int terms2 = terms1 + 11;
+
+        mFitTerms.setMovementMethod(LinkMovementMethod.getInstance());
+        mFitTerms.setText(text, TextView.BufferType.SPANNABLE);
+
+        Spannable mySpannable = (Spannable)mFitTerms.getText();
+        ClickableSpan privacySpan = new ClickableSpan()
+        {
+            @Override
+            public void onClick(View widget) {
+                Intent intent = new Intent(getBaseContext(), PrivacyPolicyActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        };
+
+        ClickableSpan termsSpan = new ClickableSpan()
+        {
+            @Override
+            public void onClick(View widget) {
+                Intent intent = new Intent(getBaseContext(), TermsOfUseActivity.class);
+                startActivity(intent);
+            }
+        };
+        mySpannable.setSpan(privacySpan, privacy1, privacy2 + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mySpannable.setSpan(termsSpan, terms1, terms2 + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
     public void attemptSignUp() {
 
         // Reset errors.
-        signUpName.setError(null);
         signUpEmail.setError(null);
         signUpPassword.setError(null);
 
         //TODO: Update if Name will be added to Credentials
         // Store values at the time of the login attempt.
-        String name = signUpName.getText().toString();
         String email = signUpEmail.getText().toString();
         String password = signUpPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
-
-        // Check for a valid email address and password.
-        if (TextUtils.isEmpty(name)) {
-            signUpName.setError(getString(R.string.error_field_required));
-            focusView = signUpName;
-            cancel = true;
-        }
 
         if (TextUtils.isEmpty(email)) {
             signUpEmail.setError(getString(R.string.error_field_required));
@@ -140,6 +172,15 @@ public class SignUpActivity extends Activity {
 
    class SignUpTask extends AsyncTask<Void, Void, String>{
 
+       String email;
+       String password;
+
+       public SignUpTask()
+       {
+           email = signUpEmail.getText().toString();
+           password = signUpPassword.getText().toString();
+       }
+
        @Override
        protected String doInBackground(Void... params) {
 
@@ -148,12 +189,21 @@ public class SignUpActivity extends Activity {
            userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
            Credentials credentials = new Credentials();
-           credentials.setEmail(signUpEmail.getText().toString());
-           //credentials.setFirst_name(signUpName.getText().toString());
-           credentials.setPassword(signUpPassword.getText().toString());
+           credentials.setEmail(email);
+           credentials.setPassword(password);
 
            try{
                userApi.registerUser(credentials);
+
+               userApi.getInvoker().setContext(getApplicationContext());
+               userApi.login(credentials);
+
+               WhoAmI id = userApi.whoAmI();
+
+               PrefUtil.putString(getApplicationContext(), IAppConstants.DSP_URL, IAppConstants.DSP_URL);
+               PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, email);
+               PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, password);
+               PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, id.getUser_id());
            } catch (Exception e) {
                return e.getMessage();
            }
@@ -184,7 +234,8 @@ public class SignUpActivity extends Activity {
            }
            else {
                Toast.makeText(getBaseContext(), "Sign up successful", Toast.LENGTH_SHORT).show();
-               Intent in= new Intent(SignUpActivity.this,LoginActivity.class);
+               Intent in= new Intent(SignUpActivity.this,ConfigureProfileActivity.class);
+               in.putExtra("class", ConfigureProfileActivity.class.toString());
                startActivity(in);
                finish();
            }
@@ -193,7 +244,7 @@ public class SignUpActivity extends Activity {
 
        @Override
        protected void onPreExecute() {
-           progressDialog.show();
+           progressDialog = ProgressDialog.show(SignUpActivity.this, "Signing up...", getString(R.string.progress_dialog_text), true);
        }
    }
 }
