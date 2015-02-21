@@ -21,7 +21,7 @@ import java.util.List;
 
 public class DateTimePicker {
 
-    private static final String DATEFORMAT = "MMM-dd-yyyy hh:mm a";
+    private static final String DATEFORMAT = "E MMM-dd hh:mm a";
     private final Integer MAX = 3;
 
     private Dialog mDateTimeDialog;

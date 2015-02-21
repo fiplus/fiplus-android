@@ -33,9 +33,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:singleLine="true"/>
-            <!--android:layout_toRightOf="@+id/createEventImageView"-->
-            <!--android:layout_toEndOf="@+id/createEventImageView"-->
-            <!--android:inputType="text" />-->
 
         <EditText
             android:paddingTop="10dp"
@@ -64,7 +61,6 @@
             android:layout_alignParentStart="true"
             android:layout_toLeftOf="@+id/create_event_add_location"
             android:singleLine="true"/>
-            <!--android:inputType="text|textMultiLine|textPostalAddress" />-->
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -88,101 +84,70 @@
             android:headerDividersEnabled="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            style="?android:attr/textAppearanceSmall"
             />
 
-        <RelativeLayout
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/create_event_address_list"
-            android:id="@+id/dateTimeLinearLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/create_event_suggest_date_time"
-                android:id="@+id/create_event_suggest_date_time"
-                android:clickable="true"
-                android:enabled="true"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                style="?android:attr/buttonStyleSmall"/>
-
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/create_event_datetimelist"
-                android:layout_below="@+id/create_event_suggest_date_time"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:footerDividersEnabled="true"
-                android:headerDividersEnabled="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/create_event_datetime_error"
-                android:layout_alignBottom="@+id/create_event_suggest_date_time"
-                android:layout_toRightOf="@+id/create_event_suggest_date_time"
-                android:layout_toEndOf="@+id/create_event_suggest_date_time"
-                android:background="@null"
-                android:textIsSelectable="true"
-                android:inputType="none"
-                />
-
-            <!--<Button-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--android:text="@string/create_event_time_hint"-->
-                <!--android:onClick="showTimePickerDialog"-->
-                <!--android:id="@+id/create_event_time_button"-->
-                <!--android:clickable="true"-->
-                <!--android:enabled="true" />-->
-
-        </RelativeLayout>
-
-        <TextView
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
+        <Button
+            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/dateTimeLinearLayout"
-            android:text="@string/create_event_attendees_label"
-            android:id="@+id/create_event_attendees_label"
+            android:id="@+id/create_event_add_datetime"
+            android:layout_below="@+id/create_event_address_list"
+            android:text="@string/create_event_suggest_date_time"
+            android:layout_toLeftOf="@+id/create_event_datetime_error"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/create_event_datetime_error"
+            android:layout_below="@+id/create_event_address_list"
+            android:layout_alignBottom="@+id/create_event_add_datetime"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:textIsSelectable="true"
+            android:inputType="none"
+            />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_event_datetimelist"
+            android:layout_below="@+id/create_event_add_datetime"
+            android:layout_marginTop="10dp"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            style="?android:attr/textAppearanceSmall"
+            />
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:paddingBottom="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/create_event_datetimelist"
+            android:text="@string/create_event_attendees_label"
+            android:id="@+id/create_event_attendees_label"
+            />
+
+        <EditText
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:inputType="number"
             android:id="@+id/create_event_number_of_people"
-            android:background="@android:drawable/edit_text"
-            android:textColor="@android:color/primary_text_light"
-            android:layout_below="@+id/dateTimeLinearLayout"
+            android:layout_below="@+id/create_event_datetimelist"
             android:layout_toRightOf="@+id/create_event_attendees_label"
             android:ems="4"
             android:maxLength="3"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:textAppearance="?android:attr/textAppearanceSmallInverse"
             />
-
-        <!--<EditText-->
-            <!--android:paddingTop="20dp"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/create_event_check_in_question"-->
-            <!--android:hint="@string/create_event_check_in_question_hint"-->
-            <!--android:layout_below="@+id/create_event_number_of_people"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_alignRight="@+id/create_event_cancel"-->
-            <!--android:layout_alignEnd="@+id/create_event_cancel" />-->
 
         <LinearLayout
             android:id="@+id/tagsLinearLayout"

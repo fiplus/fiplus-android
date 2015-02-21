@@ -1,6 +1,5 @@
 package com.Fiplus;
 
-import android.app.Dialog;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -15,12 +14,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.wordnik.client.ApiException;
@@ -56,8 +53,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     protected EditText mDescription;
     protected Button mCreateButton;
     protected Button mCancelButton;
-    protected Button mDateTimeButton;
     protected EditText mMaxPeople;
+    protected Button mDateTimeButton;
     protected ListView mDateTimeListView;
     protected EditText mTags;
     protected TextView mAddTags;
@@ -74,13 +71,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
     protected List<String> mTagsList = new ArrayList<String>();
     protected LinearLayout mTagsLinearLayout;
-
-    protected Button mSetTimeButton;
-    protected Button mCancelTimeButton;
-    protected DatePicker mDatePicker;
-    protected TimePicker mTimePicker;
-
-    private Dialog mDateTimeDialog;
 
     //zero argument constructor
     public CreateEventActivity()
@@ -163,17 +153,14 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         mTagsLinearLayout = (LinearLayout) findViewById(R.id.create_event_tags_list);
 
         mDateTimeError = (EditText) findViewById(R.id.create_event_datetime_error);
-        mDateTimeButton = (Button) findViewById(R.id.create_event_suggest_date_time);
-        mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + MAX + "]");
+        mDateTimeButton = (Button) findViewById(R.id.create_event_add_datetime);
         mDateTimeButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
                 mDateTimeError.setError(null);
-                Time time = null;
                 DateTimePicker getDateTime = new DateTimePicker(CreateEventActivity.this);
-                //DateTimePicker getDateTime = new DateTimePicker(mDateTimeListItemsUTC,mDateTimeListItems, dateTimeAdapter );
                 getDateTime.showDateTimePickerDialog();
             }
         });
@@ -189,11 +176,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                 dateTimeAdapter.notifyDataSetChanged();
                 ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
-                int maxDateTime = MAX - mDateTimeListItems.size();
-
                 if(mDateTimeListItems.size() < MAX)
                 {
-                    mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + maxDateTime + "]");
+                    mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time));
                     mDateTimeButton.setEnabled(true);
                 }
             }
@@ -296,11 +281,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         dateTimeAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
-        int maxDateTime = MAX - mDateTimeListItems.size();
-        mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time) + " [" + maxDateTime + "]");
-
         if(mDateTimeListItems.size() == MAX)
         {
+            //mDateTimeError.setText(getString(R.string.create_event_max_time));
+            mDateTimeButton.setText(getString(R.string.create_event_max_time));
             mDateTimeButton.setEnabled(false);
         }
     }

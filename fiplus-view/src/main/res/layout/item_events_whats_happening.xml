@@ -34,7 +34,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
-        android:textSize="20sp"
         android:text="Event 1"
         android:textColor="@color/list_item_title"
         />
@@ -43,24 +42,25 @@
         android:id="@+id/event_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:gravity="center_vertical"
-        android:textSize="14sp"
         android:textStyle="italic"
         android:text="Location"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/event_name"
         android:layout_alignStart="@+id/event_name"
+        android:layout_below="@+id/event_name"
         android:layout_toLeftOf="@+id/event_button"
-        android:textColor="@color/list_item_title" />
+        android:textColor="@color/list_item_title"
+        android:ellipsize = "end"
+        android:singleLine="true"/>
 
     <TextView
         android:id="@+id/event_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:gravity="center_vertical"
-        android:textSize="14sp"
         android:textStyle="italic"
         android:text="Time"
         android:textColor="@color/list_item_title"
@@ -73,9 +73,8 @@
         android:id="@+id/event_attendees"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:gravity="center_vertical"
-        android:textSize="14sp"
         android:text="Number of attendees"
         android:layout_below="@+id/event_time"
         android:layout_alignLeft="@+id/event_location"
@@ -89,7 +88,6 @@
         android:text="@string/join_button"
         android:id="@+id/event_button"
         android:theme="@android:style/Theme.Holo"
-        android:layout_alignTop="@+id/event_name"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
