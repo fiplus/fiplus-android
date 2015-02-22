@@ -8,6 +8,7 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,13 +27,18 @@ import com.wordnik.client.model.Time;
 import com.wordnik.client.model.UserProfile;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.ocpsoft.prettytime.Duration;
 import org.ocpsoft.prettytime.PrettyTime;
+import org.ocpsoft.prettytime.TimeFormat;
+import org.ocpsoft.prettytime.TimeUnit;
+
 import utils.IAppConstants;
 
 public class ViewEventActivity extends FragmentActivity {
@@ -224,7 +230,7 @@ public class ViewEventActivity extends FragmentActivity {
         {
             Address addr;
             List<Address> addressList;
-            int numOfVotes;
+       //     int numOfVotes;
 
             for (int row = 0; row < 1; row++) {
                 for (int i = 0; i < mSuggestedLocs.size(); i++)
@@ -251,14 +257,14 @@ public class ViewEventActivity extends FragmentActivity {
                                     // If there's a postal code, add it
                                     addr.getPostalCode() != null ? addr.getPostalCode() : "");
 
-                            //add votes
+/*                            //add votes
                             try {
                                 numOfVotes = mSuggestedLocs.get(i).getSuggestion_votes().intValue();
                             } catch(NullPointerException e)
                             {
                                 numOfVotes= -1;
                             }
-                            addressText += "\n(" + numOfVotes + " vote(s))";
+                            addressText += "\n(" + numOfVotes + " vote(s))";*/
 
                             addrRadioList.setText(addressText);
 
@@ -278,14 +284,13 @@ public class ViewEventActivity extends FragmentActivity {
 
         private void addTime()
         {
-            PrettyTime p = new PrettyTime();
             for (int row = 0; row < 1; row++) {
 
                 for (int i = 0; i < mSuggestedTimes.size(); i++) {
                     RadioButton rdbtn = new RadioButton(getBaseContext());
                     rdbtn.setTextColor(Color.BLACK);
                     rdbtn.setId((row * 2) + i);
-                    rdbtn.setPadding(5, 5, 5, 5);
+                    rdbtn.setPadding(0, 5, 0, 5);
                     rdbtn.setText(convertToTimeToString(mSuggestedTimes.get(i)));
                     mTimeList.addView(rdbtn);
                 }
@@ -301,7 +306,7 @@ public class ViewEventActivity extends FragmentActivity {
         {
             long startDate = time.getStart().longValue();
             long endDate = time.getEnd().longValue();
-            int numOfVotes;
+/*            int numOfVotes;
             String s;
 
             //add votes
@@ -312,12 +317,31 @@ public class ViewEventActivity extends FragmentActivity {
                 numOfVotes = -1;
             }
 
-            s = "     (" + numOfVotes + " vote(s))";
+            s = "     (" + numOfVotes + " vote(s))";*/
 
             Date d1 = new Date(startDate);
             Date d2 = new Date(endDate);
-            SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-            return "Start: " + dateFormat.format(d1) + s + "\nEnd  : " + dateFormat.format(d2);
+            PrettyTime p = new PrettyTime();
+            String format = "EEE, MMM d 'at' h:m a";
+            String format2 = format;
+            boolean curYear = d1.getYear() == new Date().getYear();
+            boolean sameMonth = d1.getMonth() == d2.getMonth();
+            boolean sameDay = d1.getDate() == d2.getDate();
+            if(sameDay && sameMonth)
+            {
+                format2 = "h:m a";
+            }
+            if(!curYear)
+            {
+                format2 += ", YYYY";
+            }
+
+            // TODO print year if different year
+            // TODO don't print E M d if same E M D
+
+            SimpleDateFormat sdf1 = new SimpleDateFormat(format);
+            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+            return sdf1.format(d1) + " to " + sdf2.format(d2);
         }
     }
 

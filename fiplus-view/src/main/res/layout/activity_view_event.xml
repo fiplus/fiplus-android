@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+    <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fillViewport="true"
     >
+<ScrollView
+
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+
+    android:layout_alignParentTop="true"
+    >
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin">
 
@@ -23,34 +31,6 @@
             android:id="@+id/view_event_description"
             android:padding="@dimen/generic_padding"/>
 
-        <!-- Suggestions -->
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!-- Times -->
-            <RadioGroup
-                android:id="@+id/view_event_time_radiogroup"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".50"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:orientation="vertical"/>
-
-            <!-- Locations -->
-            <RadioGroup
-                android:id="@+id/view_event_loc_radiogroup"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".50"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:orientation="vertical"
-                />
-        </LinearLayout>
-
         <!-- Attendees -->
         <LinearLayout
             android:layout_width="fill_parent"
@@ -62,27 +42,64 @@
             android:weightSum="1">
         </LinearLayout>
 
+        <!-- Suggestions -->
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            >
+            android:orientation="horizontal"
+            android:paddingRight="0dp"
+            android:paddingLeft="0dp">
 
-            <Button
+            <!-- Times -->
+            <RadioGroup
+                android:id="@+id/view_event_time_radiogroup"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/view_event_join_btn"
-                android:id="@+id/view_event_join_btn"
-                android:layout_weight="0.5"
-                />
+                android:layout_weight=".50"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:paddingRight="0dp"
+                android:paddingLeft="0dp"/>
 
-            <Button
+            <!-- Locations -->
+            <RadioGroup
+                android:id="@+id/view_event_loc_radiogroup"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/view_event_not_interested_btn"
-                android:id="@+id/view_event_not_interested_btn"
-                android:layout_weight="0.5"
+                android:layout_weight=".50"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical"
+                android:paddingRight="0dp"
+                android:paddingLeft="0dp"
                 />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+
+<LinearLayout
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="@dimen/activity_vertical_margin"
+
+    android:layout_alignParentBottom="true"
+    >
+
+<Button
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:text="@string/view_event_join_btn"
+    android:id="@+id/view_event_join_btn"
+    android:layout_weight="0.5"
+    />
+
+<Button
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:text="@string/view_event_not_interested_btn"
+    android:id="@+id/view_event_not_interested_btn"
+    android:layout_weight="0.5"
+    />
+</LinearLayout>
+    </RelativeLayout>
