@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by Javier on 2/5/2015.
- */
 public class LocationUtil {
 
     public static List<String> getLocationStrings(List<Location> locations, Context context)
@@ -32,16 +29,14 @@ public class LocationUtil {
                 if (addressList != null && addressList.size() > 0) {
                     addr = addressList.get(0);
                     String addressText = String.format(
-                            "%s, %s, %s %s",
+                            "%s, %s, %s",
                             // If there's a street address, add it
                             addr.getMaxAddressLineIndex() > 0 ?
                                     addr.getAddressLine(0) : "",
                             // Locality is usually a city
                             addr.getLocality() != null ? addr.getLocality() : "",
                             // The country of the address
-                            addr.getCountryName(),
-                            // If there's a postal code, add it
-                            addr.getPostalCode() != null ? addr.getPostalCode() : "");
+                            addr.getCountryName());
                     // Return the text
                     locationStringsList.add(addressText);
                 }
@@ -65,16 +60,14 @@ public class LocationUtil {
             if (addressList != null && addressList.size() > 0) {
                 addr = addressList.get(0);
                 String addressText = String.format(
-                        "%s, %s, %s %s",
+                        "%s, %s, %s",
                         // If there's a street address, add it
                         addr.getMaxAddressLineIndex() > 0 ?
                                 addr.getAddressLine(0) : "",
                         // Locality is usually a city
                         addr.getLocality() != null ? addr.getLocality() : "",
                         // The country of the address
-                        addr.getCountryName(),
-                        // If there's a postal code, add it
-                        addr.getPostalCode() != null ? addr.getPostalCode() : "");
+                        addr.getCountryName());
                 // Return the text
                 return addressText;
             }
