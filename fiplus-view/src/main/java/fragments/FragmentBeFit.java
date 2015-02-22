@@ -2,12 +2,9 @@ package fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +32,8 @@ import utils.PrefUtil;
 
 public class FragmentBeFit extends Fragment{
 
+    private ProgressDialog progressDialog;
+
     public static final String TAG = FragmentBeFit.class
             .getSimpleName();
 
@@ -45,6 +44,12 @@ public class FragmentBeFit extends Fragment{
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstancesState)
+    {
+        super.onCreate(savedInstancesState);
+        progressDialog = ProgressDialog.show(getActivity(), "Getting events...", getString(R.string.progress_dialog_text), true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,8 +59,6 @@ public class FragmentBeFit extends Fragment{
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
-        GetEvents getEvents = new GetEvents();
-        getEvents.execute();
         return v;
     }
 
@@ -77,6 +80,8 @@ public class FragmentBeFit extends Fragment{
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);
+
+        mEventListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -100,13 +105,11 @@ public class FragmentBeFit extends Fragment{
 
     private class GetEvents extends AsyncTask<Void, Void, String>
     {
-        ProgressDialog progressDialog;
         protected List<Activity> response;
 
         @Override
         protected void onPreExecute()
         {
-            progressDialog= ProgressDialog.show(getActivity(), "Getting events...", getString(R.string.progress_dialog_text), true);
         }
 
         @Override
@@ -123,8 +126,8 @@ public class FragmentBeFit extends Fragment{
             try{
                 UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
-                        10.0,
-                        true,
+                        50.0,
+                        false,
                         10.0,
                         profile.getLocation());
             } catch (Exception e) {
@@ -138,7 +141,10 @@ public class FragmentBeFit extends Fragment{
         {
             if (response != null)
                 setEventList(response);
-            progressDialog.dismiss();
+            if (progressDialog != null)
+            {
+                progressDialog.dismiss();
+            }
         }
     }
 }

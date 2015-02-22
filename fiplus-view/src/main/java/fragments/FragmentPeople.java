@@ -61,8 +61,8 @@ public class FragmentPeople extends Fragment {
     private void setPeopleList() {
         ArrayList<FavouriteUsersListItem> FavouriteUsersList = new ArrayList<FavouriteUsersListItem>();
 
-        FavouriteUsersList.add(new FavouriteUsersListItem("John Doe", R.drawable.fiplus));
-        FavouriteUsersList.add(new FavouriteUsersListItem("Xerxes", R.drawable.fiplus));
+        //FavouriteUsersList.add(new FavouriteUsersListItem("John Doe", R.drawable.fiplus, "1111"));
+        //FavouriteUsersList.add(new FavouriteUsersListItem("Xerxes", R.drawable.fiplus, "2222"));
 
         mFavoriteUserListAdapter = new FavouriteUsersListAdapter(getActivity(), FavouriteUsersList);
         mPeopleList.setAdapter(mFavoriteUserListAdapter);

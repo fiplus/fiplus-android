@@ -3,28 +3,36 @@ package com.Fiplus;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.wordnik.client.api.UsersApi;
+import com.wordnik.client.model.UserProfile;
 
 import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.ArrayList;
 
 import model.EventListItem;
+import utils.IAppConstants;
+import utils.PrefUtil;
 
 public class ViewProfileActivity extends Activity
 {
     public static final String TAG = ViewProfileActivity.class
             .getSimpleName();
 
+    private CheckBox mFavoriteStar;
     private ImageView mImageView;
     private TextView mProfileName;
-    //private TextView mProfileGender;
-    //private TextView mProfileCountry;
-    //private ListView mEventsList;
-    //private EventListAdapter mEventListAdapter ;
     private FlowLayout mInterestList;
+    private String mUserId;
+
     ArrayList<EventListItem> eventList;
 
     private String userName;
@@ -39,8 +47,10 @@ public class ViewProfileActivity extends Activity
 
         overridePendingTransition(R.anim.activity_in_from_right, R.anim.activity_out_to_left);
 
+
         userName = getIntent().getExtras().getString("userName");
         userInterest = getIntent().getExtras().getStringArrayList("userInterest");
+        mUserId = getIntent().getExtras().getString("userId");
 
         progressDialog= ProgressDialog.show(ViewProfileActivity.this, getString(R.string.view_profile_progress_bar_title) + "...",
                 getString(R.string.progress_dialog_text), true);
@@ -49,6 +59,23 @@ public class ViewProfileActivity extends Activity
         mImageView = (ImageView)findViewById(R.id.profileImage);
         mProfileName = (TextView)findViewById(R.id.profileName);
         mInterestList = (FlowLayout)findViewById(R.id.profileInterestLayout);
+        mFavoriteStar = (CheckBox)findViewById(R.id.checkBox);
+
+        mFavoriteStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                {
+                    AddFavorite addFavorite = new AddFavorite();
+                    addFavorite.execute();
+                }
+                else if(!isChecked)
+                {
+                    RemoveFavorite removeFavorite = new RemoveFavorite();
+                    removeFavorite.execute();
+                }
+            }
+        });
 
         //TODO: View Other Profile - Recent Activities
 //        mEventsList = (ListView)findViewById(R.id.profileEventListView);
@@ -142,5 +169,39 @@ public class ViewProfileActivity extends Activity
             }
         }
 
+    }
+
+    private class AddFavorite extends AsyncTask<Void, Void, String>
+    {
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            try{
+                usersApi.addFavourite(mUserId);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
+    }
+
+    private class RemoveFavorite extends AsyncTask<Void, Void, String>
+    {
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            try{
+                usersApi.deleteFavourites(mUserId);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
     }
 }
