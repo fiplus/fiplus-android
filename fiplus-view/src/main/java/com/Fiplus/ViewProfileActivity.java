@@ -77,6 +77,11 @@ public class ViewProfileActivity extends Activity
             }
         });
 
+        if(getIntent().getExtras().getBoolean("favourited"))
+        {
+            mFavoriteStar.setChecked(true);
+        }
+
         //TODO: View Other Profile - Recent Activities
 //        mEventsList = (ListView)findViewById(R.id.profileEventListView);
 //        mEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

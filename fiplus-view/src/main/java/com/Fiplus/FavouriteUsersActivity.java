@@ -44,6 +44,7 @@ public class FavouriteUsersActivity extends Activity {
                 intent.putExtra("userProfile",  mFavouriteUsersListAdapter.getItem(position).getUserPic());
                 intent.putExtra("userId", mFavouriteUsersListAdapter.getItem(position).getUserId());
                 intent.putStringArrayListExtra("userInterest", (ArrayList<String>)mFavouriteUsersListAdapter.getItem(position).getTaggedInterests());
+                intent.putExtra("favourited", true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                 startActivity(intent);
             }

@@ -209,6 +209,7 @@ public class ViewEventActivity extends FragmentActivity {
                         intent.putExtra("userName", profile.getUsername()); //add in the user name
                         intent.putExtra("userProfile", profile.getProfile_pic());
                         intent.putExtra("userId", profile.getUser_id());
+                        intent.putExtra("favourited", profile.getFavourited());
                         intent.putStringArrayListExtra("userInterest", (ArrayList<String>)profile.getTagged_interests());
                         startActivity(intent);
                     }
