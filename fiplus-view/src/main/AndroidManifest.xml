@@ -26,7 +26,7 @@
     <!-- <uses-sdk android:minSdkVersion="20" /> -->
     <application
         android:allowBackup="true"
-        android:icon="@android:color/transparent"
+        android:icon="@drawable/fiplus"
         android:label="@string/app_name" >
         <activity
             android:name=".SplashScreenActivity"

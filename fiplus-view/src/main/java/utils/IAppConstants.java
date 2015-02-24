@@ -4,7 +4,7 @@ public interface IAppConstants {
 	public String EMAIL = "email";
 	public String PWD = "password";
 	public String TABLE_NAME = "todo";
-    public String DSP_URL = "http://dev-fiplus.bitnamiapp.com:3001";
+    public String DSP_URL = "http://ec2-52-1-93-196.compute-1.amazonaws.com:3001";
 	public String TOKEN = "app_token";
 	public String LOGOUT = "logout";
 	public String APP_NAME = "ANDROID";

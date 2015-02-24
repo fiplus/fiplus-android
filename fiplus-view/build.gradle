@@ -1,29 +1,39 @@
 apply plugin: 'com.android.application'
 android {
+    signingConfigs {
+        config {
+            keyAlias 'FiplusKey'
+            keyPassword 'abjnrs2014'
+            storeFile file('/Users/jsfirme/AndroidStudioProjects/keystore/fiplus/fiplus.jks')
+            storePassword 'abjnrs2014'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
         applicationId "com.Fiplus"
         minSdkVersion 15
         targetSdkVersion 21
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.config
         }
     }
 }
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
-    compile 'de.hdodenhof:circleimageview:1.2.1' //for circle image
-    compile 'org.apmem.tools:layouts:1.8@aar'   // for flowlayout
-    compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final' //for time
+    compile 'de.hdodenhof:circleimageview:1.2.1'
+    //for circle image
+    compile 'org.apmem.tools:layouts:1.8@aar'
+    // for flowlayout
+    compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
+    //for time
     compile 'com.google.android.gms:play-services-location:6.5.87'
     compile 'com.google.android.gms:play-services-base:6.5.87'
     compile project(':android-client')
-    compile ('com.google.android.gms:play-services-maps:6.5.87')
+    compile 'com.google.android.gms:play-services-maps:6.5.87'
 }
