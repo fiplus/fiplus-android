@@ -1,12 +1,6 @@
 apply plugin: 'com.android.application'
 android {
     signingConfigs {
-        config {
-            keyAlias 'FiplusKey'
-            keyPassword 'abjnrs2014'
-            storeFile file('/Users/jsfirme/AndroidStudioProjects/keystore/fiplus/fiplus.jks')
-            storePassword 'abjnrs2014'
-        }
     }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
@@ -19,7 +13,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.config
         }
     }
 }
