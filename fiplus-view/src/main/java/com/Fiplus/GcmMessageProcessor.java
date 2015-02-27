@@ -28,6 +28,10 @@ public class GcmMessageProcessor extends IntentService {
 
     private static final String NEW_ACTIVITY_GROUP = "new_activity_group";
 
+    /** Push notification message types */
+    private static final String NEW_ACTIVITY_TYPE = "new_activity";
+    private static final String CANCELLED_ACTIVITY_TYPE = "cancelled_activity";
+
     public GcmMessageProcessor() {
         super(GcmMessageProcessor.class.getSimpleName());
     }
@@ -43,7 +47,14 @@ public class GcmMessageProcessor extends IntentService {
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
-                sendActivityCreatedNotification(extras.getString("message"), extras.getString("activityId"));
+                switch(extras.getString("type")) {
+                    case NEW_ACTIVITY_TYPE:
+                    case CANCELLED_ACTIVITY_TYPE:
+                        sendActivityCreatedNotification(extras.getString("message"), extras.getString("activityId"));
+                        break;
+                    default:
+                        break;
+                }
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }
