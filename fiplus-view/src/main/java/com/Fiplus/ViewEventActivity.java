@@ -8,6 +8,7 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,11 +27,17 @@ import com.wordnik.client.model.Time;
 import com.wordnik.client.model.UserProfile;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import org.ocpsoft.prettytime.Duration;
+import org.ocpsoft.prettytime.PrettyTime;
+import org.ocpsoft.prettytime.TimeFormat;
+import org.ocpsoft.prettytime.TimeUnit;
 
 import utils.IAppConstants;
 
@@ -39,14 +46,14 @@ public class ViewEventActivity extends FragmentActivity {
     static final String DATEFORMAT = "MMM-dd-yyyy HH:mm a";
     public static final String EXTRA_EVENT_ID = "eventID";
 
-    protected TextView mEventName;
+//    protected TextView mEventName;
     protected TextView mEventDesc;
     protected Button mJoinEventBtn;
     protected Button mCancelBtn;
     protected RadioGroup mLocationList;
     protected RadioGroup mTimeList;
     protected LinearLayout mAttendeesList;
-    protected TextView mAttendeesLabel;
+//    protected TextView mAttendeesLabel;
 
     protected List<Time> mSuggestedTimes = new ArrayList<Time>();
     protected List<Location> mSuggestedLocs = new ArrayList<Location>();
@@ -61,12 +68,12 @@ public class ViewEventActivity extends FragmentActivity {
         Bundle b = getIntent().getExtras();
         final String mEventID = b.getString(EXTRA_EVENT_ID);
 
-        mEventName = (TextView) findViewById(R.id.view_event_name);
+      //  mEventName = (TextView) findViewById(R.id.view_event_name);
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
         mLocationList = (RadioGroup) findViewById(R.id.view_event_loc_radiogroup);
         mTimeList = (RadioGroup) findViewById(R.id.view_event_time_radiogroup);
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
-        mAttendeesLabel = (TextView) findViewById(R.id.view_event_attendees_label);
+  //      mAttendeesLabel = (TextView) findViewById(R.id.view_event_attendees_label);
 
         GetEventTask getEventTask = new GetEventTask(mEventID);
         getEventTask.execute();
@@ -179,11 +186,12 @@ public class ViewEventActivity extends FragmentActivity {
             }
             else
             {
-                mEventName.setText(response.getName());
+                setTitle(response.getName());
+         //       mEventName.setText(response.getName());
                 mEventDesc.setText(response.getDescription());
                 mSuggestedTimes = response.getSuggested_times();
                 mSuggestedLocs = response.getSuggested_locations();
-                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
+         //       mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
                 addLocation();
                 addTime();
@@ -223,7 +231,7 @@ public class ViewEventActivity extends FragmentActivity {
         {
             Address addr;
             List<Address> addressList;
-            int numOfVotes;
+       //     int numOfVotes;
 
             for (int row = 0; row < 1; row++) {
                 for (int i = 0; i < mSuggestedLocs.size(); i++)
@@ -250,14 +258,14 @@ public class ViewEventActivity extends FragmentActivity {
                                     // If there's a postal code, add it
                                     addr.getPostalCode() != null ? addr.getPostalCode() : "");
 
-                            //add votes
+/*                            //add votes
                             try {
                                 numOfVotes = mSuggestedLocs.get(i).getSuggestion_votes().intValue();
                             } catch(NullPointerException e)
                             {
                                 numOfVotes= -1;
                             }
-                            addressText += "\n(" + numOfVotes + " vote(s))";
+                            addressText += "\n(" + numOfVotes + " vote(s))";*/
 
                             addrRadioList.setText(addressText);
 
@@ -283,6 +291,7 @@ public class ViewEventActivity extends FragmentActivity {
                     RadioButton rdbtn = new RadioButton(getBaseContext());
                     rdbtn.setTextColor(Color.BLACK);
                     rdbtn.setId((row * 2) + i);
+                    rdbtn.setPadding(0, 5, 0, 5);
                     rdbtn.setText(convertToTimeToString(mSuggestedTimes.get(i)));
                     mTimeList.addView(rdbtn);
                 }
@@ -298,7 +307,7 @@ public class ViewEventActivity extends FragmentActivity {
         {
             long startDate = time.getStart().longValue();
             long endDate = time.getEnd().longValue();
-            int numOfVotes;
+/*            int numOfVotes;
             String s;
 
             //add votes
@@ -309,12 +318,31 @@ public class ViewEventActivity extends FragmentActivity {
                 numOfVotes = -1;
             }
 
-            s = "     (" + numOfVotes + " vote(s))";
+            s = "     (" + numOfVotes + " vote(s))";*/
 
             Date d1 = new Date(startDate);
             Date d2 = new Date(endDate);
-            SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-            return "Start: " + dateFormat.format(d1) + s + "\nEnd  : " + dateFormat.format(d2);
+            PrettyTime p = new PrettyTime();
+            String format = "EEE, MMM d 'at' h:m a";
+            String format2 = format;
+            boolean curYear = d1.getYear() == new Date().getYear();
+            boolean sameMonth = d1.getMonth() == d2.getMonth();
+            boolean sameDay = d1.getDate() == d2.getDate();
+            if(sameDay && sameMonth)
+            {
+                format2 = "h:m a";
+            }
+            if(!curYear)
+            {
+                format2 += ", YYYY";
+            }
+
+            // TODO print year if different year
+            // TODO don't print E M d if same E M D
+
+            SimpleDateFormat sdf1 = new SimpleDateFormat(format);
+            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+            return sdf1.format(d1) + " to " + sdf2.format(d2);
         }
     }
 
