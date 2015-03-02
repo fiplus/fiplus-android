@@ -7,17 +7,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Favourites;
-import com.wordnik.client.model.UserProfile;
 
 import java.util.ArrayList;
 
 import adapters.FavouriteUsersListAdapter;
 import model.FavouriteUsersListItem;
 import utils.IAppConstants;
-import utils.PrefUtil;
 
 /**
  * Created by Allan on 03/12/2014.
@@ -76,7 +73,7 @@ public class FavouriteUsersActivity extends Activity {
         for(int i = 0; i < favourites.getFavourite_users().size(); i++ )
         {
             FavouriteUsersList.add(new FavouriteUsersListItem(favourites.getFavourite_users().get(i).getUsername(),
-                    R.drawable.fiplus,
+                    R.mipmap.fiplus,
                     favourites.getFavourite_users().get(i).getUser_id(),
                     favourites.getFavourite_users().get(i).getTagged_interests()));
         }

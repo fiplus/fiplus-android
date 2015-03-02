@@ -3,13 +3,12 @@ package com.Fiplus;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
-import android.view.View;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -84,7 +83,7 @@ public class GcmMessageProcessor extends IntentService {
 
 
         mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.fiplus)
+                .setSmallIcon(R.mipmap.fiplus)
                 .setContentTitle("Fi+")
                 .setContentText(msg)
                 .setContentIntent(resultPendingIntent)

@@ -79,7 +79,7 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
         }
 
         mFitLogo = (ImageView)findViewById(R.id.login_fit_logo);
-        mFitLogo.setImageResource(R.drawable.fiplus);
+        mFitLogo.setImageResource(R.mipmap.fiplus);
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);

@@ -89,11 +89,13 @@ public class DateTimePicker {
 
                 time.setStart(lTime.doubleValue());
                 mDateTimeDialog.dismiss();
-                if(checkTime(time))
+
+                String timeCheck = checkTime(time, cal);
+                if(timeCheck != null)
                 {
                     //AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateEventActivity.this);
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(callingContext);
-                    alertDialog.setTitle("Error").setMessage(R.string.start_time_error).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    alertDialog.setTitle("Error").setMessage(timeCheck).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -104,13 +106,13 @@ public class DateTimePicker {
                 else
                 {
                     //set end date if start time is set properly
-                    getEndTime();
+                    getEndTime(year, month, day, hour, minutes);
                 }
             }
         });
     }
 
-    private void getEndTime()
+    private void getEndTime(int year, int month, int day, int hour, int minutes)
     {
         mDateTimeDialog = new Dialog(callingContext);
         mDateTimeDialog.setContentView(R.layout.date_time_layout);
@@ -121,6 +123,11 @@ public class DateTimePicker {
 
         mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
         mTimePicker = (TimePicker) mDateTimeDialog.findViewById(R.id.timePicker);
+
+        //set the end date and time picker to start as to what the start date & time got set
+        mDatePicker.updateDate(year, month, day);
+        mTimePicker.setCurrentHour(hour);
+        mTimePicker.setCurrentMinute(minutes);
 
         //for cancel button
         mCancelTimeButton = (Button) mDateTimeDialog.findViewById(R.id.cancelPicker);
@@ -151,10 +158,12 @@ public class DateTimePicker {
 
                 time.setEnd(lTime.doubleValue());
                 mDateTimeDialog.dismiss();
-                if (checkTime(time)) {
+
+                String timeCheck = checkTime(time, cal);
+                if (timeCheck != null) {
 
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(callingContext);
-                    alertDialog.setTitle("Error").setMessage(R.string.end_time_error).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    alertDialog.setTitle("Error").setMessage(timeCheck).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -192,20 +201,30 @@ public class DateTimePicker {
     }
 
 
-    private boolean checkTime(Time time)
+    private String checkTime(Time time, Calendar cal)
     {
-        boolean isError;
+        String isError = null;
 
         //get current date and date
         Calendar c = Calendar.getInstance();
 
-        if(time.getEnd() == null)
+        int result = (int)((cal.getTimeInMillis() - c.getTimeInMillis()) / (1000 * 60 * 60 * 24));
+
+        //check if entered time is more than a year from now
+        if((result) > 365)
         {
-            isError = time.getStart() < c.getTime().getTime();
+            isError = callingContext.getString(R.string.time_more_than_a_year);
         }
-        else
+        // check if start time is less than the current time
+        else if(time.getEnd() == null && (time.getStart() < c.getTime().getTime()))
         {
-            isError = time.getEnd() < time.getStart();
+            isError = callingContext.getString(R.string.start_time_error);
+        }
+        //check if end time is less than start time
+        else if(time.getEnd() != null && time.getEnd() < time.getStart())
+        {
+
+            isError = callingContext.getString(R.string.end_time_error);
         }
 
         return isError;
