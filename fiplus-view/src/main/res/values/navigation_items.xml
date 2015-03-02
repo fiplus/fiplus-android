@@ -6,7 +6,7 @@
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
         <item >Configure Profile</item>
-      <!--  <item >Recent Activities</item> -->
+        <item >Recent Activities</item>
         <item >Favorites</item>
         <item >Settings</item>
         <item >Log Out</item>
@@ -16,6 +16,7 @@
 
     <array name="nav_drawer_icons">
         <item>@drawable/ic_configure</item>
+        <item>@drawable/ic_activities</item>
         <item>@drawable/ic_star</item>
         <item>@drawable/ic_settings</item>
         <item>@drawable/ic_logout</item>
