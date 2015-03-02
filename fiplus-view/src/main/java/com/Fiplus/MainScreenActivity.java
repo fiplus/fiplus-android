@@ -267,20 +267,20 @@ public class MainScreenActivity extends BaseFragmentActivity
                 intent = new Intent(this, ConfigureProfileActivity.class);
                 startActivity(intent);
                 break;
-//            case 1: //Recent Activities
-//                intent = new Intent(this, RecentActivitiesActivity.class);
-//                startActivity(intent);
-//                break;
-            case 1: //Favorites
+            case 1: //Recent Activities
+                intent = new Intent(this, RecentActivitiesActivity.class);
+                startActivity(intent);
+                break;
+            case 2: //Favorites
                 intent = new Intent(this, FavouriteUsersActivity.class);
                 startActivity(intent);
                 break;
-            case 2: //Settings
+            case 3: //Settings
                 break;
-            case 3: //logout
+            case 4: //logout
                 logout();
                 break;
-            case 4://feedback
+            case 5://feedback
                 Uri uriUrl = Uri.parse("https://docs.google.com/forms/d/1IJanmZWGyjQ2f8rQuzSDyo8Y8PKvV8Ed4wrzGRkXoNI/viewform?usp=send_form");
                 Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
                 startActivity(launchBrowser);

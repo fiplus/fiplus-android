@@ -25,7 +25,8 @@ public class EventListAdapter extends BaseAdapter
         FRAGMENTNEARYOU,
         FRAGMENTINTEREST,
         FRAGMENTMYEVENTS,
-        FRAGMENTEVENTS
+        FRAGMENTEVENTS,
+        FRAGMENTRECENTACTIVITIES
     }
 
     private Context context;
