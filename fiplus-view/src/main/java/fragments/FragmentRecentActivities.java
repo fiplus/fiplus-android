@@ -29,6 +29,7 @@ import model.EventListItem;
 import utils.AlertFragmentDialog;
 import utils.IAppConstants;
 import utils.LocationUtil;
+import utils.PrefUtil;
 
 public class FragmentRecentActivities extends Fragment {
 
@@ -82,8 +83,8 @@ public class FragmentRecentActivities extends Fragment {
             eventList.add(new EventListItem(
                     R.drawable.ic_configure,
                     activities.get(i).getName(),
-                    LocationUtil.getLocationStrings(activities.get(i).getSuggested_locations(), getActivity().getBaseContext()),
-                    activities.get(i).getSuggested_times(),
+                    LocationUtil.getLocationStrings(activities.get(i).getLocations(), getActivity().getBaseContext()),
+                    activities.get(i).getTimes(),
                     ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));
 
@@ -124,7 +125,8 @@ public class FragmentRecentActivities extends Fragment {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try{
-                response = usersApi.getActivities(true,false);
+                response = usersApi.getActivities(PrefUtil.getString(getActivity().getBaseContext(), IAppConstants.USER_ID),
+                                                  true,false);
             } catch (Exception e) {
                 return e.getMessage();
             }
