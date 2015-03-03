@@ -5,6 +5,10 @@
     <string name="view_event_cancel_event_btn">Cancel Event</string>
     <string name="view_event_joiner">Joiner</string>
 
+    <string name="view_event_joiner_button">Update Changes</string>
+    <string name="view_event_suggest_date">Suggest Date</string>
+    <string name="view_event_suggest_time">Suggest Time</string>
+
     <string name="view_event_name_label">Event Name:</string>
     <string name="view_event_desc_label">Description:</string>
     <string name="view_event_attendees_label">Fi+ Buddies:</string>

@@ -440,8 +440,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
             createEvent.setCreator(PrefUtil.getString(getApplicationContext(),IAppConstants.USER_ID));
             createEvent.setTagged_interests(mTagsList);
-            createEvent.setSuggested_times(mDateTimeListItemsUTC);
-            createEvent.setSuggested_locations(mEventLocationList);
+            createEvent.setTimes(mDateTimeListItemsUTC);
+            createEvent.setLocations(mEventLocationList);
             try {
                 createEventApi.createActivity(createEvent);
                 message = "Event Created";

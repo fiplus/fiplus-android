@@ -28,6 +28,7 @@
     <string name="error_time">Invalid time on the list</string>
     <string name="end_time_error">End Time cannot be earlier than Start Time</string>
     <string name="start_time_error">Start Time cannot be earlier than Current Time</string>
+    <string name="time_more_than_a_year">You can only set dates that are less than 1 year from now</string>
 
     <string name="progress_dialog_title">Validating Address</string>
     <string name="progress_dialog_text">Please Wait</string>

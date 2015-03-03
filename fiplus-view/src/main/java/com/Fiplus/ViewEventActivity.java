@@ -11,9 +11,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +31,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import utils.DateTimePicker;
 import utils.IAppConstants;
+import utils.PrefUtil;
 
 public class ViewEventActivity extends FragmentActivity {
 
@@ -43,10 +44,13 @@ public class ViewEventActivity extends FragmentActivity {
     protected TextView mEventDesc;
     protected Button mJoinEventBtn;
     protected Button mCancelBtn;
-    protected RadioGroup mLocationList;
-    protected RadioGroup mTimeList;
+    protected LinearLayout mLocationList;
+    protected LinearLayout mTimeList;
     protected LinearLayout mAttendeesList;
+    protected LinearLayout mSuggestButtonsLayout;
     protected TextView mAttendeesLabel;
+    protected Button mSuggestDate;
+    protected Button mSuggestTime;
 
     protected List<Time> mSuggestedTimes = new ArrayList<Time>();
     protected List<Location> mSuggestedLocs = new ArrayList<Location>();
@@ -63,8 +67,8 @@ public class ViewEventActivity extends FragmentActivity {
 
         mEventName = (TextView) findViewById(R.id.view_event_name);
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
-        mLocationList = (RadioGroup) findViewById(R.id.view_event_loc_radiogroup);
-        mTimeList = (RadioGroup) findViewById(R.id.view_event_time_radiogroup);
+        mLocationList = (LinearLayout) findViewById(R.id.view_event_loc_checkboxes);
+        mTimeList = (LinearLayout) findViewById(R.id.view_event_time_checkboxes);
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
         mAttendeesLabel = (TextView) findViewById(R.id.view_event_attendees_label);
 
@@ -89,6 +93,21 @@ public class ViewEventActivity extends FragmentActivity {
             }
         });
 
+
+        mSuggestButtonsLayout = (LinearLayout) findViewById(R.id.suggest_layout);
+        mSuggestDate = (Button) findViewById(R.id.view_event_suggest_date);
+        mSuggestTime = (Button) findViewById(R.id.view_event_suggest_time);
+        mSuggestTime.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                DateTimePicker getDateTime = new DateTimePicker(ViewEventActivity.this);
+                getDateTime.showDateTimePickerDialog();
+            }
+        });
+
+
     }
 
     @Override
@@ -109,6 +128,7 @@ public class ViewEventActivity extends FragmentActivity {
         Activity response;
         String sEventID, sEventDetails = "";
         Attendee attendees;
+        Boolean isAJoiner = false;
 
         public GetEventTask (String s)
         {
@@ -149,6 +169,11 @@ public class ViewEventActivity extends FragmentActivity {
                 {
                     try {
                         String sID = attendees.getJoiners().get(i);
+                        //check if a user is a joiner of this event
+                        if(sID.equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
+                        {
+                            isAJoiner = true;
+                        }
                         sUserProfile = usersApi.getUserProfile(sID);
                         mAttendees.add(sUserProfile);
                     } catch (Exception e) {
@@ -181,8 +206,18 @@ public class ViewEventActivity extends FragmentActivity {
             {
                 mEventName.setText(response.getName());
                 mEventDesc.setText(response.getDescription());
-                mSuggestedTimes = response.getSuggested_times();
-                mSuggestedLocs = response.getSuggested_locations();
+                mSuggestedTimes = response.getTimes();
+                mSuggestedLocs = response.getLocations();
+                if(isAJoiner)
+                {
+                    mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                }
+
+//                if(!response.getAllow_joiner_input() )
+//                {
+//                    mSuggestButtonsLayout.setVisibility(View.GONE);
+//                }
+
                 mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
                 addLocation();
@@ -228,9 +263,9 @@ public class ViewEventActivity extends FragmentActivity {
             for (int row = 0; row < 1; row++) {
                 for (int i = 0; i < mSuggestedLocs.size(); i++)
                 {
-                    RadioButton addrRadioList = new RadioButton(getBaseContext());
-                    addrRadioList.setTextColor(Color.BLACK);
-                    addrRadioList.setId((row * 2) + i);
+                    CheckBox addrCheckList = new CheckBox(getBaseContext());
+                    addrCheckList.setTextColor(Color.BLACK);
+                    addrCheckList.setId((row * 2) + i);
                     try {
                         Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
                         addressList = geocoder.getFromLocation(mSuggestedLocs.get(i).getLatitude(),
@@ -259,19 +294,14 @@ public class ViewEventActivity extends FragmentActivity {
                             }
                             addressText += "\n(" + numOfVotes + " vote(s))";
 
-                            addrRadioList.setText(addressText);
+                            addrCheckList.setText(addressText);
 
-                            mLocationList.addView(addrRadioList);
+                            mLocationList.addView(addrCheckList);
                         }
                     } catch (IOException e) {
                         Log.e("View Event", e.getMessage());
                     }
                 }
-            }
-
-            if(mSuggestedLocs.size() > 0)
-            {
-                mLocationList.check(0); //select the first item on the list
             }
         }
 
@@ -280,17 +310,12 @@ public class ViewEventActivity extends FragmentActivity {
             for (int row = 0; row < 1; row++) {
 
                 for (int i = 0; i < mSuggestedTimes.size(); i++) {
-                    RadioButton rdbtn = new RadioButton(getBaseContext());
-                    rdbtn.setTextColor(Color.BLACK);
-                    rdbtn.setId((row * 2) + i);
-                    rdbtn.setText(convertToTimeToString(mSuggestedTimes.get(i)));
-                    mTimeList.addView(rdbtn);
+                    CheckBox timeCheckBox = new CheckBox(getBaseContext());
+                    timeCheckBox.setTextColor(Color.BLACK);
+                    timeCheckBox.setId((row * 2) + i);
+                    timeCheckBox.setText(convertToTimeToString(mSuggestedTimes.get(i)));
+                    mTimeList.addView(timeCheckBox);
                 }
-            }
-
-            if(mSuggestedTimes.size() > 0)
-            {
-                mTimeList.check(0); //select the first item on the list
             }
         }
 
@@ -322,14 +347,11 @@ public class ViewEventActivity extends FragmentActivity {
     {
         String sEventID, response;
         ProgressDialog progressDialog;
-        int addressIndex;
-        int timeIndex;
+        ActsApi getEventApi;
 
         public JoinEventTask (String s)
         {
             sEventID = s;
-            addressIndex = mLocationList.indexOfChild(mLocationList.findViewById(mLocationList.getCheckedRadioButtonId()));
-            timeIndex = mTimeList.indexOfChild(mTimeList.findViewById(mTimeList.getCheckedRadioButtonId()));
         }
 
         @Override
@@ -341,14 +363,13 @@ public class ViewEventActivity extends FragmentActivity {
         @Override
         protected String doInBackground(Void... params)
         {
-            ActsApi getEventApi = new ActsApi();
+            getEventApi = new ActsApi();
             getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
                 getEventApi.joinActivity(sEventID);
-                getEventApi.voteForSuggestion(mSuggestedLocs.get(addressIndex).getSuggestion_id());
-                getEventApi.voteForSuggestion(mSuggestedTimes.get(timeIndex).getSuggestion_id());
+                checkVotes();
             } catch (Exception e) {
                 response = e.getMessage();
             }
@@ -362,6 +383,41 @@ public class ViewEventActivity extends FragmentActivity {
             message = "Joined Event";
             Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
+        }
+
+        private void checkVotes()
+        {
+
+            int addrCount = mLocationList.getChildCount();
+            int timeCount = mTimeList.getChildCount();
+
+            System.out.println("Count = " + addrCount);
+
+            for (int i=0; i<addrCount; i++)
+            {
+                if(((CheckBox)mLocationList.getChildAt(i)).isChecked())
+                {
+                    try {
+                        getEventApi.voteForSuggestion(mSuggestedLocs.get(i).getSuggestion_id());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
+            }
+
+            System.out.println("Count = " + timeCount);
+
+            for (int i=0; i<timeCount; i++)
+            {
+                if(((CheckBox)mTimeList.getChildAt(i)).isChecked())
+                {
+                    try {
+                        getEventApi.voteForSuggestion(mSuggestedTimes.get(i).getSuggestion_id());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
+            }
         }
     }
 }

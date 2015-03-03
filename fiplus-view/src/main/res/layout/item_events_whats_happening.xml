@@ -31,11 +31,14 @@
         android:layout="@id/event_pic"
         android:layout_toEndOf="@id/event_pic"
         android:layout_toRightOf="@id/event_pic"
+        android:layout_toLeftOf="@+id/event_button"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
         android:text="Event 1"
         android:textColor="@color/list_item_title"
+        android:ellipsize = "end"
+        android:singleLine="true"
         />
 
     <TextView

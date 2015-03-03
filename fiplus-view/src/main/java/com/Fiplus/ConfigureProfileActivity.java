@@ -102,7 +102,7 @@ public class ConfigureProfileActivity extends Activity {
 
         //TODO: (Nick) Configure Profile - Upload Profile Photo
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mImageView.setImageResource(R.drawable.fiplus);
+        mImageView.setImageResource(R.mipmap.fiplus);
 
         mProfileName = (EditText) findViewById(R.id.configure_profile_name);
         mGender = (EditText) findViewById(R.id.configure_gender);

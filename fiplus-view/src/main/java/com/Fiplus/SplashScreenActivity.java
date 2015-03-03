@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wordnik.client.api.UsersApi;
@@ -12,14 +13,18 @@ import com.wordnik.client.model.Credentials;
 import utils.IAppConstants;
 import utils.PrefUtil;
 
-/**
- * Created by jsfirme on 15-01-04.
- */
 public class SplashScreenActivity extends BaseFragmentActivity {
+
+    protected ImageView image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+        //TODO: Splashscreen handle landscape
+        image = (ImageView) findViewById(R.id.imageSplash);
+
         // check for google play services and obtain the current regid
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
