@@ -26,6 +26,7 @@ import model.EventListItem;
 import utils.AlertFragmentDialog;
 import utils.IAppConstants;
 import utils.LocationUtil;
+import utils.PrefUtil;
 
 
 public class FragmentMyEvents extends Fragment {
@@ -128,7 +129,8 @@ public class FragmentMyEvents extends Fragment {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try{
-                response = usersApi.getActivities(false, true);
+                response = usersApi.getActivities(PrefUtil.getString(getActivity().getBaseContext(), IAppConstants.USER_ID),
+                                                  false, true);
             } catch (Exception e) {
                 return e.getMessage();
             }
