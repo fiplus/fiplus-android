@@ -4,6 +4,8 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
+import android.text.TextWatcher;
 import android.util.Log;
 
 import com.Fiplus.CreateEventActivity;
@@ -20,10 +22,10 @@ public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
     List<Address> addressList = null;
     Address addr;
     Location location = new Location();
-    CreateEventActivity callerActivity;
+    GeoAutoCompleteInterface callerActivity;
     int max_location;
 
-    public GeocodingLocation(Context context, CreateEventActivity activity, int num) {
+    public GeocodingLocation(Context context, GeoAutoCompleteInterface activity, int num) {
         super();
         mContext = context;
         callerActivity = activity;

@@ -87,13 +87,38 @@
             android:orientation="vertical"
             />
 
+        <AutoCompleteTextView
+            android:paddingTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/view_event_location"
+            android:hint="@string/create_event_location_hint"
+            android:background="@android:drawable/edit_text"
+            android:textColor="@android:color/primary_text_light"
+            android:layout_below="@+id/view_event_loc_checkboxes"
+            android:layout_above="@+id/view_event_time_label"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/view_event_add_location"
+            android:singleLine="true"/>
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/view_event_add_location"
+            android:layout_below="@+id/view_event_loc_checkboxes"
+            android:background="@android:drawable/ic_input_add"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/view_event_suggested_time_label"
             android:id="@+id/view_event_time_label"
-            android:layout_below="@+id/view_event_loc_checkboxes"
+            android:layout_below="@+id/view_event_add_location"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
@@ -106,6 +131,8 @@
             android:layout_centerVertical="true"
             android:layout_below="@+id/view_event_time_label"
             android:id="@+id/view_event_time_checkboxes"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:orientation="vertical"
         />
 

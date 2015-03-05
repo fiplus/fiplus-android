@@ -31,19 +31,15 @@ import java.util.List;
 
 import adapters.LocationArrayAdapterNoFilter;
 import utils.DateTimePicker;
+import utils.GeoAutoCompleteInterface;
 import utils.GeocodingLocation;
 import utils.IAppConstants;
 import utils.ListViewUtil;
 import utils.PrefUtil;
 
 
-public class CreateEventActivity extends FragmentActivity implements TextWatcher {
-
-    private static final int MAX_CHARS = 3; //max chars before suggesting locations
-    private static final int AUTOCOMPLETE = 5; //number of suggestions
-    private static final int FINAL_LOC = 1; //when adding the location
+public class CreateEventActivity extends FragmentActivity implements TextWatcher, GeoAutoCompleteInterface {
     final String btnInnerHTML = "<font color='gray'>\"%s\"    </font>";
-    final Integer MAX = 3;
 
     //protected ImageView mImageView;
     protected EditText mEventName;

@@ -6,10 +6,15 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -31,14 +36,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import adapters.LocationArrayAdapterNoFilter;
 import utils.DateTimePicker;
+import utils.GeoAutoCompleteInterface;
+import utils.GeocodingLocation;
 import utils.IAppConstants;
+import utils.ListViewUtil;
 import utils.PrefUtil;
 
-public class ViewEventActivity extends FragmentActivity {
+public class ViewEventActivity extends FragmentActivity  implements TextWatcher, GeoAutoCompleteInterface {
     public static final String EXTRA_EVENT_ID = "eventID";
 
     protected TextView mEventDesc;
+    protected AutoCompleteTextView mEventLocation;
     protected Button mJoinEventBtn;
     protected Button mCancelBtn;
     protected LinearLayout mLocationList;
@@ -47,10 +57,12 @@ public class ViewEventActivity extends FragmentActivity {
     protected LinearLayout mSuggestButtonsLayout;
     protected Button mSuggestDate;
     protected Button mSuggestTime;
+    protected Button mAddLocationBtn;
 
     protected List<Time> mSuggestedTimes = new ArrayList<Time>();
     protected List<Location> mSuggestedLocs = new ArrayList<Location>();
     protected List<UserProfile> mAttendees = new ArrayList<UserProfile>();
+    protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -101,6 +113,34 @@ public class ViewEventActivity extends FragmentActivity {
             }
         });
 
+        mEventLocation = (AutoCompleteTextView) findViewById(R.id.view_event_location);
+        autoCompleteLocationAdapter = new LocationArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);
+        autoCompleteLocationAdapter.setNotifyOnChange(false);
+        mEventLocation.addTextChangedListener(this);
+        //mEventLocation.setOnItemSelectedListener(this);
+        mEventLocation.setThreshold(MAX_CHARS);
+        mEventLocation.setAdapter(autoCompleteLocationAdapter);
+
+
+        mAddLocationBtn = (Button) findViewById(R.id.view_event_add_location);
+        mAddLocationBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                String address = mEventLocation.getText().toString();
+
+                if(!address.isEmpty())
+                {
+                    if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
+                    {
+                        GeocodingLocation location = new GeocodingLocation(getBaseContext(), ViewEventActivity.this, FINAL_LOC);
+                        location.execute(address);
+                    }
+
+                }
+            }
+        });
 
     }
 
@@ -114,6 +154,65 @@ public class ViewEventActivity extends FragmentActivity {
     public void onPause() {
         super.onPause();
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        final String address = s.toString();
+
+        if(!address.isEmpty() && address.length() >= MAX_CHARS)
+        {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
+            {
+                GeocodingLocation location = new GeocodingLocation(getBaseContext(), ViewEventActivity.this, AUTOCOMPLETE);
+                location.execute(address);
+            }
+        }
+        else
+        {
+            autoCompleteLocationAdapter.clear();
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
+
+    @Override
+    public void populateLocation(Location location, String address) {
+        // Display the results of the lookup.
+        if(address != null)
+        {
+            //TODO: items should appear to be "in progress" until user joins
+            mSuggestedLocs.add(location);
+   //         mEventLocationListItems.add(address);
+      //      locationAdapter.notifyDataSetChanged();
+     //       ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
+
+            if(mSuggestedLocs.size() == MAX)
+            {
+                mEventLocation.setHint(R.string.create_event_max_location);
+                mEventLocation.setClickable(false);
+                mEventLocation.setEnabled(false);
+            }
+
+            mEventLocation.setText("");
+        }
+        else
+        {
+            mEventLocation.setError(getString(R.string.error_address_not_found));
+        }
+    }
+
+    @Override
+    public ArrayAdapter<String> getAutoComplete() {
+            return autoCompleteLocationAdapter;
     }
 
     class GetEventTask extends AsyncTask<Void, Void, String> {
