@@ -36,11 +36,8 @@ import utils.IAppConstants;
 import utils.PrefUtil;
 
 public class ViewEventActivity extends FragmentActivity {
-
-    static final String DATEFORMAT = "MMM-dd-yyyy HH:mm a";
     public static final String EXTRA_EVENT_ID = "eventID";
 
-    protected TextView mEventName;
     protected TextView mEventDesc;
     protected Button mJoinEventBtn;
     protected Button mCancelBtn;
@@ -48,7 +45,6 @@ public class ViewEventActivity extends FragmentActivity {
     protected LinearLayout mTimeList;
     protected LinearLayout mAttendeesList;
     protected LinearLayout mSuggestButtonsLayout;
-    protected TextView mAttendeesLabel;
     protected Button mSuggestDate;
     protected Button mSuggestTime;
 
@@ -65,12 +61,10 @@ public class ViewEventActivity extends FragmentActivity {
         Bundle b = getIntent().getExtras();
         final String mEventID = b.getString(EXTRA_EVENT_ID);
 
-        mEventName = (TextView) findViewById(R.id.view_event_name);
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
         mLocationList = (LinearLayout) findViewById(R.id.view_event_loc_checkboxes);
         mTimeList = (LinearLayout) findViewById(R.id.view_event_time_checkboxes);
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
-        mAttendeesLabel = (TextView) findViewById(R.id.view_event_attendees_label);
 
         GetEventTask getEventTask = new GetEventTask(mEventID);
         getEventTask.execute();
@@ -204,7 +198,7 @@ public class ViewEventActivity extends FragmentActivity {
             }
             else
             {
-                mEventName.setText(response.getName());
+                setTitle(response.getName());
                 mEventDesc.setText(response.getDescription());
                 mSuggestedTimes = response.getTimes();
                 mSuggestedLocs = response.getLocations();
@@ -218,7 +212,7 @@ public class ViewEventActivity extends FragmentActivity {
 //                    mSuggestButtonsLayout.setVisibility(View.GONE);
 //                }
 
-                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
+//                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
                 addLocation();
                 addTime();
@@ -274,16 +268,12 @@ public class ViewEventActivity extends FragmentActivity {
                             addr = addressList.get(0);
 
                             String addressText = String.format(
-                                    "%s, %s, %s %s",
+                                    "%s, %s",
                                     // If there's a street address, add it
                                     addr.getMaxAddressLineIndex() > 0 ?
                                             addr.getAddressLine(0) : "",
                                     // Locality is usually a city
-                                    addr.getLocality() != null ? addr.getLocality() : "",
-                                    // The country of the address
-                                    addr.getCountryName(),
-                                    // If there's a postal code, add it
-                                    addr.getPostalCode() != null ? addr.getPostalCode() : "");
+                                    addr.getLocality() != null ? addr.getLocality() : "");
 
                             //add votes
                             try {
@@ -292,7 +282,6 @@ public class ViewEventActivity extends FragmentActivity {
                             {
                                 numOfVotes= -1;
                             }
-                            addressText += "\n(" + numOfVotes + " vote(s))";
 
                             addrCheckList.setText(addressText);
 
@@ -334,12 +323,34 @@ public class ViewEventActivity extends FragmentActivity {
                 numOfVotes = -1;
             }
 
-            s = "     (" + numOfVotes + " vote(s))";
+            s = " (" + numOfVotes + " vote(s))";
 
             Date d1 = new Date(startDate);
             Date d2 = new Date(endDate);
-            SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-            return "Start: " + dateFormat.format(d1) + s + "\nEnd  : " + dateFormat.format(d2);
+            String format = "EEE MMM d, h:m a";
+
+            String format2 = format;
+            String middle = " to ";
+            boolean curYear = d1.getYear() == new Date().getYear();
+            boolean sameMonth = d1.getMonth() == d2.getMonth();
+            boolean sameDay = d1.getDate() == d2.getDate();
+
+            if(sameDay && sameMonth)
+            {
+                format2 = "h:m a";
+                middle = " to ";
+            }
+            if(!curYear)
+            {
+                format2 += ", YYYY";
+            }
+
+            // TODO print year if different year
+            // TODO don't print E M d if same E M D
+
+            SimpleDateFormat sdf1 = new SimpleDateFormat(format);
+            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+            return sdf1.format(d1) + middle + sdf2.format(d2);
         }
     }
 
