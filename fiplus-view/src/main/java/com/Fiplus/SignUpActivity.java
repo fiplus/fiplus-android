@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -99,9 +100,9 @@ public class SignUpActivity extends Activity {
         {
             @Override
             public void onClick(View widget) {
-                Intent intent = new Intent(getBaseContext(), PrivacyPolicyActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                Uri uriUrl = Uri.parse("http://fiplus.github.io/PrivacyPolicy.html");
+                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                startActivity(launchBrowser);
             }
         };
 
@@ -109,8 +110,9 @@ public class SignUpActivity extends Activity {
         {
             @Override
             public void onClick(View widget) {
-                Intent intent = new Intent(getBaseContext(), TermsOfUseActivity.class);
-                startActivity(intent);
+                Uri uriUrl = Uri.parse("http://fiplus.github.io/TermsOfUse.html");
+                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                startActivity(launchBrowser);
             }
         };
         mySpannable.setSpan(privacySpan, privacy1, privacy2 + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

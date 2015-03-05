@@ -75,25 +75,6 @@
                 android:value=".LoginActivity" />
         </activity>
         <activity
-            android:name=".TermsOfUseActivity"
-            android:label="@string/terms_of_use_activity"
-            android:parentActivityName=".LoginActivity"
-            android:theme="@style/Theme.Mainscreen" >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
-        </activity>
-        <activity
-            android:name=".PrivacyPolicyActivity"
-            android:label="@string/privacy_policy_activity"
-            android:parentActivityName=".LoginActivity"
-            android:theme="@style/Theme.Mainscreen" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
-        </activity>
-        <activity
             android:name=".MyEventsActivity"
             android:label="@string/my_events"
             android:parentActivityName=".MainScreenActivity"
