@@ -194,13 +194,6 @@ public class ViewProfileActivity extends Activity
         {
             return;
         }
-        else if(activities.size() == 0)
-        {
-            FragmentManager fm = getFragmentManager();
-            DialogFragment alertDialog = AlertFragmentDialog.newInstance("Be Fi+!");
-            alertDialog.setCancelable(false);
-            alertDialog.show(fm, "fragment_alert");
-        }
 
         ArrayList<EventListItem> eventList = new ArrayList<>();
 
