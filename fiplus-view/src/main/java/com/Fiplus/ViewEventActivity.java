@@ -2,7 +2,6 @@ package com.Fiplus;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -13,11 +12,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,11 +38,12 @@ import java.util.List;
 import java.util.Locale;
 
 import adapters.LocationArrayAdapterNoFilter;
+import adapters.SuggestionListAdapter;
+import model.SuggestionListItem;
 import utils.DateTimePicker;
 import utils.GeoAutoCompleteInterface;
 import utils.GeocodingLocation;
 import utils.IAppConstants;
-import utils.ListViewUtil;
 import utils.PrefUtil;
 
 public class ViewEventActivity extends FragmentActivity  implements TextWatcher, GeoAutoCompleteInterface {
@@ -51,16 +53,14 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected AutoCompleteTextView mEventLocation;
     protected Button mJoinEventBtn;
     protected Button mCancelBtn;
-    protected LinearLayout mLocationList;
-    protected LinearLayout mTimeList;
+    protected ListView mLocationList;
+    protected ListView mTimeList;
     protected LinearLayout mAttendeesList;
-    protected LinearLayout mSuggestButtonsLayout;
-    protected Button mSuggestDate;
     protected Button mSuggestTime;
     protected Button mAddLocationBtn;
 
-    protected List<Time> mSuggestedTimes = new ArrayList<Time>();
-    protected List<Location> mSuggestedLocs = new ArrayList<Location>();
+    private SuggestionListAdapter mLocationListAdapter;
+    private SuggestionListAdapter mTimesListAdapter;
     protected List<UserProfile> mAttendees = new ArrayList<UserProfile>();
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
@@ -74,8 +74,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         final String mEventID = b.getString(EXTRA_EVENT_ID);
 
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
-        mLocationList = (LinearLayout) findViewById(R.id.view_event_loc_checkboxes);
-        mTimeList = (LinearLayout) findViewById(R.id.view_event_time_checkboxes);
+        mLocationList = (ListView) findViewById(R.id.view_event_loc_checkboxes);
+        mTimeList = (ListView) findViewById(R.id.view_event_time_checkboxes);
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
 
         GetEventTask getEventTask = new GetEventTask(mEventID);
@@ -99,9 +99,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
         });
 
-
-        mSuggestButtonsLayout = (LinearLayout) findViewById(R.id.suggest_layout);
-        mSuggestDate = (Button) findViewById(R.id.view_event_suggest_date);
         mSuggestTime = (Button) findViewById(R.id.view_event_suggest_time);
         mSuggestTime.setOnClickListener(new View.OnClickListener()
         {
@@ -117,7 +114,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         autoCompleteLocationAdapter = new LocationArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);
         autoCompleteLocationAdapter.setNotifyOnChange(false);
         mEventLocation.addTextChangedListener(this);
-        //mEventLocation.setOnItemSelectedListener(this);
         mEventLocation.setThreshold(MAX_CHARS);
         mEventLocation.setAdapter(autoCompleteLocationAdapter);
 
@@ -142,6 +138,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
         });
 
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     @Override
@@ -186,28 +183,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     @Override
     public void populateLocation(Location location, String address) {
-        // Display the results of the lookup.
-        if(address != null)
-        {
-            //TODO: items should appear to be "in progress" until user joins
-            mSuggestedLocs.add(location);
-   //         mEventLocationListItems.add(address);
-      //      locationAdapter.notifyDataSetChanged();
-     //       ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
-
-            if(mSuggestedLocs.size() == MAX)
-            {
-                mEventLocation.setHint(R.string.create_event_max_location);
-                mEventLocation.setClickable(false);
-                mEventLocation.setEnabled(false);
-            }
-
-            mEventLocation.setText("");
-        }
-        else
-        {
-            mEventLocation.setError(getString(R.string.error_address_not_found));
-        }
+        //TODO Jobelle - add suggestion to list
     }
 
     @Override
@@ -298,9 +274,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             else
             {
                 setTitle(response.getName());
-                mEventDesc.setText(response.getDescription());
-                mSuggestedTimes = response.getTimes();
-                mSuggestedLocs = response.getLocations();
+                String desc = response.getDescription();
+                if(desc.length() == 0)
+                {
+                    mEventDesc.setVisibility(View.GONE);
+                }
+                else
+                {
+                    mEventDesc.setText(desc);
+                }
                 if(isAJoiner)
                 {
                     mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
@@ -313,8 +295,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
 //                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
-                addLocation();
-                addTime();
+                addLocation(response.getLocations());
+                addTime(response.getTimes());
             }
         }
 
@@ -347,64 +329,71 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
         }
 
-        private void addLocation()
+        private void addLocation(List<Location> suggestedLocs)
         {
+            ArrayList<SuggestionListItem> suggestionList = new ArrayList<SuggestionListItem>();
             Address addr;
             List<Address> addressList;
             int numOfVotes;
 
-            for (int row = 0; row < 1; row++) {
-                for (int i = 0; i < mSuggestedLocs.size(); i++)
-                {
-                    CheckBox addrCheckList = new CheckBox(getBaseContext());
-                    addrCheckList.setTextColor(Color.BLACK);
-                    addrCheckList.setId((row * 2) + i);
-                    try {
-                        Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                        addressList = geocoder.getFromLocation(mSuggestedLocs.get(i).getLatitude(),
-                                mSuggestedLocs.get(i).getLongitude(), 1);
-                        if (addressList != null && addressList.size() > 0) {
-                            addr = addressList.get(0);
+            for (int i = 0; i < suggestedLocs.size(); i++)
+            {
+                Location suggestion = suggestedLocs.get(i);
+                try {
+                    Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
+                    addressList = geocoder.getFromLocation(suggestion.getLatitude(),
+                            suggestion.getLongitude(), 1);
 
-                            String addressText = String.format(
-                                    "%s, %s",
-                                    // If there's a street address, add it
-                                    addr.getMaxAddressLineIndex() > 0 ?
-                                            addr.getAddressLine(0) : "",
-                                    // Locality is usually a city
-                                    addr.getLocality() != null ? addr.getLocality() : "");
+                    if (addressList != null && addressList.size() > 0) {
+                        addr = addressList.get(0);
+                        String addressText = String.format(
+                                "%s, %s",
+                                // If there's a street address, add it
+                                addr.getMaxAddressLineIndex() > 0 ? addr.getAddressLine(0) : "",
+                                // Locality is usually a city
+                                addr.getLocality() != null ? addr.getLocality() : "");
 
-                            //add votes
-                            try {
-                                numOfVotes = mSuggestedLocs.get(i).getSuggestion_votes().intValue();
-                            } catch(NullPointerException e)
-                            {
-                                numOfVotes= -1;
-                            }
-
-                            addrCheckList.setText(addressText);
-
-                            mLocationList.addView(addrCheckList);
+                        //add votes
+                        try {
+                            numOfVotes = suggestion.getSuggestion_votes().intValue();
+                        } catch(NullPointerException e)
+                        {
+                            numOfVotes = -1;
                         }
-                    } catch (IOException e) {
-                        Log.e("View Event", e.getMessage());
+
+                        suggestionList.add(new SuggestionListItem(suggestion.getSuggestion_id(),
+                                addressText, numOfVotes));
                     }
+                } catch (IOException e) {
+                    Log.e("View Event", e.getMessage());
                 }
             }
+
+            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, suggestionList);
+            mLocationList.setAdapter(mLocationListAdapter);
         }
 
-        private void addTime()
+        private void addTime(List<Time> times)
         {
-            for (int row = 0; row < 1; row++) {
+            ArrayList<SuggestionListItem> suggestionList = new ArrayList<SuggestionListItem>();
+            for (int i = 0; i < times.size(); i++) {
+                Time time = times.get(i);
 
-                for (int i = 0; i < mSuggestedTimes.size(); i++) {
-                    CheckBox timeCheckBox = new CheckBox(getBaseContext());
-                    timeCheckBox.setTextColor(Color.BLACK);
-                    timeCheckBox.setId((row * 2) + i);
-                    timeCheckBox.setText(convertToTimeToString(mSuggestedTimes.get(i)));
-                    mTimeList.addView(timeCheckBox);
+                int numOfVotes;
+                //add votes
+                try {
+                    numOfVotes = time.getSuggestion_votes().intValue();
+                } catch(NullPointerException e)
+                {
+                    numOfVotes = -1;
                 }
+
+                suggestionList.add(new SuggestionListItem(time.getSuggestion_id(),
+                        convertToTimeToString(time), numOfVotes));
             }
+
+            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, suggestionList);
+            mTimeList.setAdapter(mTimesListAdapter);
         }
 
         private String convertToTimeToString(Time time)
@@ -441,11 +430,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
             if(!curYear)
             {
-                format2 += ", YYYY";
+                format2 += ", yyyy";
             }
-
-            // TODO print year if different year
-            // TODO don't print E M d if same E M D
 
             SimpleDateFormat sdf1 = new SimpleDateFormat(format);
             SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
@@ -501,14 +487,13 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             int addrCount = mLocationList.getChildCount();
             int timeCount = mTimeList.getChildCount();
 
-            System.out.println("Count = " + addrCount);
-
             for (int i=0; i<addrCount; i++)
             {
-                if(((CheckBox)mLocationList.getChildAt(i)).isChecked())
+                if(((CheckBox)mLocationList.getChildAt(i)
+                        .findViewById(R.id.suggestion_checkbox)).isChecked())
                 {
                     try {
-                        getEventApi.voteForSuggestion(mSuggestedLocs.get(i).getSuggestion_id());
+                        getEventApi.voteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
                     } catch (Exception e) {
                         response = e.getMessage();
                     }
@@ -519,10 +504,11 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             for (int i=0; i<timeCount; i++)
             {
-                if(((CheckBox)mTimeList.getChildAt(i)).isChecked())
+                if(((CheckBox)mTimeList.getChildAt(i)
+                        .findViewById(R.id.suggestion_checkbox)).isChecked())
                 {
                     try {
-                        getEventApi.voteForSuggestion(mSuggestedTimes.get(i).getSuggestion_id());
+                        getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
                     } catch (Exception e) {
                         response = e.getMessage();
                     }
