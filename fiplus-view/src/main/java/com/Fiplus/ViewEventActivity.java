@@ -64,6 +64,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected List<UserProfile> mAttendees = new ArrayList<UserProfile>();
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
+    boolean mIsAJoiner = false;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -95,6 +96,13 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mIsAJoiner)
+                {
+                    // un-join
+                    UnJoinEventTask unJoinEventTask = new UnJoinEventTask(mEventID);
+                    unJoinEventTask.execute();
+
+                }
                 finish();
             }
         });
@@ -197,7 +205,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         Activity response;
         String sEventID, sEventDetails = "";
         Attendee attendees;
-        Boolean isAJoiner = false;
 
         public GetEventTask (String s)
         {
@@ -241,7 +248,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         //check if a user is a joiner of this event
                         if(sID.equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
                         {
-                            isAJoiner = true;
+                            mIsAJoiner = true;
                         }
                         sUserProfile = usersApi.getUserProfile(sID);
                         mAttendees.add(sUserProfile);
@@ -283,9 +290,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     mEventDesc.setText(desc);
                 }
-                if(isAJoiner)
+                if(mIsAJoiner)
                 {
                     mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                    mCancelBtn.setText("Un-Join");
                 }
 
 //                if(!response.getAllow_joiner_input() )
@@ -512,8 +520,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
 
-            System.out.println("Count = " + timeCount);
-
             for (int i=0; i<timeCount; i++)
             {
                 if(((CheckBox)mTimeList.getChildAt(i)
@@ -534,6 +540,51 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     }
                 }
             }
+        }
+    }
+
+
+    class UnJoinEventTask extends AsyncTask<Void, Void, String>
+    {
+        String sEventID, response;
+        ProgressDialog progressDialog;
+        ActsApi getEventApi;
+
+        public UnJoinEventTask (String s)
+        {
+            sEventID = s;
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressDialog = ProgressDialog.show(ViewEventActivity.this,
+                    getString(R.string.unjoin_event_progress_bar_title) + "...",
+                    getString(R.string.progress_dialog_text), true);
+        }
+
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            getEventApi = new ActsApi();
+            getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try {
+                getEventApi.unjoinActivity(sEventID);
+            } catch (Exception e) {
+                response = e.getMessage();
+            }
+
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+            progressDialog.dismiss();
+            message = "Un-Joined Event";
+            Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 }
