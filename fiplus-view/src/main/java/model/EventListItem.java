@@ -27,7 +27,7 @@ public class EventListItem {
         this.mEventName = mEventName;
         this.mEventId = mEventId;
         this.mEventPic = mEventPic;
-        this.mEventAttendee = mEventAttendee + " people going!";
+        this.mEventAttendee = mEventAttendee + " attendees!";
         if(eventLocations.size() == 1)
             mEventLocation = eventLocations.get(0);
         else

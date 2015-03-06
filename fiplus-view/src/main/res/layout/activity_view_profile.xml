@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
-    android:background="@color/list_background">
+<!--<ScrollView-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:fillViewport="true"-->
+    <!--android:focusable="false"-->
+    <!--android:focusableInTouchMode="false"-->
+    <!--android:background="@color/list_background">-->
 
-    <RelativeLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-         >
+<RelativeLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--TODO: View Profile - Circle Image View, Fix Fonts, Change Star Color-->
 
@@ -77,30 +77,31 @@
             android:layout_marginLeft="@dimen/tags_padding"
         />
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-            <!--android:text="@string/recent_activities"-->
-            <!--android:id="@+id/recentActivitiesText"-->
-            <!--android:layout_below="@+id/profileInterestLayout"-->
-            <!--android:layout_marginTop="30dp"-->
-            <!--android:layout_marginLeft="15dp"-->
-            <!--android:layout_marginStart="15dp"-->
-            <!--android:textStyle="italic"-->
-            <!--/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/recent_activities"
+            android:id="@+id/recentActivitiesText"
+            android:layout_below="@+id/profileInterestLayout"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:textStyle="italic"
+            />
 
-        <!--<ListView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/profileEventListView"-->
-            <!--android:layout_below="@+id/recentActivitiesText"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:divider="@color/list_divider"-->
-            <!--android:listSelector="@drawable/list_selector"-->
-            <!--android:dividerHeight="2dp"-->
-            <!--android:scrollbars="none"-->
-            <!--android:smoothScrollbar="true"/>-->
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profileEventListView"
+            android:layout_below="@+id/recentActivitiesText"
+            android:layout_centerHorizontal="true"
+            android:divider="@color/list_divider"
+            android:listSelector="@drawable/list_selector"
+            android:dividerHeight="2dp"
+            android:scrollbars="none"
+            android:smoothScrollbar="true"/>
 
     </RelativeLayout>
-</ScrollView>
+<!--</ScrollView>-->

@@ -1,14 +1,18 @@
 package com.Fiplus;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wordnik.client.api.UsersApi;
@@ -17,9 +21,13 @@ import com.wordnik.client.model.UserProfile;
 import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import adapters.EventListAdapter;
 import model.EventListItem;
+import utils.AlertFragmentDialog;
 import utils.IAppConstants;
+import utils.LocationUtil;
 import utils.PrefUtil;
 
 public class ViewProfileActivity extends Activity
@@ -32,6 +40,9 @@ public class ViewProfileActivity extends Activity
     private TextView mProfileName;
     private FlowLayout mInterestList;
     private String mUserId;
+
+    private ListView mEventsList;
+    private EventListAdapter mEventListAdapter;
 
     ArrayList<EventListItem> eventList;
 
@@ -83,14 +94,14 @@ public class ViewProfileActivity extends Activity
         }
 
         //TODO: View Other Profile - Recent Activities
-//        mEventsList = (ListView)findViewById(R.id.profileEventListView);
-//        mEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-//            {
-//
-//            }
-//        });
+        mEventsList = (ListView)findViewById(R.id.profileEventListView);
+        mEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+
+            }
+        });
 
 //        mEventsList.setOnTouchListener(new ListView.OnTouchListener() {
 //            @Override
@@ -115,7 +126,8 @@ public class ViewProfileActivity extends Activity
 //        });
 
         setProfile();
-        setEventList();
+        GetRecentEvents getRecentEvents = new GetRecentEvents();
+        getRecentEvents.execute();
     }
 
     @Override
@@ -176,6 +188,30 @@ public class ViewProfileActivity extends Activity
 
     }
 
+    private void setEventList(List<com.wordnik.client.model.Activity> activities)
+    {
+        if (activities == null)
+        {
+            return;
+        }
+
+        ArrayList<EventListItem> eventList = new ArrayList<>();
+
+        for(int i = 0; i < activities.size(); i++)
+            eventList.add(new EventListItem(
+                    R.drawable.ic_configure,
+                    activities.get(i).getName(),
+                    LocationUtil.getLocationStrings(activities.get(i).getLocations(),   getBaseContext()),
+                    activities.get(i).getTimes(),
+                    ((Integer)activities.get(i).getNum_attendees().intValue()).toString(),
+                    activities.get(i).getActivity_id()));
+
+        mEventListAdapter = new EventListAdapter(this, eventList, TAG);
+        mEventsList.setAdapter(mEventListAdapter);
+        mEventListAdapter.notifyDataSetChanged();
+
+    }
+
     private class AddFavorite extends AsyncTask<Void, Void, String>
     {
         @Override
@@ -207,6 +243,41 @@ public class ViewProfileActivity extends Activity
                 return e.getMessage();
             }
             return null;
+        }
+    }
+
+    private class GetRecentEvents extends AsyncTask<Void, Void, String>
+    {
+        protected List<com.wordnik.client.model.Activity> response;
+        protected ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressDialog= ProgressDialog.show(ViewProfileActivity.this, getString(R.string.view_event_progress_bar_title) + "s...", getString(R.string.progress_dialog_text), true);
+        }
+
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            UsersApi usersApi = new UsersApi();
+            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try{
+                response = usersApi.getActivities(mUserId, true, false);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if (response != null)
+                setEventList(response);
+            progressDialog.dismiss();
         }
     }
 }
