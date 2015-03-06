@@ -199,6 +199,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         //TODO Jobelle - add suggestion to list
     }
 
+    //gets called from DateTimePicker
+    public void addDateTime(Time time, String sTime)
+    {
+
+    }
+
     @Override
     public ArrayAdapter<String> getAutoComplete() {
             return autoCompleteLocationAdapter;
@@ -312,10 +318,13 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     mCancelBtn.setText("Un-Join");
                 }
 
-//                if(!response.getAllow_joiner_input() )
-//                {
-//                    mSuggestButtonsLayout.setVisibility(View.GONE);
-//                }
+                //hide the buttons if joiners are not allowed to suggest
+                if(!response.getAllow_joiner_input() )
+                {
+                    mEventLocation.setVisibility(View.GONE);
+                    mSuggestTime.setVisibility(View.GONE);
+                    mAddLocationBtn.setVisibility(View.GONE);
+                }
 
 //                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
