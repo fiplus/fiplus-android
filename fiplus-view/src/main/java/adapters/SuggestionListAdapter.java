@@ -49,6 +49,7 @@ public class SuggestionListAdapter extends BaseAdapter {
         }
 
         CheckBox sugCheckBox = (CheckBox) convertView.findViewById(R.id.suggestion_checkbox);
+        sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
         TextView voteProgress = (TextView) convertView.findViewById(R.id.vote_progress);
 
         sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
