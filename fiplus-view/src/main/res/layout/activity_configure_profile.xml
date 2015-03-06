@@ -110,7 +110,7 @@
                 android:text="@string/interests_label"
                 android:id="@+id/interests_label" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:layout_width="150dp"

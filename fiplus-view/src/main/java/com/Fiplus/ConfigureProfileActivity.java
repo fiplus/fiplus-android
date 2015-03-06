@@ -9,13 +9,16 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wordnik.client.api.InterestsApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.UserProfile;
@@ -39,7 +43,7 @@ import utils.LocationUtil;
 import utils.PrefUtil;
 
 
-public class ConfigureProfileActivity extends Activity {
+public class ConfigureProfileActivity extends Activity implements TextWatcher {
 
     protected ImageView mImageView;
     protected TextView mAddTextView;
@@ -51,7 +55,11 @@ public class ConfigureProfileActivity extends Activity {
     protected EditText mProfileName;
     protected EditText mGender;
     protected EditText mAge;
-    protected EditText mInterestInputField;
+
+    protected AutoCompleteTextView mInterestInputField;
+    protected ArrayAdapter<String> autoCompleteInterestAdapter;
+    protected List<String> interestsList;
+
     protected EditText mLocationInputField;
 
     protected ArrayList<String> mInterestListItems = new ArrayList<String>();
@@ -102,7 +110,7 @@ public class ConfigureProfileActivity extends Activity {
 
         //TODO: (Nick) Configure Profile - Upload Profile Photo
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mImageView.setImageResource(R.mipmap.fiplus);
+        mImageView.setImageResource(R.drawable.ic_nopic);
 
         mProfileName = (EditText) findViewById(R.id.configure_profile_name);
         mGender = (EditText) findViewById(R.id.configure_gender);
@@ -110,7 +118,9 @@ public class ConfigureProfileActivity extends Activity {
         mLocationButton = (Button) findViewById(R.id.configure_location_button);
 
 
-        mInterestInputField = (EditText) findViewById(R.id.interests_input_field);
+        mInterestInputField = (AutoCompleteTextView) findViewById(R.id.interests_input_field);
+        mInterestInputField.addTextChangedListener(this);
+        mInterestInputField.setThreshold(1);
 
         mInterestListView = (ListView) findViewById(R.id.interests_list);
         mInterestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -150,7 +160,6 @@ public class ConfigureProfileActivity extends Activity {
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mInterestListItems);
         mInterestListView.setAdapter(listAdapter);
 
-
         getProfile();
         ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
     }
@@ -161,6 +170,23 @@ public class ConfigureProfileActivity extends Activity {
             finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * This is for text listener in the address textbox
+     */
+    @Override
+    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable arg0) {
     }
 
     public void onAddInterestClick(View view) {
@@ -199,6 +225,9 @@ public class ConfigureProfileActivity extends Activity {
     private void getProfile() {
         GetProfileTask getProfileTask = new GetProfileTask();
         getProfileTask.execute();
+
+        GetInterestsTask getInterestsTask = new GetInterestsTask();
+        getInterestsTask.execute();
     }
 
     private boolean checkForValidInputs()
@@ -212,6 +241,33 @@ public class ConfigureProfileActivity extends Activity {
             return false;
         }
         return true;
+    }
+
+    class GetInterestsTask extends AsyncTask<Void, Void, String>
+    {
+        @Override
+        protected String doInBackground(Void... params) {
+
+            InterestsApi interests = new InterestsApi();
+            interests.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            interests.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try {
+                interestsList = interests.getInterestsWithInput(null);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            autoCompleteInterestAdapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1, interestsList);
+            autoCompleteInterestAdapter.setNotifyOnChange(false);
+            mInterestInputField.setAdapter(autoCompleteInterestAdapter);
+        }
+
     }
 
     class GetProfileTask extends AsyncTask<Void, Void, String> {
