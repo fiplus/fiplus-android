@@ -501,6 +501,14 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         response = e.getMessage();
                     }
                 }
+                else
+                {
+                    try {
+                        getEventApi.unvoteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
             }
 
             System.out.println("Count = " + timeCount);
@@ -512,6 +520,14 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     try {
                         getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
+                else
+                {
+                    try {
+                        getEventApi.unvoteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
                     } catch (Exception e) {
                         response = e.getMessage();
                     }
