@@ -64,8 +64,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected List<UserProfile> mAttendees = new ArrayList<UserProfile>();
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
-    UserProfile sUserProfile;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -231,6 +229,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             UsersApi usersApi = new UsersApi();
             usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+            UserProfile sUserProfile;
 
             // to handle bad events
             try
@@ -362,7 +361,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                             numOfVotes = -1;
                         }
 
-                        boolean yesVote = suggestion.getSuggestion_voters().contains(sUserProfile.getUser_id());
+                        boolean yesVote = suggestion.getSuggestion_voters().contains(
+                                PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
                         suggestionList.add(new SuggestionListItem(suggestion.getSuggestion_id(),
                                 addressText, numOfVotes, yesVote));
                     }
@@ -390,7 +390,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     numOfVotes = -1;
                 }
 
-                boolean yesVote = time.getSuggestion_voters().contains(sUserProfile.getUser_id());
+                boolean yesVote = time.getSuggestion_voters().contains(
+                        PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
                 suggestionList.add(new SuggestionListItem(time.getSuggestion_id(),
                         convertToTimeToString(time), numOfVotes, yesVote));
             }
