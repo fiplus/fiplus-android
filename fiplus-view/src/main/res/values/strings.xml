@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Welcome</string>
+    <string name="app_name">Fi+</string>
+    <string name="welcome">Welcome</string>
     <string name="sign_up_activity">Sign Up</string>
     <string name="mainscreen_activity">What\'s happening?</string>
     <string name="terms_of_use_activity">Terms Of Use</string>
