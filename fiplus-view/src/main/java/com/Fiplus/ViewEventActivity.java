@@ -65,6 +65,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
     boolean mIsAJoiner = false;
+    boolean mIsACreator = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -96,12 +98,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mIsACreator)
+                {
+                    CancelEventTask cancelEventTask = new CancelEventTask(mEventID);
+                    cancelEventTask.execute();
+                }
                 if(mIsAJoiner)
                 {
-                    // un-join
                     UnJoinEventTask unJoinEventTask = new UnJoinEventTask(mEventID);
                     unJoinEventTask.execute();
-
                 }
                 finish();
             }
@@ -203,7 +208,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         ProgressDialog progressDialog;
         Activity response;
-        String sEventID, sEventDetails = "";
+        String sEventID, creator, sEventDetails = "";
         Attendee attendees;
 
         public GetEventTask (String s)
@@ -228,6 +233,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 response = getEventApi.getActivity(sEventID);
                 sEventDetails = response.toString();
                 attendees = getEventApi.getAttendees(sEventID, null);
+                creator = response.getCreator();
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
                 Log.e("Error - Get Activity", sEventDetails);
@@ -238,6 +244,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
             UserProfile sUserProfile;
 
+            if(creator.equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
+            {
+                mIsACreator = true;
+            }
             // to handle bad events
             try
             {
@@ -290,7 +300,13 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     mEventDesc.setText(desc);
                 }
-                if(mIsAJoiner)
+
+                if(mIsACreator)
+                {
+                    mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                    mCancelBtn.setText("Cancel Event");
+                }
+                else if(mIsAJoiner)
                 {
                     mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
                     mCancelBtn.setText("Un-Join");
@@ -543,7 +559,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         }
     }
 
-
     class UnJoinEventTask extends AsyncTask<Void, Void, String>
     {
         String sEventID, response;
@@ -583,6 +598,50 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
             message = "Un-Joined Event";
+            Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    class CancelEventTask extends AsyncTask<Void, Void, String>
+    {
+        String sEventID, response;
+        ProgressDialog progressDialog;
+        ActsApi getEventApi;
+
+        public CancelEventTask (String s)
+        {
+            sEventID = s;
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressDialog = ProgressDialog.show(ViewEventActivity.this,
+                    getString(R.string.cancel_event_progress_bar_title) + "...",
+                    getString(R.string.progress_dialog_text), true);
+        }
+
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            getEventApi = new ActsApi();
+            getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try {
+                getEventApi.cancelActivity(sEventID);
+            } catch (Exception e) {
+                response = e.getMessage();
+            }
+
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+            progressDialog.dismiss();
+            message = "Cancelled Event";
             Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
         }
