@@ -12,8 +12,8 @@
     <string name="view_event_name_label">Event Name:</string>
     <string name="view_event_desc_label">Description:</string>
     <string name="view_event_attendees_label">Fi+ Buddies:</string>
-    <string name="view_event_suggested_loc_label">Suggested Location(s):</string>
-    <string name="view_event_suggested_time_label">Suggested Time(s):</string>
+    <string name="view_event_suggested_loc_label">Suggested Location(s)</string>
+    <string name="view_event_suggested_time_label">Suggested Time(s)</string>
 
     <string name="view_event_progress_bar_title">Getting Event</string>
     <string name="join_event_progress_bar_title">Joining Event</string>
