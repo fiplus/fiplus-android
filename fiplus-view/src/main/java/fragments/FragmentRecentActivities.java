@@ -57,7 +57,6 @@ public class FragmentRecentActivities extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
-        mEventsList.setOnItemClickListener(new EventItemClickListener());
         GetRecentEvents getRecentEvents= new GetRecentEvents();
         getRecentEvents.execute();
         return v;
@@ -92,18 +91,6 @@ public class FragmentRecentActivities extends Fragment {
         mEventsList.setAdapter(mEventListAdapter);
         mEventListAdapter.notifyDataSetChanged();
 
-    }
-
-
-    protected class EventItemClickListener implements AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-        {
-            String sEventID = mEventListAdapter.getItem(position).getEventId();
-            Intent intent = new Intent(getActivity(), ViewEventActivity.class);
-            intent.putExtra("eventID", sEventID);
-            startActivity(intent);
-        }
     }
 
     private class GetRecentEvents extends AsyncTask<Void, Void, String>
