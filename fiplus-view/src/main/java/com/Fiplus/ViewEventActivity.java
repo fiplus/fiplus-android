@@ -65,6 +65,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
     UserProfile sUserProfile;
+    private Boolean isAJoiner = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -188,6 +189,19 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         //TODO Jobelle - add suggestion to list
     }
 
+    //gets called from DateTimePicker
+    public void addDateTime(Time time, String sTime)
+    {
+        if(isAJoiner)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
     @Override
     public ArrayAdapter<String> getAutoComplete() {
             return autoCompleteLocationAdapter;
@@ -199,7 +213,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         Activity response;
         String sEventID, sEventDetails = "";
         Attendee attendees;
-        Boolean isAJoiner = false;
 
         public GetEventTask (String s)
         {
@@ -289,10 +302,13 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
                 }
 
-//                if(!response.getAllow_joiner_input() )
-//                {
-//                    mSuggestButtonsLayout.setVisibility(View.GONE);
-//                }
+                //hide the buttons if joiners are not allowed to suggest
+                if(!response.getAllow_joiner_input() )
+                {
+                    mEventLocation.setVisibility(View.GONE);
+                    mSuggestTime.setVisibility(View.GONE);
+                    mAddLocationBtn.setVisibility(View.GONE);
+                }
 
 //                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
