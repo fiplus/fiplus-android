@@ -4,14 +4,16 @@ public class SuggestionListItem {
 
     private String mSuggestionId;
     private String mSuggestion;
-    private int mVote;
+    private int mVoteCount;
+    private boolean mYesVote;
 
     public SuggestionListItem(){}
 
-    public SuggestionListItem(String suggestionId, String suggestion, int vote){
+    public SuggestionListItem(String suggestionId, String suggestion, int voteCount, boolean yesVote){
         this.mSuggestionId = suggestionId;
         this.mSuggestion = suggestion;
-        this.mVote = vote;
+        this.mVoteCount = voteCount;
+        this.mYesVote = yesVote;
     }
 
     public String getSuggestion() {
@@ -22,7 +24,9 @@ public class SuggestionListItem {
         return this.mSuggestionId;
     }
 
+    public boolean getYesVote() { return this.mYesVote; }
+
     public int getVote(){
-        return this.mVote;
+        return this.mVoteCount;
     }
 }
