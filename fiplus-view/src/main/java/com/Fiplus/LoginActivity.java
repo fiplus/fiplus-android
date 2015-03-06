@@ -130,8 +130,9 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
         {
             @Override
             public void onClick(View widget) {
-                Intent intent = new Intent(getBaseContext(), PrivacyPolicyActivity.class);
-                startActivity(intent);
+                Uri uriUrl = Uri.parse("http://fiplus.github.io/PrivacyPolicy.html");
+                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                startActivity(launchBrowser);
             }
         };
 
@@ -139,8 +140,9 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
         {
             @Override
             public void onClick(View widget) {
-                Intent intent = new Intent(getBaseContext(), TermsOfUseActivity.class);
-                startActivity(intent);
+                Uri uriUrl = Uri.parse("http://fiplus.github.io/TermsOfUse.html");
+                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                startActivity(launchBrowser);
             }
         };
         mySpannable.setSpan(privacySpan, privacy1, privacy2 + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
