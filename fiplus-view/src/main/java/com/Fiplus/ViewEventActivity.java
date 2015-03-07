@@ -204,6 +204,57 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             return autoCompleteLocationAdapter;
     }
 
+    //gets called from DateTimePicker
+    public void addDateTime(Time time, String sTime)
+    {
+        if(mIsAJoiner)
+        {
+
+        }
+    }
+
+    private String convertToTimeToString(Time time)
+    {
+        long startDate = time.getStart().longValue();
+        long endDate = time.getEnd().longValue();
+        int numOfVotes;
+        String s;
+
+        //add votes
+        try {
+            numOfVotes = time.getSuggestion_votes().intValue();
+        } catch (NullPointerException e)
+        {
+            numOfVotes = -1;
+        }
+
+        s = " (" + numOfVotes + " vote(s))";
+
+        Date d1 = new Date(startDate);
+        Date d2 = new Date(endDate);
+        String format = "EEE MMM d, h:m a";
+
+        String format2 = format;
+        String middle = " to ";
+        boolean curYear = d1.getYear() == new Date().getYear();
+        boolean sameMonth = d1.getMonth() == d2.getMonth();
+        boolean sameDay = d1.getDate() == d2.getDate();
+
+        if(sameDay && sameMonth)
+        {
+            format2 = "h:m a";
+            middle = " to ";
+        }
+        if(!curYear)
+        {
+            format2 += ", yyyy";
+        }
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat(format);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+        return sdf1.format(d1) + middle + sdf2.format(d2);
+    }
+
     class GetEventTask extends AsyncTask<Void, Void, String> {
 
         ProgressDialog progressDialog;
@@ -312,10 +363,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     mCancelBtn.setText("Un-Join");
                 }
 
-//                if(!response.getAllow_joiner_input() )
-//                {
-//                    mSuggestButtonsLayout.setVisibility(View.GONE);
-//                }
+                if(!response.getAllow_joiner_input() )
+                {
+                    mEventLocation.setVisibility(View.GONE);
+                    mSuggestTime.setVisibility(View.GONE);
+                    mAddLocationBtn.setVisibility(View.GONE);
+                }
 
 //                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
@@ -424,47 +477,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             mTimeList.setAdapter(mTimesListAdapter);
         }
 
-        private String convertToTimeToString(Time time)
-        {
-            long startDate = time.getStart().longValue();
-            long endDate = time.getEnd().longValue();
-            int numOfVotes;
-            String s;
-
-            //add votes
-            try {
-                numOfVotes = time.getSuggestion_votes().intValue();
-            } catch (NullPointerException e)
-            {
-                numOfVotes = -1;
-            }
-
-            s = " (" + numOfVotes + " vote(s))";
-
-            Date d1 = new Date(startDate);
-            Date d2 = new Date(endDate);
-            String format = "EEE MMM d, h:m a";
-
-            String format2 = format;
-            String middle = " to ";
-            boolean curYear = d1.getYear() == new Date().getYear();
-            boolean sameMonth = d1.getMonth() == d2.getMonth();
-            boolean sameDay = d1.getDate() == d2.getDate();
-
-            if(sameDay && sameMonth)
-            {
-                format2 = "h:m a";
-                middle = " to ";
-            }
-            if(!curYear)
-            {
-                format2 += ", yyyy";
-            }
-
-            SimpleDateFormat sdf1 = new SimpleDateFormat(format);
-            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
-            return sdf1.format(d1) + middle + sdf2.format(d2);
-        }
     }
 
     class JoinEventTask extends AsyncTask<Void, Void, String>
