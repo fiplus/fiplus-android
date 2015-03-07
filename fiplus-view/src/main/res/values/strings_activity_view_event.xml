@@ -17,6 +17,8 @@
 
     <string name="view_event_progress_bar_title">Getting Event</string>
     <string name="join_event_progress_bar_title">Joining Event</string>
+    <string name="unjoin_event_progress_bar_title">Un-Joining Event</string>
+    <string name="cancel_event_progress_bar_title">Un-Joining Event</string>
 
 
 </resources>
