@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
@@ -45,18 +49,16 @@
         android:textColor="@color/counter_text_color" />
 
     <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_below="@+id/view_event_loc_label"
-        android:layout_alignParentLeft="true"
         android:id="@+id/view_event_loc_checkboxes"
         android:orientation="vertical"
+        android:fadeScrollbars="false"
         />
 
     <AutoCompleteTextView
-        android:paddingTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/view_event_location"
@@ -92,15 +94,13 @@
         android:textColor="@color/counter_text_color"/>
 
     <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_below="@+id/view_event_time_label"
         android:id="@+id/view_event_time_checkboxes"
-        android:layout_alignParentLeft="true"
         android:orientation="vertical"
-    />
+        android:fadeScrollbars="false"
+        />
 
     <Button
         android:layout_height="wrap_content"
@@ -115,6 +115,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_below="@+id/view_event_suggest_time"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:id="@+id/linearLayout">
 
@@ -139,3 +140,4 @@
             />
     </LinearLayout>
 </RelativeLayout>
+    </ScrollView>

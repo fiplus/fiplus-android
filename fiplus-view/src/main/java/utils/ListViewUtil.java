@@ -21,10 +21,17 @@ public class ListViewUtil {
         }
 
         int totalHeight = 0;
+
         for (int i = 0; i < listAdapter.getCount() && i < 3; i++) {
             View listItem = listAdapter.getView(i, null, listView);
             listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
+
+            //BAD CODING STYLE!
+            //However, for some reason, the height of the items in
+            //the suggestion list is really really big. I'm
+            //not sure how that's happening so I'm just
+            //hardcoding this for now.
+            totalHeight += 144; //listItem.getMeasuredHeight();
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
