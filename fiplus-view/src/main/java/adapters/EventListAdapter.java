@@ -2,7 +2,9 @@ package adapters;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.Fiplus.R;
+import com.wordnik.client.api.ActsApi;
+import com.wordnik.client.api.UsersApi;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import model.EventListItem;
+import utils.IAppConstants;
+import utils.PrefUtil;
 
 public class EventListAdapter extends BaseAdapter
 {
@@ -60,7 +67,7 @@ public class EventListAdapter extends BaseAdapter
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
         Classes currentClass = Classes.valueOf(className.toUpperCase());
         Button eventButton;
@@ -82,6 +89,13 @@ public class EventListAdapter extends BaseAdapter
                     break;
                 case FRAGMENTMYEVENTS:
                     eventButton.setText(R.string.cancel_button);
+                    eventButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            CancelEvent cancelEvent = new CancelEvent(position);
+                            cancelEvent.execute();
+                        }
+                    });
                     break;
                 case FRAGMENTEVENTS:
                     eventButton.setText(R.string.rate_now);
@@ -109,6 +123,51 @@ public class EventListAdapter extends BaseAdapter
         eventAttendee.setText(mEventItems.get(position).getEventAttendee());
 
         return convertView;
+    }
+
+    private class CancelEvent extends AsyncTask<Void, Void, String>
+    {
+        protected ProgressDialog progressDialog;
+        protected int position;
+
+        public CancelEvent(int position)
+        {
+            super();
+            this.position = position;
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+//            progressDialog= ProgressDialog.show(getActivity(), getString(R.string.view_event_progress_bar_title) + "s...", getString(R.string.progress_dialog_text), true);
+        }
+
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            ActsApi actsApi = new ActsApi();
+            actsApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            actsApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try{
+                com.wordnik.client.model.Activity response = actsApi.getActivity(mEventItems.get(position).getEventId());
+                if(!response.getCreator().equalsIgnoreCase(PrefUtil.getString(context, IAppConstants.USER_ID)))
+                    actsApi.unjoinActivity(mEventItems.get(position).getEventId());
+                else
+                    actsApi.cancelActivity(mEventItems.get(position).getEventId());
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+//            progressDialog.dismiss();
+            mEventItems.remove(position);
+            notifyDataSetChanged();
+        }
     }
 
 }
