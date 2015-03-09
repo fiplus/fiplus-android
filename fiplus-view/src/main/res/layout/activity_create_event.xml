@@ -127,12 +127,12 @@
 
         <TextView
             android:layout_marginTop="20dp"
-            android:paddingBottom="12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/create_event_datetimelist"
             android:text="@string/create_event_attendees_label"
             android:id="@+id/create_event_attendees_label"
+            android:layout_alignBaseline="@+id/create_event_number_of_people"
             />
 
         <EditText
@@ -148,6 +148,18 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:textAppearance="?android:attr/textAppearanceSmallInverse"
             />
+
+        <CheckBox
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_event_allow_suggestion_label"
+            android:id="@+id/create_event_suggestion_checkbox"
+            android:layout_below="@+id/create_event_datetimelist"
+            android:layout_toRightOf="@+id/create_event_number_of_people"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse"
+            android:checked="true"/>
+
 
         <LinearLayout
             android:id="@+id/tagsLinearLayout"

@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -50,6 +51,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     protected Button mCreateButton;
     protected Button mCancelButton;
     protected EditText mMaxPeople;
+    protected CheckBox mAllowSuggestions;
     protected Button mDateTimeButton;
     protected ListView mDateTimeListView;
     protected EditText mTags;
@@ -142,6 +144,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
         mMaxPeople = (EditText) findViewById(R.id.create_event_number_of_people);
+        mAllowSuggestions = (CheckBox) findViewById(R.id.create_event_suggestion_checkbox);
 
         //for tags
         mTags = (EditText) findViewById(R.id.create_event_tags);
@@ -421,6 +424,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     {
         String message;
         boolean error = false;
+        boolean allow = false;
 
         @Override
         protected String doInBackground(Void... params)
@@ -438,6 +442,12 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             createEvent.setTagged_interests(mTagsList);
             createEvent.setTimes(mDateTimeListItemsUTC);
             createEvent.setLocations(mEventLocationList);
+            if(mAllowSuggestions.isChecked())
+            {
+                allow = true;
+            }
+            createEvent.setAllow_joiner_input(allow);
+
             try {
                 createEventApi.createActivity(createEvent);
                 message = "Event Created";
