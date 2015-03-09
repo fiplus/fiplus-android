@@ -64,7 +64,7 @@ public class FragmentBeFit extends Fragment{
     {
         if (activities == null)
             return;
-        ArrayList<EventListItem> eventList = new ArrayList<>();
+        ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(

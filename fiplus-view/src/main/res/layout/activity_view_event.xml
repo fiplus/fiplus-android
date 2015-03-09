@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
@@ -45,26 +49,32 @@
         android:textColor="@color/counter_text_color" />
 
     <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_below="@+id/view_event_loc_label"
-        android:layout_alignParentLeft="true"
         android:id="@+id/view_event_loc_checkboxes"
         android:orientation="vertical"
+        android:fadeScrollbars="false"
+        />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_below="@+id/view_event_loc_checkboxes"
+        android:id="@+id/view_event_pending_loc"
+        android:orientation="vertical"
+        android:fadeScrollbars="false"
         />
 
     <AutoCompleteTextView
-        android:paddingTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/view_event_location"
         android:hint="@string/create_event_location_hint"
         android:background="@android:drawable/edit_text"
         android:textColor="@android:color/primary_text_light"
-        android:layout_below="@+id/view_event_loc_checkboxes"
-        android:layout_above="@+id/view_event_time_label"
+        android:layout_below="@+id/view_event_pending_loc"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/view_event_add_location"
         android:singleLine="true"/>
@@ -74,7 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/view_event_add_location"
-        android:layout_below="@+id/view_event_loc_checkboxes"
+        android:layout_below="@+id/view_event_pending_loc"
         android:background="@android:drawable/ic_input_add"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
@@ -92,22 +102,30 @@
         android:textColor="@color/counter_text_color"/>
 
     <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_below="@+id/view_event_time_label"
         android:id="@+id/view_event_time_checkboxes"
-        android:layout_alignParentLeft="true"
         android:orientation="vertical"
-    />
+        android:fadeScrollbars="false"
+        />
+
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_below="@+id/view_event_time_checkboxes"
+        android:id="@+id/view_event_pending_time"
+        android:orientation="vertical"
+        android:fadeScrollbars="false"
+        />
 
     <Button
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:text="@string/view_event_suggest_time"
         android:id="@+id/view_event_suggest_time"
-        android:layout_below="@id/view_event_time_checkboxes"
+        android:layout_below="@id/view_event_pending_time"
         style="?android:attr/buttonStyleSmall"
         android:layout_alignParentLeft="true" />
 
@@ -115,6 +133,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_below="@+id/view_event_suggest_time"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:id="@+id/linearLayout">
 
@@ -139,3 +158,4 @@
             />
     </LinearLayout>
 </RelativeLayout>
+    </ScrollView>

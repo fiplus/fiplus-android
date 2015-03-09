@@ -11,8 +11,10 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -38,12 +40,17 @@ import java.util.List;
 import java.util.Locale;
 
 import adapters.LocationArrayAdapterNoFilter;
+import adapters.PendingLocListAdapter;
+import adapters.PendingTimeLocListAdapter;
 import adapters.SuggestionListAdapter;
+import model.PendingLocItem;
+import model.PendingTimeItem;
 import model.SuggestionListItem;
 import utils.DateTimePicker;
 import utils.GeoAutoCompleteInterface;
 import utils.GeocodingLocation;
 import utils.IAppConstants;
+import utils.ListViewUtil;
 import utils.PrefUtil;
 
 public class ViewEventActivity extends FragmentActivity  implements TextWatcher, GeoAutoCompleteInterface {
@@ -55,17 +62,29 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected Button mCancelBtn;
     protected ListView mLocationList;
     protected ListView mTimeList;
+    protected ListView mSuggestedLocList;
+    protected ListView mSuggestedTimeList;
     protected LinearLayout mAttendeesList;
-    protected Button mSuggestTime;
+    protected Button mSuggestTimeBtn;
     protected Button mAddLocationBtn;
 
-    private SuggestionListAdapter mLocationListAdapter;
+    ArrayList<PendingLocItem> locPendingSuggestion = new ArrayList<PendingLocItem>();
+    private PendingLocListAdapter mPendingLocSuggestionAdapter;
+
+    ArrayList<PendingTimeItem> timePendingSuggestion = new ArrayList<PendingTimeItem>();
+    private PendingTimeLocListAdapter mPendingTimeSuggestionAdapter;
+
+    ArrayList<SuggestionListItem> timeSuggestionList = new ArrayList<SuggestionListItem>();
     private SuggestionListAdapter mTimesListAdapter;
     protected List<UserProfile> mAttendees = new ArrayList<UserProfile>();
+
+    ArrayList<SuggestionListItem> locSuggestionList = new ArrayList<SuggestionListItem>();
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
+    private SuggestionListAdapter mLocationListAdapter;
 
     boolean mIsAJoiner = false;
     boolean mIsACreator = false;
+    String eventID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -75,10 +94,50 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         Bundle b = getIntent().getExtras();
         final String mEventID = b.getString(EXTRA_EVENT_ID);
+        eventID = mEventID;
 
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
         mLocationList = (ListView) findViewById(R.id.view_event_loc_checkboxes);
+        mLocationList.setOnTouchListener(new TouchListener());
+
+        mSuggestedLocList = (ListView) findViewById(R.id.view_event_pending_loc);
+        mPendingLocSuggestionAdapter = new PendingLocListAdapter(this, locPendingSuggestion);
+        mSuggestedLocList.setAdapter(mPendingLocSuggestionAdapter);
+        mSuggestedLocList.setOnTouchListener(new TouchListener());
+        mSuggestedLocList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                locPendingSuggestion.remove(position);
+                mPendingLocSuggestionAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedLocList);
+
+                if(locPendingSuggestion.size() == 0) {
+                    mSuggestedLocList.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mSuggestedTimeList = (ListView) findViewById(R.id.view_event_pending_time);
+        mPendingTimeSuggestionAdapter = new PendingTimeLocListAdapter(this, timePendingSuggestion);
+        mSuggestedTimeList.setAdapter(mPendingTimeSuggestionAdapter);
+        mSuggestedTimeList.setOnTouchListener(new TouchListener());
+        mSuggestedTimeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                timePendingSuggestion.remove(position);
+                mPendingTimeSuggestionAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedTimeList);
+
+                if(timePendingSuggestion.size() == 0) {
+                    mSuggestedTimeList.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
         mTimeList = (ListView) findViewById(R.id.view_event_time_checkboxes);
+        mTimeList.setOnTouchListener(new TouchListener());
+
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
 
         GetEventTask getEventTask = new GetEventTask(mEventID);
@@ -112,8 +171,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
         });
 
-        mSuggestTime = (Button) findViewById(R.id.view_event_suggest_time);
-        mSuggestTime.setOnClickListener(new View.OnClickListener()
+        mSuggestTimeBtn = (Button) findViewById(R.id.view_event_suggest_time);
+        mSuggestTimeBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -196,18 +255,124 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     @Override
     public void populateLocation(Location location, String address) {
-        //TODO Jobelle - add suggestion to list
-    }
 
-    //gets called from DateTimePicker
-    public void addDateTime(Time time, String sTime)
-    {
+        if(address!=null)
+        {
+            mEventLocation.setText("");
+            //if the user is the creator/joiner of an event, automatically add
+            //the suggested location
+            if(mIsACreator || mIsAJoiner)
+            {
+                AddSuggestionTask newSuggest = new AddSuggestionTask(location, address);
+                newSuggest.execute();
+            }
+            else //put on pending list first
+            {
+                locPendingSuggestion.add(new PendingLocItem(address, location));
+                mPendingLocSuggestionAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedLocList);
 
+                if(locPendingSuggestion.size() > 0) {
+                    mSuggestedLocList.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+        else
+        {
+            mEventLocation.setError(getString(R.string.error_address_not_found));
+        }
     }
 
     @Override
     public ArrayAdapter<String> getAutoComplete() {
             return autoCompleteLocationAdapter;
+    }
+
+    //gets called from DateTimePicker
+    public void addDateTime(Time time, String sTime)
+    {
+        //if the user is the creator/joiner of an event, automatically add
+        //the suggested time
+        if(mIsAJoiner || mIsACreator)
+        {
+            AddSuggestionTask newSuggest = new AddSuggestionTask(time);
+            newSuggest.execute();
+        }
+        else //add to pending list first
+        {
+            timePendingSuggestion.add(new PendingTimeItem(convertToTimeToString(time), time));
+            mPendingTimeSuggestionAdapter.notifyDataSetChanged();
+            ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedTimeList);
+
+            if(timePendingSuggestion.size() > 0) {
+                mSuggestedTimeList.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private String convertToTimeToString(Time time)
+    {
+        long startDate = time.getStart().longValue();
+        long endDate = time.getEnd().longValue();
+        int numOfVotes;
+        String s;
+
+        //add votes
+        try {
+            numOfVotes = time.getSuggestion_votes().intValue();
+        } catch (NullPointerException e)
+        {
+            numOfVotes = -1;
+        }
+
+        s = " (" + numOfVotes + " vote(s))";
+
+        Date d1 = new Date(startDate);
+        Date d2 = new Date(endDate);
+        String format = "EEE MMM d, h:m a";
+
+        String format2 = format;
+        String middle = " to ";
+        boolean curYear = d1.getYear() == new Date().getYear();
+        boolean sameMonth = d1.getMonth() == d2.getMonth();
+        boolean sameDay = d1.getDate() == d2.getDate();
+
+        if(sameDay && sameMonth)
+        {
+            format2 = "h:m a";
+            middle = " to ";
+        }
+        if(!curYear)
+        {
+            format2 += ", yyyy";
+        }
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat(format);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+        return sdf1.format(d1) + middle + sdf2.format(d2);
+    }
+
+    //To handle multiple scrollviews
+    protected class TouchListener implements ListView.OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    // Allow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+
+            // Handle ListView touch events.
+            v.onTouchEvent(event);
+            return true;
+        }
     }
 
     class GetEventTask extends AsyncTask<Void, Void, String> {
@@ -318,15 +483,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     mCancelBtn.setText("Un-Join");
                 }
 
-                //hide the buttons if joiners are not allowed to suggest
-                if(!response.getAllow_joiner_input() )
+                //Hide the suggest buttons if the creator does not allow user input
+                //and if the user is not a joiner
+                if(!response.getAllow_joiner_input() && !mIsACreator)
                 {
                     mEventLocation.setVisibility(View.GONE);
-                    mSuggestTime.setVisibility(View.GONE);
+                    mSuggestTimeBtn.setVisibility(View.GONE);
                     mAddLocationBtn.setVisibility(View.GONE);
                 }
 
-//                mAttendeesLabel.setText(getString(R.string.view_event_attendees_label) + " (max of " + response.getMax_attendees().intValue() + ")");
                 addAttendees();
                 addLocation(response.getLocations());
                 addTime(response.getTimes());
@@ -364,7 +529,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         private void addLocation(List<Location> suggestedLocs)
         {
-            ArrayList<SuggestionListItem> suggestionList = new ArrayList<SuggestionListItem>();
             Address addr;
             List<Address> addressList;
             int numOfVotes;
@@ -396,7 +560,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                         boolean yesVote = suggestion.getSuggestion_voters().contains(
                                 PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
-                        suggestionList.add(new SuggestionListItem(suggestion.getSuggestion_id(),
+                        locSuggestionList.add(new SuggestionListItem(suggestion.getSuggestion_id(),
                                 addressText, numOfVotes, yesVote));
                     }
                 } catch (IOException e) {
@@ -404,13 +568,14 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
 
-            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, suggestionList);
+            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList);
             mLocationList.setAdapter(mLocationListAdapter);
+            ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
         }
 
         private void addTime(List<Time> times)
         {
-            ArrayList<SuggestionListItem> suggestionList = new ArrayList<SuggestionListItem>();
+
             for (int i = 0; i < times.size(); i++) {
                 Time time = times.get(i);
 
@@ -425,55 +590,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                 boolean yesVote = time.getSuggestion_voters().contains(
                         PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
-                suggestionList.add(new SuggestionListItem(time.getSuggestion_id(),
+                timeSuggestionList.add(new SuggestionListItem(time.getSuggestion_id(),
                         convertToTimeToString(time), numOfVotes, yesVote));
             }
 
-            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, suggestionList);
+            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, timeSuggestionList);
             mTimeList.setAdapter(mTimesListAdapter);
+            ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
         }
 
-        private String convertToTimeToString(Time time)
-        {
-            long startDate = time.getStart().longValue();
-            long endDate = time.getEnd().longValue();
-            int numOfVotes;
-            String s;
-
-            //add votes
-            try {
-                numOfVotes = time.getSuggestion_votes().intValue();
-            } catch (NullPointerException e)
-            {
-                numOfVotes = -1;
-            }
-
-            s = " (" + numOfVotes + " vote(s))";
-
-            Date d1 = new Date(startDate);
-            Date d2 = new Date(endDate);
-            String format = "EEE MMM d, h:m a";
-
-            String format2 = format;
-            String middle = " to ";
-            boolean curYear = d1.getYear() == new Date().getYear();
-            boolean sameMonth = d1.getMonth() == d2.getMonth();
-            boolean sameDay = d1.getDate() == d2.getDate();
-
-            if(sameDay && sameMonth)
-            {
-                format2 = "h:m a";
-                middle = " to ";
-            }
-            if(!curYear)
-            {
-                format2 += ", yyyy";
-            }
-
-            SimpleDateFormat sdf1 = new SimpleDateFormat(format);
-            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
-            return sdf1.format(d1) + middle + sdf2.format(d2);
-        }
     }
 
     class JoinEventTask extends AsyncTask<Void, Void, String>
@@ -502,6 +627,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             try {
                 getEventApi.joinActivity(sEventID);
+                checkPendingSuggestions();
                 checkVotes();
             } catch (Exception e) {
                 response = e.getMessage();
@@ -513,9 +639,45 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         @Override
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
-            message = "Joined Event";
+            if(mIsAJoiner)
+            {
+                message = "Event updated";
+            }
+            else
+            {
+                message = "Joined Event!";
+            }
+
             Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
+        }
+
+        private void checkPendingSuggestions()
+        {
+            int pendingLocCount = mSuggestedLocList.getChildCount();
+            int pendingTimeCount = mSuggestedTimeList.getChildCount();
+
+            for(int i = 0; i < pendingLocCount; i++)
+            {
+                try
+                {
+                    getEventApi.suggestLocationForActivity(sEventID, mPendingLocSuggestionAdapter.getItem(i).getLoc());
+                }
+                catch (Exception e) {
+                    response = e.getMessage();
+                }
+            }
+
+            for(int i = 0; i < pendingTimeCount; i++)
+            {
+                try
+                {
+                    getEventApi.suggestTimeForActivity(sEventID, mPendingTimeSuggestionAdapter.getItem(i).getTime());
+                }
+                catch (Exception e) {
+                    response = e.getMessage();
+                }
+            }
         }
 
         private void checkVotes()
@@ -653,6 +815,75 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             message = "Cancelled Event";
             Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
+        }
+    }
+
+    class AddSuggestionTask extends AsyncTask<Void, Void, String>
+    {
+        ActsApi setEventApi;
+        String sEventID = eventID, response = "";
+        Time suggestedTime = null;
+        Location suggestedLocation = null;
+        String address;
+        boolean isTime;
+
+        public AddSuggestionTask(Time t)
+        {
+            suggestedTime = t;
+            isTime = true;
+        }
+
+        public AddSuggestionTask(Location loc, String s)
+        {
+            suggestedLocation = loc;
+            address = s;
+            isTime = false;
+        }
+
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            setEventApi = new ActsApi();
+            setEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            setEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try {
+
+                if(isTime)
+                {
+                    setEventApi.suggestTimeForActivity(sEventID, suggestedTime);
+                }
+                else
+                {
+                    setEventApi.suggestLocationForActivity(sEventID, suggestedLocation);
+                }
+
+            } catch (Exception e) {
+                response = e.getMessage();
+            }
+
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+            Log.e("Suggestion", message);
+
+            if(isTime)
+            {
+                timeSuggestionList.add(new SuggestionListItem(null,
+                        convertToTimeToString(suggestedTime), 0, true));
+                mTimesListAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
+            }
+            else
+            {
+                locSuggestionList.add(new SuggestionListItem(null,
+                        address, 0, true));
+                mLocationListAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
+            }
+
         }
     }
 }
