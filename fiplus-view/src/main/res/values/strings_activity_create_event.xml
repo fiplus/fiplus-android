@@ -12,6 +12,7 @@
     <string name="create_event_description_hint">Description</string>
     <string name="create_event_tags_label">Tags:</string>
     <string name="create_event_create_button_label">Create Event</string>
+    <string name="create_event_allow_suggestion_label">Allow Suggestions</string>
 
     <string name="create_event_add_location">Add</string>
     <string name="create_event_set_button">Set</string>
