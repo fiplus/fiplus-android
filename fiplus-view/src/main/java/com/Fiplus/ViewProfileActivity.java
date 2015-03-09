@@ -1,8 +1,6 @@
 package com.Fiplus;
 
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -16,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wordnik.client.api.UsersApi;
-import com.wordnik.client.model.UserProfile;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -25,10 +22,8 @@ import java.util.List;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
-import utils.AlertFragmentDialog;
 import utils.IAppConstants;
 import utils.LocationUtil;
-import utils.PrefUtil;
 
 public class ViewProfileActivity extends Activity
 {
@@ -195,7 +190,7 @@ public class ViewProfileActivity extends Activity
             return;
         }
 
-        ArrayList<EventListItem> eventList = new ArrayList<>();
+        ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(

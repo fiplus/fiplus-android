@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -39,7 +40,11 @@ import java.util.List;
 import java.util.Locale;
 
 import adapters.LocationArrayAdapterNoFilter;
+import adapters.PendingLocListAdapter;
+import adapters.PendingTimeLocListAdapter;
 import adapters.SuggestionListAdapter;
+import model.PendingLocItem;
+import model.PendingTimeItem;
 import model.SuggestionListItem;
 import utils.DateTimePicker;
 import utils.GeoAutoCompleteInterface;
@@ -57,9 +62,17 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected Button mCancelBtn;
     protected ListView mLocationList;
     protected ListView mTimeList;
+    protected ListView mSuggestedLocList;
+    protected ListView mSuggestedTimeList;
     protected LinearLayout mAttendeesList;
-    protected Button mSuggestTime;
+    protected Button mSuggestTimeBtn;
     protected Button mAddLocationBtn;
+
+    ArrayList<PendingLocItem> locPendingSuggestion = new ArrayList<PendingLocItem>();
+    private PendingLocListAdapter mPendingLocSuggestionAdapter;
+
+    ArrayList<PendingTimeItem> timePendingSuggestion = new ArrayList<PendingTimeItem>();
+    private PendingTimeLocListAdapter mPendingTimeSuggestionAdapter;
 
     ArrayList<SuggestionListItem> timeSuggestionList = new ArrayList<SuggestionListItem>();
     private SuggestionListAdapter mTimesListAdapter;
@@ -85,52 +98,45 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
         mLocationList = (ListView) findViewById(R.id.view_event_loc_checkboxes);
+        mLocationList.setOnTouchListener(new TouchListener());
 
-        mLocationList.setOnTouchListener(new ListView.OnTouchListener() {
+        mSuggestedLocList = (ListView) findViewById(R.id.view_event_pending_loc);
+        mPendingLocSuggestionAdapter = new PendingLocListAdapter(this, locPendingSuggestion);
+        mSuggestedLocList.setAdapter(mPendingLocSuggestionAdapter);
+        mSuggestedLocList.setOnTouchListener(new TouchListener());
+        mSuggestedLocList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disallow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                locPendingSuggestion.remove(position);
+                mPendingLocSuggestionAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedLocList);
 
-                    case MotionEvent.ACTION_UP:
-                        // Allow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
+                if(locPendingSuggestion.size() == 0) {
+                    mSuggestedLocList.setVisibility(View.GONE);
                 }
+            }
+        });
 
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
+        mSuggestedTimeList = (ListView) findViewById(R.id.view_event_pending_time);
+        mPendingTimeSuggestionAdapter = new PendingTimeLocListAdapter(this, timePendingSuggestion);
+        mSuggestedTimeList.setAdapter(mPendingTimeSuggestionAdapter);
+        mSuggestedTimeList.setOnTouchListener(new TouchListener());
+        mSuggestedTimeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                timePendingSuggestion.remove(position);
+                mPendingTimeSuggestionAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedTimeList);
+
+                if(timePendingSuggestion.size() == 0) {
+                    mSuggestedTimeList.setVisibility(View.GONE);
+                }
             }
         });
 
 
         mTimeList = (ListView) findViewById(R.id.view_event_time_checkboxes);
-        mTimeList.setOnTouchListener(new ListView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disallow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        // Allow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
-            }
-        });
+        mTimeList.setOnTouchListener(new TouchListener());
 
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
 
@@ -165,8 +171,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
         });
 
-        mSuggestTime = (Button) findViewById(R.id.view_event_suggest_time);
-        mSuggestTime.setOnClickListener(new View.OnClickListener()
+        mSuggestTimeBtn = (Button) findViewById(R.id.view_event_suggest_time);
+        mSuggestTimeBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -250,20 +256,30 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     @Override
     public void populateLocation(Location location, String address) {
 
-        //if the user is the creator/joiner of an event, automatically add
-        //the suggested location
-        if(mIsACreator || mIsAJoiner)
+        if(address!=null)
         {
-            if(address != null)
+            mEventLocation.setText("");
+            //if the user is the creator/joiner of an event, automatically add
+            //the suggested location
+            if(mIsACreator || mIsAJoiner)
             {
-                mEventLocation.setText("");
                 AddSuggestionTask newSuggest = new AddSuggestionTask(location, address);
                 newSuggest.execute();
             }
-            else
+            else //put on pending list first
             {
-                mEventLocation.setError(getString(R.string.error_address_not_found));
+                locPendingSuggestion.add(new PendingLocItem(address, location));
+                mPendingLocSuggestionAdapter.notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedLocList);
+
+                if(locPendingSuggestion.size() > 0) {
+                    mSuggestedLocList.setVisibility(View.VISIBLE);
+                }
             }
+        }
+        else
+        {
+            mEventLocation.setError(getString(R.string.error_address_not_found));
         }
     }
 
@@ -281,6 +297,16 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         {
             AddSuggestionTask newSuggest = new AddSuggestionTask(time);
             newSuggest.execute();
+        }
+        else //add to pending list first
+        {
+            timePendingSuggestion.add(new PendingTimeItem(convertToTimeToString(time), time));
+            mPendingTimeSuggestionAdapter.notifyDataSetChanged();
+            ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedTimeList);
+
+            if(timePendingSuggestion.size() > 0) {
+                mSuggestedTimeList.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -324,6 +350,29 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         SimpleDateFormat sdf1 = new SimpleDateFormat(format);
         SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
         return sdf1.format(d1) + middle + sdf2.format(d2);
+    }
+
+    //To handle multiple scrollviews
+    protected class TouchListener implements ListView.OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    // Allow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+
+            // Handle ListView touch events.
+            v.onTouchEvent(event);
+            return true;
+        }
     }
 
     class GetEventTask extends AsyncTask<Void, Void, String> {
@@ -436,10 +485,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                 //Hide the suggest buttons if the creator does not allow user input
                 //and if the user is not a joiner
-                if((!response.getAllow_joiner_input() || !mIsAJoiner) && !mIsACreator)
+                if(!response.getAllow_joiner_input() && !mIsACreator)
                 {
                     mEventLocation.setVisibility(View.GONE);
-                    mSuggestTime.setVisibility(View.GONE);
+                    mSuggestTimeBtn.setVisibility(View.GONE);
                     mAddLocationBtn.setVisibility(View.GONE);
                 }
 
@@ -557,7 +606,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         String sEventID, response;
         ProgressDialog progressDialog;
         ActsApi getEventApi;
-        boolean allowSuggestion;
 
         public JoinEventTask (String s)
         {
@@ -579,8 +627,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             try {
                 getEventApi.joinActivity(sEventID);
-                allowSuggestion = getEventApi.getActivity(sEventID).getAllow_joiner_input();
-
+                checkPendingSuggestions();
                 checkVotes();
             } catch (Exception e) {
                 response = e.getMessage();
@@ -595,19 +642,42 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             if(mIsAJoiner)
             {
                 message = "Event updated";
-                Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             }
             else
             {
                 message = "Joined Event!";
-                if(allowSuggestion) {
-
-                    message += " You can add suggestions for the event in your My Events page.";
-                }
-                Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
             }
 
+            Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
+        }
+
+        private void checkPendingSuggestions()
+        {
+            int pendingLocCount = mSuggestedLocList.getChildCount();
+            int pendingTimeCount = mSuggestedTimeList.getChildCount();
+
+            for(int i = 0; i < pendingLocCount; i++)
+            {
+                try
+                {
+                    getEventApi.suggestLocationForActivity(sEventID, mPendingLocSuggestionAdapter.getItem(i).getLoc());
+                }
+                catch (Exception e) {
+                    response = e.getMessage();
+                }
+            }
+
+            for(int i = 0; i < pendingTimeCount; i++)
+            {
+                try
+                {
+                    getEventApi.suggestTimeForActivity(sEventID, mPendingTimeSuggestionAdapter.getItem(i).getTime());
+                }
+                catch (Exception e) {
+                    response = e.getMessage();
+                }
+            }
         }
 
         private void checkVotes()

@@ -74,7 +74,7 @@ public class FragmentMyEvents extends Fragment {
             alertDialog.show(fm, "fragment_alert");
         }
 
-        ArrayList<EventListItem> eventList = new ArrayList<>();
+        ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(
