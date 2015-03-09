@@ -127,19 +127,12 @@ public class EventListAdapter extends BaseAdapter
 
     private class CancelEvent extends AsyncTask<Void, Void, String>
     {
-        protected ProgressDialog progressDialog;
         protected int position;
 
         public CancelEvent(int position)
         {
             super();
             this.position = position;
-        }
-
-        @Override
-        protected void onPreExecute()
-        {
-//            progressDialog= ProgressDialog.show(getActivity(), getString(R.string.view_event_progress_bar_title) + "s...", getString(R.string.progress_dialog_text), true);
         }
 
         @Override
@@ -164,7 +157,6 @@ public class EventListAdapter extends BaseAdapter
         @Override
         protected void onPostExecute(String result)
         {
-//            progressDialog.dismiss();
             mEventItems.remove(position);
             notifyDataSetChanged();
         }
