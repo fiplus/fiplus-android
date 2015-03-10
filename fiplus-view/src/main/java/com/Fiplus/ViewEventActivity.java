@@ -28,6 +28,7 @@ import com.wordnik.client.api.ActsApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Attendee;
+import com.wordnik.client.model.Joiner;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 import com.wordnik.client.model.UserProfile;
@@ -425,13 +426,13 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 for(int i=0; i < attendees.getJoiners().size(); i++)
                 {
                     try {
-                        String sID = attendees.getJoiners().get(i);
+                        Joiner joiner = attendees.getJoiners().get(i);
                         //check if a user is a joiner of this event
-                        if(sID.equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
+                        if(joiner.getJoiner_id().toString().equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
                         {
                             mIsAJoiner = true;
                         }
-                        sUserProfile = usersApi.getUserProfile(sID);
+                        sUserProfile = usersApi.getUserProfile(joiner.getJoiner_id().toString());
                         mAttendees.add(sUserProfile);
                     } catch (Exception e) {
                         sEventDetails = e.getMessage();
