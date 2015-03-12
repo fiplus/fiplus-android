@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.wordnik.client.ApiException;
 import com.wordnik.client.api.ActsApi;
+import com.wordnik.client.api.InterestsApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
@@ -54,8 +55,12 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     protected CheckBox mAllowSuggestions;
     protected Button mDateTimeButton;
     protected ListView mDateTimeListView;
-    protected EditText mTags;
+    protected AutoCompleteTextView mTags;
     protected TextView mAddTags;
+    protected ArrayAdapter<String> autoCompleteInterestAdapter;
+    protected List<String> interestsList;
+
+
     protected EditText mDateTimeError;
 
     protected List<Location> mEventLocationList = new ArrayList<Location>();
@@ -93,7 +98,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         autoCompleteLocationAdapter = new LocationArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);
         autoCompleteLocationAdapter.setNotifyOnChange(false);
         mEventLocation.addTextChangedListener(this);
-        //mEventLocation.setOnItemSelectedListener(this);
         mEventLocation.setThreshold(MAX_CHARS);
         mEventLocation.setAdapter(autoCompleteLocationAdapter);
 
@@ -135,6 +139,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                     mEventLocation.setClickable(true);
                     mEventLocation.setEnabled(true);
                 }
+
+                if(mEventLocationListItems.size() == 0) {
+                    mLocationListView.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -147,7 +155,24 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         mAllowSuggestions = (CheckBox) findViewById(R.id.create_event_suggestion_checkbox);
 
         //for tags
-        mTags = (EditText) findViewById(R.id.create_event_tags);
+        mTags = (AutoCompleteTextView) findViewById(R.id.create_event_tags);
+        mTags.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        mTags.setThreshold(1);
         mAddTags = (TextView) findViewById(R.id.create_event_tags_label);
         mTagsLinearLayout = (LinearLayout) findViewById(R.id.create_event_tags_list);
 
@@ -180,6 +205,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                     mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time));
                     mDateTimeButton.setEnabled(true);
                 }
+
+                if(mDateTimeListItems.size() == 0) {
+                    mDateTimeListView.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -203,6 +232,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                 finish();
             }
         });
+
+        GetInterestsTask getInterestsTask = new GetInterestsTask();
+        getInterestsTask.execute();
     }
 
     @Override
@@ -286,6 +318,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             mDateTimeButton.setText(getString(R.string.create_event_max_time));
             mDateTimeButton.setEnabled(false);
         }
+        else if(mDateTimeListItems.size() > 0) {
+            mDateTimeListView.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -341,6 +376,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                 mEventLocation.setHint(R.string.create_event_max_location);
                 mEventLocation.setClickable(false);
                 mEventLocation.setEnabled(false);
+            }
+            else if(mEventLocationListItems.size() > 0) {
+                mLocationListView.setVisibility(View.VISIBLE);
             }
 
             mEventLocation.setText("");
@@ -417,6 +455,33 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             mTags.setClickable(true);
             mTags.setEnabled(true);
         }
+    }
+
+    class GetInterestsTask extends AsyncTask<Void, Void, String>
+    {
+        @Override
+        protected String doInBackground(Void... params) {
+
+            InterestsApi interests = new InterestsApi();
+            interests.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            interests.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try {
+                interestsList = interests.getInterestsWithInput(null);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            autoCompleteInterestAdapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1, interestsList);
+            autoCompleteInterestAdapter.setNotifyOnChange(false);
+            mTags.setAdapter(autoCompleteInterestAdapter);
+        }
+
     }
 
     //TODO: Create event task

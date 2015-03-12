@@ -28,6 +28,7 @@ import com.wordnik.client.api.ActsApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Attendee;
+import com.wordnik.client.model.CreateSuggestionResponse;
 import com.wordnik.client.model.Joiner;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
@@ -544,12 +545,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                     if (addressList != null && addressList.size() > 0) {
                         addr = addressList.get(0);
-                        String addressText = String.format(
-                                "%s, %s",
-                                // If there's a street address, add it
-                                addr.getMaxAddressLineIndex() > 0 ? addr.getAddressLine(0) : "",
-                                // Locality is usually a city
-                                addr.getLocality() != null ? addr.getLocality() : "");
+                        String addressText = (addr.getMaxAddressLineIndex() > 0 ? addr.getAddressLine(0) : "")+" "+
+                                                (addr.getLocality() != null ? addr.getLocality() : "")+" "+
+                                                (addr.getCountryName() != null ? addr.getCountryName() : "");
 
                         //add votes
                         try {
@@ -827,6 +825,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         Location suggestedLocation = null;
         String address;
         boolean isTime;
+        CreateSuggestionResponse suggested;
 
         public AddSuggestionTask(Time t)
         {
@@ -852,12 +851,14 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                 if(isTime)
                 {
-                    setEventApi.suggestTimeForActivity(sEventID, suggestedTime);
+                    suggested = setEventApi.suggestTimeForActivity(sEventID, suggestedTime);
                 }
                 else
                 {
-                    setEventApi.suggestLocationForActivity(sEventID, suggestedLocation);
+                    suggested = setEventApi.suggestLocationForActivity(sEventID, suggestedLocation);
                 }
+
+
 
             } catch (Exception e) {
                 response = e.getMessage();
@@ -872,15 +873,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             if(isTime)
             {
-                timeSuggestionList.add(new SuggestionListItem(null,
-                        convertToTimeToString(suggestedTime), 0, true));
+                timeSuggestionList.add(new SuggestionListItem(suggested.getSuggestion_id(),
+                        convertToTimeToString(suggestedTime), 1, true));
                 mTimesListAdapter.notifyDataSetChanged();
                 ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
             }
             else
             {
-                locSuggestionList.add(new SuggestionListItem(null,
-                        address, 0, true));
+                locSuggestionList.add(new SuggestionListItem(suggested.getSuggestion_id(),
+                        address, 1, true));
                 mLocationListAdapter.notifyDataSetChanged();
                 ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
             }
