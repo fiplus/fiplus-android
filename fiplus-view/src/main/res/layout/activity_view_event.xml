@@ -77,7 +77,8 @@
         android:layout_below="@+id/view_event_pending_loc"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/view_event_add_location"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -87,8 +88,7 @@
         android:layout_below="@+id/view_event_pending_loc"
         android:background="@android:drawable/ic_input_add"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        />
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:layout_width="wrap_content"

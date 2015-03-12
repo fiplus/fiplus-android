@@ -1,6 +1,8 @@
 package com.Fiplus;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -602,9 +604,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     class JoinEventTask extends AsyncTask<Void, Void, String>
     {
-        String sEventID, response;
+        String sEventID, response = "";
         ProgressDialog progressDialog;
         ActsApi getEventApi;
+        boolean error = false;
 
         public JoinEventTask (String s)
         {
@@ -626,9 +629,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             try {
                 getEventApi.joinActivity(sEventID);
-                checkPendingSuggestions();
-                checkVotes();
+                response = checkPendingSuggestions();
+                response = checkVotes();
             } catch (Exception e) {
+                error = true;
                 response = e.getMessage();
             }
 
@@ -638,6 +642,48 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         @Override
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
+            Log.e("Join", message);
+
+            if(error) // have a pop up
+            {
+                message = message.replace("\"", "");
+                message = message.replace("{error:", "");
+                message = message.replace("}", "");
+
+                if(message.toLowerCase().contains("duplicate"))
+                {
+                    if(message.toLowerCase().contains("location"))
+                    {
+                        message = "One or more of your suggested locations were ignored. Duplicate suggestions are not allowed.";
+                    }
+                    else if(message.toLowerCase().contains("time"))
+                    {
+                        message = "One or more of your suggested times were ignored. Duplicate suggestions are not allowed.";
+                    }
+                }
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ViewEventActivity.this);
+                alertDialog.setTitle("Warning").setMessage(message).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        joinSuccessful();
+                    }
+                });
+                alertDialog.show();
+
+                //Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                joinSuccessful();
+            }
+        }
+
+        private void joinSuccessful()
+        {
+            String message;
+
             if(mIsAJoiner)
             {
                 message = "Event updated";
@@ -651,10 +697,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             finish();
         }
 
-        private void checkPendingSuggestions()
+        private String checkPendingSuggestions()
         {
-            int pendingLocCount = mSuggestedLocList.getChildCount();
-            int pendingTimeCount = mSuggestedTimeList.getChildCount();
+            int pendingLocCount = mSuggestedLocList.getCount();
+            int pendingTimeCount = mSuggestedTimeList.getCount();
 
             for(int i = 0; i < pendingLocCount; i++)
             {
@@ -663,7 +709,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     getEventApi.suggestLocationForActivity(sEventID, mPendingLocSuggestionAdapter.getItem(i).getLoc());
                 }
                 catch (Exception e) {
-                    response = e.getMessage();
+                    error = true;
+                    response = e.getMessage() + "pendingLoc";
                 }
             }
 
@@ -674,12 +721,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     getEventApi.suggestTimeForActivity(sEventID, mPendingTimeSuggestionAdapter.getItem(i).getTime());
                 }
                 catch (Exception e) {
-                    response = e.getMessage();
+                    error = true;
+                    response = e.getMessage() + "pendingTime";
                 }
             }
+
+            return response;
         }
 
-        private void checkVotes()
+        private String checkVotes()
         {
 
             int addrCount = mLocationList.getChildCount();
@@ -693,6 +743,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     try {
                         getEventApi.voteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
                     } catch (Exception e) {
+                        error = true;
                         response = e.getMessage();
                     }
                 }
@@ -701,6 +752,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     try {
                         getEventApi.unvoteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
                     } catch (Exception e) {
+                        error = true;
                         response = e.getMessage();
                     }
                 }
@@ -714,6 +766,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     try {
                         getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
                     } catch (Exception e) {
+                        error = true;
                         response = e.getMessage();
                     }
                 }
@@ -722,10 +775,13 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     try {
                         getEventApi.unvoteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
                     } catch (Exception e) {
+                        error = true;
                         response = e.getMessage();
                     }
                 }
             }
+
+            return response;
         }
     }
 
@@ -819,6 +875,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     class AddSuggestionTask extends AsyncTask<Void, Void, String>
     {
+        boolean error = false;
         ActsApi setEventApi;
         String sEventID = eventID, response = "";
         Time suggestedTime = null;
@@ -861,6 +918,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
 
             } catch (Exception e) {
+                error = true;
                 response = e.getMessage();
             }
 
@@ -871,19 +929,37 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected void onPostExecute(String message) {
             Log.e("Suggestion", message);
 
-            if(isTime)
+            if(error)
             {
-                timeSuggestionList.add(new SuggestionListItem(suggested.getSuggestion_id(),
-                        convertToTimeToString(suggestedTime), 1, true));
-                mTimesListAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
+                message = message.replace("\"", "");
+                message = message.replace("{error:", "");
+                message = message.replace("}", "");
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ViewEventActivity.this);
+                alertDialog.setTitle("Error").setMessage(message).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
             }
             else
             {
-                locSuggestionList.add(new SuggestionListItem(suggested.getSuggestion_id(),
-                        address, 1, true));
-                mLocationListAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
+                if(isTime)
+                {
+                    timeSuggestionList.add(new SuggestionListItem(suggested.getSuggestion_id(),
+                            convertToTimeToString(suggestedTime), 1, true));
+                    mTimesListAdapter.notifyDataSetChanged();
+                    ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
+                }
+                else
+                {
+                    locSuggestionList.add(new SuggestionListItem(suggested.getSuggestion_id(),
+                            address, 1, true));
+                    mLocationListAdapter.notifyDataSetChanged();
+                    ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
+                }
             }
 
         }
