@@ -18,7 +18,7 @@ public class LocationUtil {
     {
         Address addr;
         List<Address> addressList;
-        List<String> locationStringsList = new ArrayList<>();
+        List<String> locationStringsList = new ArrayList<String>();
 
         for(int i = 0; i < locations.size(); i++) {
             try {
