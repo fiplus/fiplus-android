@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.ApiException;
 import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.UsersApi;
@@ -53,6 +56,10 @@ public class FragmentRecentActivities extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Tracker t = ((FiplusApplication)getActivity().getApplication()).getTracker();
+        t.setScreenName(this.getClass().getSimpleName());
+        t.send(new HitBuilders.ScreenViewBuilder().build());
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);

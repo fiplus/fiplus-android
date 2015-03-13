@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.ApiException;
 import com.wordnik.client.api.ActsApi;
 import com.wordnik.client.api.InterestsApi;
@@ -83,6 +85,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Tracker t = ((FiplusApplication)this.getApplication()).getTracker();
+        t.setScreenName(this.getClass().getSimpleName());
+        t.send(new HitBuilders.ScreenViewBuilder().build());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 

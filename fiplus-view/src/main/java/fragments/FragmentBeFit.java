@@ -14,10 +14,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
 import com.wordnik.client.ApiException;
 import com.wordnik.client.ApiInvoker;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
@@ -63,6 +66,9 @@ public class FragmentBeFit extends Fragment{
     public void onCreate(Bundle savedInstancesState)
     {
         super.onCreate(savedInstancesState);
+        Tracker t = ((FiplusApplication)getActivity().getApplication()).getTracker();
+        t.setScreenName(this.getClass().getSimpleName());
+        t.send(new HitBuilders.ScreenViewBuilder().build());
         progressDialog = ProgressDialog.show(getActivity(), "Getting events...", getString(R.string.progress_dialog_text), true);
     }
 

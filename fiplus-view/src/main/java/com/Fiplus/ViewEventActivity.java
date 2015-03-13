@@ -26,6 +26,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.api.ActsApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
@@ -94,12 +96,26 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Tracker t = ((FiplusApplication)this.getApplication()).getTracker();
+        t.setScreenName(this.getClass().getSimpleName());
+        t.send(new HitBuilders.ScreenViewBuilder().build());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
 
         Bundle b = getIntent().getExtras();
         final String mEventID = b.getString(EXTRA_EVENT_ID);
         eventID = mEventID;
+
+        t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
+                .setAction(FiplusApplication.VIEWED_EVENT_ACTION)
+                .setLabel(eventID).build());
+
+        if(b.getBoolean(GcmMessageProcessor.FROM_NOTIFICATION))
+        {
+            t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
+                .setAction(FiplusApplication.CLICKED_NOTIFICATION_ACTION).build());
+        }
 
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
         mLocationList = (ListView) findViewById(R.id.view_event_loc_checkboxes);

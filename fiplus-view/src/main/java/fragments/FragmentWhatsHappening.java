@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
 import com.astuetz.PagerSlidingTabStrip;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import adapters.TabPagerAdapter;
 
@@ -35,6 +38,9 @@ public class FragmentWhatsHappening extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Tracker t = ((FiplusApplication)getActivity().getApplication()).getTracker();
+        t.setScreenName(this.getClass().getSimpleName());
+        t.send(new HitBuilders.ScreenViewBuilder().build());
         return inflater.inflate(R.layout.fragment_whats_happening, container, false);
 
     }
