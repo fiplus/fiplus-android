@@ -54,7 +54,7 @@ public class SplashScreenActivity extends BaseFragmentActivity {
                 }
             }else{ // previously logged in, check if still valid
                 UsersApi userApi = new UsersApi();
-                userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+                userApi.getInvoker().setContext(getBaseContext());
                 userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
                 try{
                     Credentials login = new Credentials();

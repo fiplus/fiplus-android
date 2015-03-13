@@ -249,7 +249,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         protected String doInBackground(Void... params) {
 
             InterestsApi interests = new InterestsApi();
-            interests.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            interests.getInvoker().setContext(getBaseContext());
             interests.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
@@ -278,7 +278,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         protected String doInBackground(Void... params) {
 
             UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.getInvoker().setContext(getBaseContext());
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
@@ -327,7 +327,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         protected String doInBackground(Void... params) {
 
             UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.getInvoker().setContext(getBaseContext());
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             UserProfile userProfile = new UserProfile();

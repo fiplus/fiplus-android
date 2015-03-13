@@ -88,7 +88,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         {
             //TODO: Logout
             UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.getInvoker().setContext(getBaseContext());
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
             try
             {
@@ -206,7 +206,7 @@ public class BaseFragmentActivity extends FragmentActivity {
      */
     protected void sendRegistrationIdToBackend(String regid) {
         UsersApi userApi = new UsersApi();
-        userApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+        userApi.getInvoker().setContext(getBaseContext());
         userApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
         SetDeviceId DeviceID = new SetDeviceId();
