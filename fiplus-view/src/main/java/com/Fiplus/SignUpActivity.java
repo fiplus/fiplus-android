@@ -225,8 +225,13 @@ public class SignUpActivity extends Activity {
                } catch (JSONException e) {
                    errorMsg = result;
                }
+
+               errorMsg = errorMsg.replace("\"", "");
+               errorMsg = errorMsg.replace("{error:", "");
+               errorMsg = errorMsg.replace("}", "");
+
                AlertDialog.Builder alertDialog = new AlertDialog.Builder(SignUpActivity.this);
-               alertDialog.setTitle("Message...").setMessage(errorMsg).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+               alertDialog.setTitle("Error...").setMessage(errorMsg).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialog, int which) {
                        dialog.cancel();
