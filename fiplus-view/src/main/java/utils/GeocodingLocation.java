@@ -4,11 +4,8 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
-import android.text.TextWatcher;
 import android.util.Log;
 
-import com.Fiplus.CreateEventActivity;
 import com.wordnik.client.model.Location;
 
 import java.io.IOException;
@@ -87,7 +84,8 @@ public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
             {
                 Address a = address.get(0);
                 temp = (a.getMaxAddressLineIndex() > 0 ? a.getAddressLine(0) : "")+" "+
-                        a.getLocality()+" "+a.getCountryName();
+                        (a.getLocality() != null ? a.getLocality() : "")
+                        +" "+(a.getCountryName() != null ? a.getCountryName() : "");
             }
 
             callerActivity.populateLocation(location, temp);
@@ -98,7 +96,8 @@ public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
             for (Address a : addressList) {
                 //String temp = ""+ a.getFeatureName()+" "+a.getCountryName()+" "+a.getPostalCode();
                 temp = (a.getMaxAddressLineIndex() > 0 ? a.getAddressLine(0) : "")+" "+
-                        a.getLocality()+" "+a.getCountryName();
+                        (a.getLocality() != null ? a.getLocality() : "")
+                        +" "+(a.getCountryName() != null ? a.getCountryName() : "");
                 callerActivity.getAutoComplete().add(temp);
             }
             callerActivity.getAutoComplete().notifyDataSetChanged();

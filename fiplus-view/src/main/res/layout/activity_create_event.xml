@@ -178,7 +178,7 @@
                 android:id="@+id/create_event_tags_label"
 />
 
-            <EditText
+            <AutoCompleteTextView
                 android:paddingTop="20dp"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
