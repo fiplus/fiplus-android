@@ -89,7 +89,7 @@ public class FavouriteUsersActivity extends Activity {
         @Override
         protected String doInBackground(Void... params) {
             UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.getInvoker().setContext(getBaseContext());
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {

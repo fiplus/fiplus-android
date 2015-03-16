@@ -401,7 +401,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected String doInBackground(Void... params) {
 
             ActsApi getEventApi = new ActsApi();
-            getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            getEventApi.getInvoker().setContext(getBaseContext());
             getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
@@ -415,7 +415,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
 
             UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.getInvoker().setContext(getBaseContext());
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
             UserProfile sUserProfile;
 
@@ -624,7 +624,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected String doInBackground(Void... params)
         {
             getEventApi = new ActsApi();
-            getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            getEventApi.getInvoker().setContext(getBaseContext());
             getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
@@ -808,7 +808,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected String doInBackground(Void... params)
         {
             getEventApi = new ActsApi();
-            getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            getEventApi.getInvoker().setContext(getBaseContext());
             getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
@@ -852,9 +852,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected String doInBackground(Void... params)
         {
             getEventApi = new ActsApi();
-            getEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            getEventApi.getInvoker().setContext(getBaseContext());
             getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
-
             try {
                 getEventApi.cancelActivity(sEventID);
             } catch (Exception e) {
@@ -901,7 +900,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected String doInBackground(Void... params)
         {
             setEventApi = new ActsApi();
-            setEventApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            setEventApi.getInvoker().setContext(getBaseContext());
             setEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {

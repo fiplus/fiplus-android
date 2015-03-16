@@ -139,7 +139,7 @@ public class EventListAdapter extends BaseAdapter
         protected String doInBackground(Void... params)
         {
             ActsApi actsApi = new ActsApi();
-            actsApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            actsApi.getInvoker().setContext(context);
             actsApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try{
