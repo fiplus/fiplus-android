@@ -12,4 +12,20 @@ public interface IAppConstants {
 	public String CONTAINER_NAME = "applications";
 	public String FOLDER_NAME = "uploaded_files";
     public String USER_ID = "user_id";
+
+    public String BEFIT_CACHE_VALID_FLAG = "befit_cache_valid_flag";
+    public String BEFIT_CACHE_UPDATE_VALUE = "befit_cache_update_value";
+    public long BEFIT_CACHE_VALID_TIME = 600000;
+
+    public String INTEREST_EVENTS_CACHE_VALID_FLAG = "interest_event_cache_valid_flag";
+    public String INTEREST_EVENTS_CACHE_UPDATE_VALUE = "interest_event_cache_update_value";
+    public long INTEREST_EVENTS_CACHE_VALID_TIME = 600000;
+
+    public String MY_EVENTS_CACHE_VALID_FLAG = "my_event_cache_valid_flag";
+    public String MY_EVENTS_CACHE_UPDATE_VALUE = "my_event_cache_update_value";
+    public long MY_EVENTS_CACHE_VALID_TIME = 600000;
+
+    public String RECENT_EVENTS_CACHE_VALID_FLAG = "recent_event_cache_valid_flag";
+    public String RECENT_EVENTS_CACHE_UPDATE_VALUE = "recent_event_cache_update_value";
+    public long RECENT_EVENTS_CACHE_VALID_TIME = 600000;
 }

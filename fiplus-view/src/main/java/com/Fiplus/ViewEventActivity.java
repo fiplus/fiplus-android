@@ -151,6 +151,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         mJoinEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Invalidate the my events cache to get updated values
+                PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
+
                 JoinEventTask joinEventTask = new JoinEventTask(mEventID);
                 joinEventTask.execute();
             }
@@ -171,6 +174,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     UnJoinEventTask unJoinEventTask = new UnJoinEventTask(mEventID);
                     unJoinEventTask.execute();
                 }
+                // Invalidate the my events cache to get updated values
+                PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
                 finish();
             }
         });

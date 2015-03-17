@@ -12,6 +12,9 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import utils.IAppConstants;
+import utils.PrefUtil;
+
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
@@ -49,6 +52,9 @@ public class GcmMessageProcessor extends IntentService {
                 switch(extras.getString("type")) {
                     case NEW_ACTIVITY_TYPE:
                     case CANCELLED_ACTIVITY_TYPE:
+                        // The activity list has changed for the user so set event cache to invalid
+                        PrefUtil.putBoolean(getApplicationContext(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
+                        PrefUtil.putBoolean(getApplicationContext(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
                         sendActivityCreatedNotification(extras.getString("message"), extras.getString("activityId"));
                         break;
                     default:

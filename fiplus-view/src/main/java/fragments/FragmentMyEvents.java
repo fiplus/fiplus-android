@@ -15,9 +15,17 @@ import android.widget.ListView;
 
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
+import com.wordnik.client.ApiException;
+import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,9 +136,47 @@ public class FragmentMyEvents extends Fragment {
             usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
+            if(PrefUtil.getBoolean(getActivity(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.MY_EVENTS_CACHE_UPDATE_VALUE)) < IAppConstants.MY_EVENTS_CACHE_VALID_TIME)
+            {
+                try
+                {
+                    File cacheFile = new File(getActivity().getCacheDir() + "/" + GetJoinedEvents.class.getSimpleName());
+                    FileInputStream cacheIn = new FileInputStream(cacheFile);
+                    ByteArrayOutputStream cacheBytes = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[cacheIn.available()];
+                    while(cacheIn.available() != 0)
+                    {
+                        cacheIn.read(buffer);
+                        cacheBytes.write(buffer);
+                        buffer = new byte[cacheIn.available()];
+                    }
+                    String cachedJson = new String(cacheBytes.toByteArray(), "UTF-8");
+                    response = (List<Activity>) ApiInvoker.deserialize(cachedJson, "List", Activity.class);
+                    cacheBytes.close();
+                    cacheIn.close();
+                    return null;
+
+                } catch(FileNotFoundException e) {
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
+                } catch (IOException e) {
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
+                } catch (ApiException e) {
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
+                }
+            }
+
             try{
                 response = usersApi.getActivities(PrefUtil.getString(getActivity().getBaseContext(), IAppConstants.USER_ID),
                                                   false, true);
+
+                String toCacheString = ApiInvoker.serialize(response);
+                File cacheFile = new File(getActivity().getCacheDir().getAbsolutePath() + "/" + GetJoinedEvents.class.getSimpleName());
+                FileOutputStream toCacheStream = new FileOutputStream(cacheFile);
+                toCacheStream.write(toCacheString.getBytes("UTF-8"));
+                toCacheStream.close();
+                PrefUtil.putBoolean(getActivity(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, true);
+                PrefUtil.putLong(getActivity(), IAppConstants.MY_EVENTS_CACHE_UPDATE_VALUE, System.currentTimeMillis());
             } catch (Exception e) {
                 return e.getMessage();
             }
