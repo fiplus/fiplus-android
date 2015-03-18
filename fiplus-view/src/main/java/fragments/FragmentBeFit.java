@@ -1,10 +1,13 @@
 package fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +16,28 @@ import android.widget.ListView;
 
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
+import com.wordnik.client.ApiException;
+import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.UserProfile;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
@@ -112,6 +130,36 @@ public class FragmentBeFit extends Fragment{
         @Override
         protected String doInBackground(Void... params)
         {
+            if(PrefUtil.getBoolean(getActivity(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.BEFIT_CACHE_UPDATE_VALUE)) < IAppConstants.BEFIT_CACHE_VALID_TIME)
+            {
+                try
+                {
+                    File cacheFile = new File(getActivity().getCacheDir() + "/" + GetEvents.class.getSimpleName());
+                    FileInputStream cacheIn = new FileInputStream(cacheFile);
+                    ByteArrayOutputStream cacheBytes = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[cacheIn.available()];
+                    while(cacheIn.available() != 0)
+                    {
+                        cacheIn.read(buffer);
+                        cacheBytes.write(buffer);
+                        buffer = new byte[cacheIn.available()];
+                    }
+                    String cachedJson = new String(cacheBytes.toByteArray(), "UTF-8");
+                    response = (List<Activity>)ApiInvoker.deserialize(cachedJson, "List", Activity.class);
+                    cacheBytes.close();
+                    cacheIn.close();
+                    return null;
+
+                } catch(FileNotFoundException e) {
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
+                } catch (IOException e) {
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
+                } catch (ApiException e) {
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
+                }
+            }
+
             MatchesApi matchesApi = new MatchesApi();
             matchesApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             matchesApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
@@ -120,14 +168,23 @@ public class FragmentBeFit extends Fragment{
             usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
-            try{
+            try {
                 UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
                         50.0,
                         false,
                         10.0,
                         profile.getLocation());
+
+                String toCacheString = ApiInvoker.serialize(response);
+                File cacheFile = new File(getActivity().getCacheDir().getAbsolutePath() + "/" + GetEvents.class.getSimpleName());
+                FileOutputStream toCacheStream = new FileOutputStream(cacheFile);
+                toCacheStream.write(toCacheString.getBytes("UTF-8"));
+                toCacheStream.close();
+                PrefUtil.putBoolean(getActivity(), IAppConstants.BEFIT_CACHE_VALID_FLAG, true);
+                PrefUtil.putLong(getActivity(), IAppConstants.BEFIT_CACHE_UPDATE_VALUE, System.currentTimeMillis());
             } catch (Exception e) {
+                Log.e(this.getClass().getSimpleName(), "", e);
                 return e.getMessage();
             }
             return null;
