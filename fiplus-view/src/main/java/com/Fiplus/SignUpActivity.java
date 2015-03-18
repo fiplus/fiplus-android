@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Credentials;
@@ -34,7 +36,7 @@ import utils.PrefUtil;
 /**
  * Sign up activity
  */
-public class SignUpActivity extends Activity {
+public class SignUpActivity extends BaseFragmentActivity {
 
     protected EditText signUpEmail;
     protected EditText signUpPassword;
@@ -49,6 +51,16 @@ public class SignUpActivity extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        // Check device for Play Services APK. TODO: Check that GooglePlayServices is available on the device before calling methods
+        // that require it. Must be done for all onResume() and onCreate() methods for each Activity (Allan). If not available
+        // must disable features or prompt the user to download the latest GooglePlayServices
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(this);
+            regid = getRegistrationId(context);
+        }else{
+            Log.i(TAG, "No valid Google Play Services APK found.");
+        }
 
         //initialize
         signUpEmail = (EditText)findViewById(R.id.sign_up_email);
@@ -201,6 +213,18 @@ public class SignUpActivity extends Activity {
 
                userApi.getInvoker().setContext(getApplicationContext());
                userApi.login(credentials);
+
+               if (checkPlayServices()) {
+                   if (regid.isEmpty()) {
+                       registerInBackground();
+                   }
+                   else{
+                       sendRegistrationIdToBackend(regid);
+                   }
+               }
+               else {
+                   Log.i(TAG, "No valid Google Play Services APK found.");
+               }
 
                WhoAmI id = userApi.whoAmI();
 
