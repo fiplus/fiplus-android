@@ -66,16 +66,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/forgot_pw"
-                    android:id="@+id/forgotPW"
-                    android:layout_gravity="right"
-                    android:textColor="#fff8a426"
-                    android:textIsSelectable="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="@string/login_policy"
                     android:id="@+id/loginPolicy"
                     android:layout_marginTop="25dp"
