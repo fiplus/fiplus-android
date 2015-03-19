@@ -19,10 +19,14 @@ import model.SuggestionListItem;
 public class SuggestionListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<SuggestionListItem> mSuggestionListItems;
+    private int firstTime[];
 
     public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems) {
         this.context = context;
         this.mSuggestionListItems = suggestionListItems;
+        firstTime = new int[suggestionListItems.size()];
+        for(int i = 0; i < suggestionListItems.size(); i++)
+            firstTime[i] = 0;
     }
 
     @Override
@@ -49,7 +53,10 @@ public class SuggestionListAdapter extends BaseAdapter {
         }
 
         CheckBox sugCheckBox = (CheckBox) convertView.findViewById(R.id.suggestion_checkbox);
-        sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
+        if(firstTime[position] < 2) {
+            sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
+            firstTime[position]++;
+        }
         TextView voteProgress = (TextView) convertView.findViewById(R.id.vote_progress);
 
         sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
