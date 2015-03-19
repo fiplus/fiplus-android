@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -74,6 +75,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected LinearLayout mAttendeesList;
     protected Button mSuggestTimeBtn;
     protected Button mAddLocationBtn;
+    protected TextView mLocationLabel;
+    protected TextView mTimeLabel;
 
     ArrayList<PendingLocItem> locPendingSuggestion = new ArrayList<PendingLocItem>();
     private PendingLocListAdapter mPendingLocSuggestionAdapter;
@@ -121,6 +124,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
         mLocationList = (ListView) findViewById(R.id.view_event_loc_checkboxes);
         mLocationList.setOnTouchListener(new TouchListener());
+        mLocationLabel = (TextView) findViewById(R.id.view_event_loc_label);
+        mTimeLabel = (TextView) findViewById(R.id.view_event_time_label);
 
         mSuggestedLocList = (ListView) findViewById(R.id.view_event_pending_loc);
         mPendingLocSuggestionAdapter = new PendingLocListAdapter(this, locPendingSuggestion, mSuggestedLocList);
@@ -571,6 +576,11 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList, mIsCanceled);
             mLocationList.setAdapter(mLocationListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
+
+            if(mIsCanceled) //change color
+            {
+                mLocationLabel.setTextColor(Color.GRAY);
+            }
         }
 
         private void addTime(List<Time> times)
@@ -598,6 +608,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             mTimeList.setAdapter(mTimesListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
 
+            if(mIsCanceled) //change color
+            {
+                mTimeLabel.setTextColor(Color.GRAY);
+            }
         }
 
     }
