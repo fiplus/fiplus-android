@@ -10,7 +10,6 @@
         android:text="Large Text"
         android:textColor="@color/counter_text_bg"
         android:layout_centerVertical="true"
-        android:textStyle="italic"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"/>
 
@@ -19,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:contentDescription="@string/desc_list_item_icon"
         android:background="@android:drawable/ic_delete"
         android:visibility="visible"

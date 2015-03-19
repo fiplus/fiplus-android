@@ -125,16 +125,8 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         mInterestInputField.setThreshold(1);
 
         mInterestListView = (ListView) findViewById(R.id.interests_list);
-        mRemovableItemAdapter = new RemovableItemAdapter(this, mInterestListItems);
+        mRemovableItemAdapter = new RemovableItemAdapter(this, mInterestListItems, mInterestListView);
         mInterestListView.setAdapter(mRemovableItemAdapter);
-//        mInterestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                mInterestListItems.remove(position);
-//                listAdapter.notifyDataSetChanged();
-//                ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
-//            }
-//        });
 
         mInterestListView.setOnTouchListener(new ListView.OnTouchListener() {
             @Override

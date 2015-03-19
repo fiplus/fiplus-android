@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.Fiplus.R;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.PendingTimeItem;
+import utils.ListViewUtil;
 
 /**
  * Created by Javier on 3/19/2015.
@@ -22,10 +24,12 @@ import model.PendingTimeItem;
 public class RemovableItemAdapter extends BaseAdapter {
     private Context context;
     private List<String> mRemovableListItems;
+    private ListView view;
 
-    public RemovableItemAdapter(Context context, List<String> listItems) {
+    public RemovableItemAdapter(Context context, List<String> listItems, ListView view) {
         this.context = context;
         this.mRemovableListItems = listItems;
+        this.view = view;
     }
 
     @Override
@@ -58,6 +62,10 @@ public class RemovableItemAdapter extends BaseAdapter {
             public void onClick(View v) {
                 mRemovableListItems.remove(position);
                 notifyDataSetChanged();
+                ListViewUtil.setListViewHeightBasedOnChildren(view);
+
+                if(mRemovableListItems.size() == 0)
+                    view.setVisibility(View.GONE);
             }
         });
         mText.setText(mRemovableListItems.get(position));

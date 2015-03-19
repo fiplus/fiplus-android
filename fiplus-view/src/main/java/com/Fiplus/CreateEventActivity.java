@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapters.LocationArrayAdapterNoFilter;
+import adapters.RemovableItemAdapter;
 import utils.DateTimePicker;
 import utils.GeoAutoCompleteInterface;
 import utils.GeocodingLocation;
@@ -59,6 +60,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     protected TextView mAddTags;
     protected ArrayAdapter<String> autoCompleteInterestAdapter;
     protected List<String> interestsList;
+    protected RemovableItemAdapter mRemovableLocationAdapter;
+    protected RemovableItemAdapter mRemovableDateTimeAdapter;
 
 
     protected EditText mDateTimeError;
@@ -124,31 +127,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
         //to show the list of suggested locations
         mLocationListView = (ListView)findViewById(R.id.create_event_address_list);
-        mLocationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                mEventLocationList.remove(position);
-                mEventLocationListItems.remove(position);
-                locationAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
+        mRemovableLocationAdapter = new RemovableItemAdapter(this, mEventLocationListItems, mLocationListView);
+        mLocationListView.setAdapter(mRemovableLocationAdapter);
 
-                if(mEventLocationListItems.size() < MAX)
-                {
-                    mEventLocation.setHint(R.string.create_event_location_hint);
-                    mEventLocation.setClickable(true);
-                    mEventLocation.setEnabled(true);
-                }
-
-                if(mEventLocationListItems.size() == 0) {
-                    mLocationListView.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        //for locations
-        locationAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mEventLocationListItems);
-        mLocationListView.setAdapter(locationAdapter);
         ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
         mMaxPeople = (EditText) findViewById(R.id.create_event_number_of_people);
@@ -191,30 +172,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
         //to show the list of suggested start and end date/time
         mDateTimeListView = (ListView)findViewById(R.id.create_event_datetimelist);
-        mDateTimeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                mDateTimeListItems.remove(position);
-                mDateTimeListItemsUTC.remove(position);
-                dateTimeAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
+        mRemovableDateTimeAdapter  = new RemovableItemAdapter(this, mDateTimeListItems, mDateTimeListView);
+        mDateTimeListView.setAdapter(mRemovableDateTimeAdapter);
 
-                if(mDateTimeListItems.size() < MAX)
-                {
-                    mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time));
-                    mDateTimeButton.setEnabled(true);
-                }
-
-                if(mDateTimeListItems.size() == 0) {
-                    mDateTimeListView.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        //for date time
-        dateTimeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDateTimeListItems);
-        mDateTimeListView.setAdapter(dateTimeAdapter);
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
         mCreateButton = (Button) findViewById(R.id.create_event_create__button);
@@ -309,7 +269,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         //getDateTime.convertTimeToString(time)
         mDateTimeListItems.add(sTime);
         mDateTimeListItemsUTC.add(time);
-        dateTimeAdapter.notifyDataSetChanged();
+        mRemovableDateTimeAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
         if(mDateTimeListItems.size() == MAX)
@@ -368,7 +328,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         {
             mEventLocationList.add(location);
             mEventLocationListItems.add(address);
-            locationAdapter.notifyDataSetChanged();
+            mRemovableLocationAdapter.notifyDataSetChanged();
             ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
             if(mEventLocationListItems.size() == MAX)
