@@ -19,13 +19,15 @@ public class SuggestionListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<SuggestionListItem> mSuggestionListItems;
     private int firstTime[];
+    private boolean isCancelled;
 
-    public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems) {
+    public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems, boolean isCancelled) {
         this.context = context;
         this.mSuggestionListItems = suggestionListItems;
         firstTime = new int[suggestionListItems.size()];
         for(int i = 0; i < suggestionListItems.size(); i++)
             firstTime[i] = 0;
+        this.isCancelled = isCancelled;
     }
 
     @Override
@@ -60,6 +62,14 @@ public class SuggestionListAdapter extends BaseAdapter {
 
         sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
         voteProgress.setText("" + mSuggestionListItems.get(position).getVote() + " votes");
+
+        if(isCancelled)
+        {
+            sugCheckBox.setClickable(false);
+            sugCheckBox.setEnabled(false);
+            sugCheckBox.setFocusable(false);
+        }
+
 
         return convertView;
     }
