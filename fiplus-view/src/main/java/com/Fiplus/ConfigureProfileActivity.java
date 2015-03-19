@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import adapters.RemovableItemAdapter;
 import utils.IAppConstants;
 import utils.ListViewUtil;
 import utils.LocationUtil;
@@ -48,6 +49,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
     protected ImageView mImageView;
     protected TextView mAddTextView;
     protected ListView mInterestListView;
+    protected RemovableItemAdapter mRemovableItemAdapter;
     protected Button mSaveButton;
     protected Button mCancelButton;
     protected Button mLocationButton;
@@ -123,14 +125,16 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         mInterestInputField.setThreshold(1);
 
         mInterestListView = (ListView) findViewById(R.id.interests_list);
-        mInterestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mInterestListItems.remove(position);
-                listAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
-            }
-        });
+        mRemovableItemAdapter = new RemovableItemAdapter(this, mInterestListItems);
+        mInterestListView.setAdapter(mRemovableItemAdapter);
+//        mInterestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                mInterestListItems.remove(position);
+//                listAdapter.notifyDataSetChanged();
+//                ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
+//            }
+//        });
 
         mInterestListView.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
@@ -157,8 +161,8 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         mAddTextView = (TextView) findViewById(R.id.add_interest_label);
         setTitle(R.string.configure_profile);
 
-        listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mInterestListItems);
-        mInterestListView.setAdapter(listAdapter);
+        //listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mInterestListItems);
+        //mInterestListView.setAdapter(listAdapter);
 
         getProfile();
         ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
@@ -192,7 +196,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
     public void onAddInterestClick(View view) {
         mInterestListItems.add(mInterestInputField.getText().toString());
         mInterestInputField.setText("");
-        listAdapter.notifyDataSetChanged();
+        mRemovableItemAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
     }
 
@@ -266,6 +270,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
             autoCompleteInterestAdapter = new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_list_item_1, interestsList);
             autoCompleteInterestAdapter.setNotifyOnChange(false);
             mInterestInputField.setAdapter(autoCompleteInterestAdapter);
+            mRemovableItemAdapter.notifyDataSetChanged();
         }
 
     }
@@ -317,7 +322,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
                 }
             }
             ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
-            listAdapter.notifyDataSetChanged();
+            mRemovableItemAdapter.notifyDataSetChanged();
         }
     }
 
