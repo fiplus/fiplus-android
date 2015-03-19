@@ -55,6 +55,7 @@ import utils.GeoAutoCompleteInterface;
 import utils.GeocodingLocation;
 import utils.IAppConstants;
 import utils.ListViewUtil;
+import utils.LocationUtil;
 import utils.PrefUtil;
 
 public class ViewEventActivity extends FragmentActivity  implements TextWatcher, GeoAutoCompleteInterface {
@@ -545,33 +546,19 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             for (int i = 0; i < suggestedLocs.size(); i++)
             {
                 Location suggestion = suggestedLocs.get(i);
+                //add votes
                 try {
-                    Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                    addressList = geocoder.getFromLocation(suggestion.getLatitude(),
-                            suggestion.getLongitude(), 1);
-
-                    if (addressList != null && addressList.size() > 0) {
-                        addr = addressList.get(0);
-                        String addressText = (addr.getMaxAddressLineIndex() > 0 ? addr.getAddressLine(0) : "")+" "+
-                                                (addr.getLocality() != null ? addr.getLocality() : "")+" "+
-                                                (addr.getCountryName() != null ? addr.getCountryName() : "");
-
-                        //add votes
-                        try {
-                            numOfVotes = suggestion.getSuggestion_votes().intValue();
-                        } catch(NullPointerException e)
-                        {
-                            numOfVotes = -1;
-                        }
-
-                        boolean yesVote = suggestion.getSuggestion_voters().contains(
-                                PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
-                        locSuggestionList.add(new SuggestionListItem(suggestion.getSuggestion_id(),
-                                addressText, numOfVotes, yesVote));
-                    }
-                } catch (IOException e) {
-                    Log.e("View Event", e.getMessage());
+                    numOfVotes = suggestion.getSuggestion_votes().intValue();
+                } catch(NullPointerException e)
+                {
+                    numOfVotes = -1;
                 }
+
+                boolean yesVote = suggestion.getSuggestion_voters().contains(
+                        PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null));
+                locSuggestionList.add(new SuggestionListItem(suggestion.getSuggestion_id(),
+                        LocationUtil.getLocationString(suggestion, getBaseContext()),
+                        numOfVotes, yesVote));
             }
 
             mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList);

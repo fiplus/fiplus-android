@@ -414,6 +414,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
                 addr = addressList.get(0);
                 location.setLatitude(addr.getLatitude());
                 location.setLongitude(addr.getLongitude());
+                location.setAddress(addr.getAddressLine(0));
                 userLocation = location;
 
                 /*

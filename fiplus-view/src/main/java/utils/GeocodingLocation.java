@@ -63,6 +63,7 @@ public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
             addr = addressList.get(0);
             location.setLatitude(addr.getLatitude());
             location.setLongitude(addr.getLongitude());
+            location.setAddress(addr.getAddressLine(0));
 
             //only have one address
             addressList.clear();
