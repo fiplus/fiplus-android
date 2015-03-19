@@ -91,6 +91,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     boolean mIsAJoiner = false;
     boolean mIsACreator = false;
+    boolean mIsCanceled = false;
     String eventID;
 
     @Override
@@ -330,7 +331,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         Date d1 = new Date(startDate);
         Date d2 = new Date(endDate);
-        String format = "EEE MMM d, h:m a";
+        String format = "EEE MMM d, hh:mm a";
 
         String format2 = format;
         String middle = " to ";
@@ -340,7 +341,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         if(sameDay && sameMonth)
         {
-            format2 = "h:m a";
+            format2 = "hh:mm a";
             middle = " to ";
         }
         if(!curYear)
@@ -406,6 +407,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 sEventDetails = response.toString();
                 attendees = getEventApi.getAttendees(sEventID, null);
                 creator = response.getCreator();
+                mIsCanceled = response.getIs_cancelled();
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
                 Log.e("Error - Get Activity", sEventDetails);
@@ -462,7 +464,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
             else
             {
-                setTitle(response.getName());
                 String desc = response.getDescription();
                 if(desc.length() == 0)
                 {
@@ -473,24 +474,39 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     mEventDesc.setText(desc);
                 }
 
-                if(mIsACreator)
+                if(mIsCanceled)
                 {
-                    mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
-                    mCancelBtn.setText("Cancel Event");
-                }
-                else if(mIsAJoiner)
-                {
-                    mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
-                    mCancelBtn.setText("Un-Join");
-                }
-
-                //Hide the suggest buttons if the creator does not allow user input
-                //and if the user is not a joiner
-                if(!response.getAllow_joiner_input() && !mIsACreator)
-                {
+                    setTitle(response.getName() + " - CANCELLED");
+                    mJoinEventBtn.setVisibility(View.GONE);
+                    mCancelBtn.setVisibility(View.GONE);
                     mEventLocation.setVisibility(View.GONE);
                     mSuggestTimeBtn.setVisibility(View.GONE);
                     mAddLocationBtn.setVisibility(View.GONE);
+                }
+                else
+                {
+                    setTitle(response.getName());
+
+                    if(mIsACreator)
+                    {
+                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                        mCancelBtn.setText("Cancel Event");
+                    }
+                    else if(mIsAJoiner)
+                    {
+                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                        mCancelBtn.setText("Un-Join");
+                    }
+
+                    //Hide the suggest buttons if the creator does not allow user input
+                    //and if the user is not a joiner
+                    if(!response.getAllow_joiner_input() && !mIsACreator)
+                    {
+                        mEventLocation.setVisibility(View.GONE);
+                        mSuggestTimeBtn.setVisibility(View.GONE);
+                        mAddLocationBtn.setVisibility(View.GONE);
+                    }
+
                 }
 
                 addAttendees();
@@ -552,7 +568,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         numOfVotes, yesVote));
             }
 
-            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList);
+            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList, mIsCanceled);
             mLocationList.setAdapter(mLocationListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
         }
@@ -578,9 +594,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         convertToTimeToString(time), numOfVotes, yesVote));
             }
 
-            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, timeSuggestionList);
+            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, timeSuggestionList, mIsCanceled);
             mTimeList.setAdapter(mTimesListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
+
         }
 
     }

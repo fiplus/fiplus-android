@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
@@ -45,6 +46,7 @@ public class FragmentMyEvents extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
+    private TextView mFirmUp;
 
     public static FragmentMyEvents newInstance() {
         return new FragmentMyEvents();
@@ -67,6 +69,7 @@ public class FragmentMyEvents extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
+        mFirmUp = (TextView) v.findViewById(R.id.firm_up_event);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
         GetJoinedEvents getJoinedEvents = new GetJoinedEvents();

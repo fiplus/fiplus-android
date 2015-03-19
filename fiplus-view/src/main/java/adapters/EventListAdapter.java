@@ -2,7 +2,6 @@ package adapters;
 
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -15,10 +14,8 @@ import android.widget.TextView;
 
 import com.Fiplus.R;
 import com.wordnik.client.api.ActsApi;
-import com.wordnik.client.api.UsersApi;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import model.EventListItem;
 import utils.IAppConstants;
@@ -79,7 +76,7 @@ public class EventListAdapter extends BaseAdapter
 
             convertView = mInflater.inflate(R.layout.item_events_whats_happening, parent, false);
             eventButton = (Button) convertView.findViewById(R.id.event_button);
-            confirmEvent = (TextView) convertView.findViewById(R.id.confirm_event);
+            confirmEvent = (TextView) convertView.findViewById(R.id.firm_up_event);
 
             switch (currentClass)
             {
