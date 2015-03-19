@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -568,6 +569,31 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     mEventLocation.setVisibility(View.GONE);
                     mSuggestTimeBtn.setVisibility(View.GONE);
                     mAddLocationBtn.setVisibility(View.GONE);
+                }
+                else
+                {
+                    setTitle(response.getName());
+
+                    if(mIsACreator)
+                    {
+                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                        mCancelBtn.setText("Cancel Event");
+                    }
+                    else if(mIsAJoiner)
+                    {
+                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                        mCancelBtn.setText("Un-Join");
+                    }
+
+                    //Hide the suggest buttons if the creator does not allow user input
+                    //and if the user is not a joiner
+                    if(!response.getAllow_joiner_input() && !mIsACreator)
+                    {
+                        mEventLocation.setVisibility(View.GONE);
+                        mSuggestTimeBtn.setVisibility(View.GONE);
+                        mAddLocationBtn.setVisibility(View.GONE);
+                    }
+
                 }
 
             }
