@@ -16,6 +16,9 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +43,7 @@ public class GcmMessageProcessor extends IntentService {
     private static int sNotificationId = 1;
 
     private static final String NEW_ACTIVITY_GROUP = "new_activity_group";
+    private static final String FIRM_UP_GROUP = "firm_up_group";
 
     /** Push notification message types */
     private static final String NEW_ACTIVITY_TYPE = "new_activity";
@@ -70,13 +74,15 @@ public class GcmMessageProcessor extends IntentService {
                         activityNotification(extras.getString("message"), extras.getString("activityId"));
                         break;
                     case FIRM_UP_ACTIVITY_TYPE:
-                        String message = extras.getString("Name") + " is confirmed for:\n";
-                        Time time = (Time) extras.get("time");
-                        Location loc = (Location)extras.get("location");
-                        if(time != null)
-                        {
-                            Date d1 = new Date(time.getStart().longValue());
-                            Date d2 = new Date(time.getEnd().longValue());
+                        String time = null, location = null;
+
+                        try {
+                            JSONObject reader = new JSONObject(extras.getString("time"));
+
+                            long start = reader.getLong("start");
+                            long end = reader.getLong("start");
+                            Date d1 = new Date(start);
+                            Date d2 = new Date(end);
                             String format = "EEE MMM d, h:m a";
 
                             String format2 = format;
@@ -97,32 +103,19 @@ public class GcmMessageProcessor extends IntentService {
 
                             SimpleDateFormat sdf1 = new SimpleDateFormat(format);
                             SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
-                            message += sdf1.format(d1) + middle + sdf2.format(d2) + "\n";
-                        }
-                        else if (loc != null)
-                        {
-                            Address addr;
-                            List<Address> addressList;
-                            try {
-                                Geocoder geocoder = new Geocoder(getBaseContext(), Locale.CANADA);
-                                addressList = geocoder.getFromLocation(loc.getLatitude(),
-                                        loc.getLongitude(), 1);
+                            time = sdf1.format(d1) + middle + sdf2.format(d2);
 
-                                if (addressList != null && addressList.size() > 0) {
-                                    addr = addressList.get(0);
-                                    String addressText = String.format(
-                                            "%s, %s",
-                                            // If there's a street address, add it
-                                            addr.getMaxAddressLineIndex() > 0 ? addr.getAddressLine(0) : "",
-                                            // Locality is usually a city
-                                            addr.getLocality() != null ? addr.getLocality() : "");
-                                    message += addressText + "\n";
-                                }
-                            } catch (IOException e) {
-                                Log.e("View Event", e.getMessage());
-                            }
+                        } catch (JSONException e) {
+                            // No Time, ignore
                         }
-                        activityNotification(message, extras.getString("activityId"));
+
+                        try {
+                            JSONObject reader = new JSONObject(extras.getString("location"));
+                            location = reader.getString("address");
+                        } catch (JSONException e) {
+                            // No Location, ignore
+                        }
+                        firmUpNotification(extras.getString("activityId"), extras.getString("Name"), time, location);
                         break;
                     default:
                         break;
@@ -134,6 +127,42 @@ public class GcmMessageProcessor extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+    private void firmUpNotification(String activityId, String name, String time, String location)
+    {
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, ViewEventActivity.class);
+        resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
+
+        // The stack builder object will contain an artificial back stack for the started Activity.
+        // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(ViewEventActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.fiplus)
+                .setContentText(name + " will be at: ")
+                .setContentIntent(resultPendingIntent)
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine(time)
+                        .setBigContentTitle(name + " will be at: ")
+                        .addLine(location)
+                        .setSummaryText(location))
+                .setGroup(FIRM_UP_GROUP)
+                .setGroupSummary(true)
+                ;
+        NotificationManager mNotificationManager = (NotificationManager)
+                this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(sNotificationId++, mBuilder.build());
+    }
 
     private void activityNotification(String msg, String activityId) {
 
