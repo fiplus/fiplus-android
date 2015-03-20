@@ -5,6 +5,9 @@
     <string name="view_event_cancel_event_btn">Cancel Event</string>
     <string name="view_event_joiner">Joiner</string>
     <string name="view_event_pending">Pending</string>
+    <string name="view_event_firm_up">Firm up!</string>
+    <string name="view_event_firm_up_button">Confirm Event</string>
+    <string name="view_event_rsvp_button">RSVP</string>
 
     <string name="view_event_joiner_button">Update Changes</string>
     <string name="view_event_suggest_date">Suggest Date</string>
