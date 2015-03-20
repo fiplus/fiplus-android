@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -19,14 +20,14 @@ import model.SuggestionListItem;
 public class SuggestionListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<SuggestionListItem> mSuggestionListItems;
-    private int firstTime[];
+    private boolean checked[];
 
     public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems) {
         this.context = context;
         this.mSuggestionListItems = suggestionListItems;
-        firstTime = new int[suggestionListItems.size()];
+        checked = new boolean[suggestionListItems.size()];
         for(int i = 0; i < suggestionListItems.size(); i++)
-            firstTime[i] = 0;
+            checked[i] = suggestionListItems.get(i).getYesVote();
     }
 
     @Override
@@ -45,7 +46,7 @@ public class SuggestionListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
@@ -53,10 +54,13 @@ public class SuggestionListAdapter extends BaseAdapter {
         }
 
         CheckBox sugCheckBox = (CheckBox) convertView.findViewById(R.id.suggestion_checkbox);
-        if(firstTime[position] < 2) {
-            sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
-            firstTime[position]++;
-        }
+        sugCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checked[position] = isChecked;
+            }
+        });
+        sugCheckBox.setChecked(checked[position]);
         TextView voteProgress = (TextView) convertView.findViewById(R.id.vote_progress);
 
         sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
