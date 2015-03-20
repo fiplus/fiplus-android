@@ -443,6 +443,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                 mIsConfirmed = response.getIs_confirmed();
                 Log.e("Confirmed Event", String.valueOf(mIsConfirmed));
+
+                mNeedRSVP = response.getNeeds_rsvp();
+                Log.e("Need RSVP?", String.valueOf(mNeedRSVP));
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
                 Log.e("Error - Get Activity", sEventDetails);
@@ -471,9 +474,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         {
                             mIsAJoiner = true;
                             Log.e("Joiner?", String.valueOf(mIsAJoiner));
-
-                            mNeedRSVP = joiner.getConfirmed();
-                            Log.e("Need RSVP?", String.valueOf(mNeedRSVP));
                         }
                         sUserProfile = usersApi.getUserProfile(joiner.getJoiner_id());
                         mAttendees.add(sUserProfile);
@@ -760,8 +760,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             try {
                 getEventApi.joinActivity(sEventID);
-                response = checkPendingSuggestions();
-                response = checkVotes();
+
+                if(!mIsConfirmed){
+                    response = checkPendingSuggestions();
+                    response = checkVotes();
+                }
+
             } catch (Exception e) {
                 error = true;
                 response = e.getMessage();
