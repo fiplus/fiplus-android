@@ -158,8 +158,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     FirmUpDialog firmUp = new FirmUpDialog(ViewEventActivity.this, eventID, locSuggestionList, timeSuggestionList, mIsACreator);
                     firmUp.showFirmUpRsvp();
-
-
                 }
                 else
                 {
@@ -576,8 +574,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                     if(mIsACreator)
                     {
-                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                        mJoinEventBtn.setText(getString(R.string.view_event_firm_up_button));
                         mCancelBtn.setText("Cancel Event");
+
                     }
                     else if(mIsAJoiner)
                     {
@@ -593,7 +592,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         mSuggestTimeBtn.setVisibility(View.GONE);
                         mAddLocationBtn.setVisibility(View.GONE);
                     }
-
                 }
 
             }
