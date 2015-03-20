@@ -158,6 +158,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     FirmUpDialog firmUp = new FirmUpDialog(ViewEventActivity.this, eventID, locSuggestionList, timeSuggestionList, mIsACreator);
                     firmUp.showFirmUpRsvp();
+
+
                 }
                 else
                 {
@@ -567,31 +569,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     mEventLocation.setVisibility(View.GONE);
                     mSuggestTimeBtn.setVisibility(View.GONE);
                     mAddLocationBtn.setVisibility(View.GONE);
-                }
-                else
-                {
-                    setTitle(response.getName());
-
-                    if(mIsACreator)
-                    {
-                        mJoinEventBtn.setText(getString(R.string.view_event_firm_up_button));
-                        mCancelBtn.setText("Cancel Event");
-
-                    }
-                    else if(mIsAJoiner)
-                    {
-                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
-                        mCancelBtn.setText("Un-Join");
-                    }
-
-                    //Hide the suggest buttons if the creator does not allow user input
-                    //and if the user is not a joiner
-                    if(!response.getAllow_joiner_input() && !mIsACreator)
-                    {
-                        mEventLocation.setVisibility(View.GONE);
-                        mSuggestTimeBtn.setVisibility(View.GONE);
-                        mAddLocationBtn.setVisibility(View.GONE);
-                    }
                 }
 
             }
