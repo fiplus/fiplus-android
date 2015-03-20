@@ -173,8 +173,8 @@ public class FragmentBeFit extends Fragment{
                 response = matchesApi.matchActivities(
                         50.0,
                         false,
-                        10.0,
-                        profile.getLocation());
+                        false,
+                        10.0);
 
                 String toCacheString = ApiInvoker.serialize(response);
                 File cacheFile = new File(getActivity().getCacheDir().getAbsolutePath() + "/" + GetEvents.class.getSimpleName());

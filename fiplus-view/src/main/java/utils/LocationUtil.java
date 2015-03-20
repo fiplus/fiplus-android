@@ -21,10 +21,54 @@ public class LocationUtil {
         List<String> locationStringsList = new ArrayList<String>();
 
         for(int i = 0; i < locations.size(); i++) {
+            String address = locations.get(i).getAddress();
+            if(address != null)
+            {
+                locationStringsList.add(address);
+            }
+            else {
+                try {
+                    Geocoder geocoder = new Geocoder(context, Locale.CANADA);
+                    addressList = geocoder.getFromLocation(locations.get(i).getLatitude(),
+                            locations.get(i).getLongitude(),
+                            1);
+                    if (addressList != null && addressList.size() > 0) {
+                        addr = addressList.get(0);
+                        String addressText = String.format(
+                                "%s, %s, %s",
+                                // If there's a street address, add it
+                                addr.getMaxAddressLineIndex() > 0 ?
+                                        addr.getAddressLine(0) : "",
+                                // Locality is usually a city
+                                addr.getLocality() != null ? addr.getLocality() : "",
+                                // The country of the address
+                                addr.getCountryName());
+                        // Return the text
+                        locationStringsList.add(addressText);
+                    }
+                } catch (IOException e) {
+                    Log.e("LocationUtil", e.getMessage());
+                }
+            }
+        }
+        return locationStringsList;
+    }
+
+    public static String getLocationString(Location location, Context context)
+    {
+        String address = location.getAddress();
+        if(address != null)
+        {
+            return address;
+        }
+        else {
+            Address addr;
+            List<Address> addressList;
+
             try {
                 Geocoder geocoder = new Geocoder(context, Locale.CANADA);
-                addressList = geocoder.getFromLocation(locations.get(i).getLatitude(),
-                        locations.get(i).getLongitude(),
+                addressList = geocoder.getFromLocation(location.getLatitude(),
+                        location.getLongitude(),
                         1);
                 if (addressList != null && addressList.size() > 0) {
                     addr = addressList.get(0);
@@ -38,42 +82,12 @@ public class LocationUtil {
                             // The country of the address
                             addr.getCountryName());
                     // Return the text
-                    locationStringsList.add(addressText);
+                    return addressText;
                 }
             } catch (IOException e) {
-                Log.e("LocationUtil", e.getMessage());
+                Log.e("LocationUtil ", e.getMessage());
             }
+            return "<ERROR: Location not found>";
         }
-        return locationStringsList;
-    }
-
-    public static String getLocationString(Location location, Context context)
-    {
-        Address addr;
-        List<Address> addressList;
-
-        try {
-            Geocoder geocoder = new Geocoder(context, Locale.CANADA);
-            addressList = geocoder.getFromLocation(location.getLatitude(),
-                    location.getLongitude(),
-                    1);
-            if (addressList != null && addressList.size() > 0) {
-                addr = addressList.get(0);
-                String addressText = String.format(
-                        "%s, %s, %s",
-                        // If there's a street address, add it
-                        addr.getMaxAddressLineIndex() > 0 ?
-                                addr.getAddressLine(0) : "",
-                        // Locality is usually a city
-                        addr.getLocality() != null ? addr.getLocality() : "",
-                        // The country of the address
-                        addr.getCountryName());
-                // Return the text
-                return addressText;
-            }
-        } catch (IOException e) {
-            Log.e("LocationUtil ", e.getMessage());
-        }
-        return "<ERROR: Location not found>";
     }
 }
