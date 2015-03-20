@@ -68,7 +68,6 @@ public class EventListAdapter extends BaseAdapter
     {
         Classes currentClass = Classes.valueOf(className.toUpperCase());
         Button eventButton;
-        TextView confirmEvent;
 
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
@@ -76,13 +75,11 @@ public class EventListAdapter extends BaseAdapter
 
             convertView = mInflater.inflate(R.layout.item_events_whats_happening, parent, false);
             eventButton = (Button) convertView.findViewById(R.id.event_button);
-            confirmEvent = (TextView) convertView.findViewById(R.id.firm_up_event);
 
             switch (currentClass)
             {
                 case VIEWPROFILEACTIVITY :
                     eventButton.setVisibility(convertView.GONE);
-                    confirmEvent.setVisibility(convertView.GONE);
                     break;
                 case FRAGMENTMYEVENTS:
                     eventButton.setText(R.string.cancel_button);
@@ -96,12 +93,10 @@ public class EventListAdapter extends BaseAdapter
                     break;
                 case FRAGMENTEVENTS:
                     eventButton.setText(R.string.rate_now);
-                    confirmEvent.setVisibility(convertView.GONE);
                     break;
                 default:
 //                    eventButton.setText(R.string.join_button);
                     eventButton.setVisibility(convertView.GONE);
-                    confirmEvent.setVisibility(convertView.GONE);
                     break;
             }
 

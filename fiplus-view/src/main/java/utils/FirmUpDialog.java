@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.Fiplus.R;
+import com.Fiplus.ViewEventActivity;
 import com.wordnik.client.api.ActsApi;
 
 import java.util.ArrayList;
@@ -34,7 +35,8 @@ public class FirmUpDialog {
     private Button firmUpButton;
     private Button cancelFirmUpButton;
     public static int selectedIndex = 0;
-    //public static int selectedIndexTime = 0;
+
+    private Class<?> callingClass;
 
     public FirmUpDialog(Context c, String sEventID, ArrayList<SuggestionListItem> loc, ArrayList<SuggestionListItem> time, boolean isACreator)
     {
@@ -43,6 +45,7 @@ public class FirmUpDialog {
         locSuggestionList = loc;
         timeSuggestionList = time;
         this.isACreator = isACreator;
+        callingClass = c.getClass();
     }
 
     public void showFirmUpRsvp()
@@ -85,7 +88,7 @@ public class FirmUpDialog {
     {
         if(isACreator)
         {
-            mFirmUP.setTitle(R.string.view_event_firm_up_button);
+            mFirmUP.setTitle(R.string.view_event_firm_up);
             firmUpButton.setText(R.string.view_event_firm_up_button);
         }
         else
@@ -171,9 +174,12 @@ public class FirmUpDialog {
         @Override
         protected void onPostExecute(String message)
         {
+            mFirmUP.dismiss();
             if(message == null)
             {
                 Toast.makeText(callingContext, "Successfully firmed up event!", Toast.LENGTH_SHORT).show();
+                ViewEventActivity activity = (ViewEventActivity)callingContext;
+                activity.recreate();
             }
             else
             {
