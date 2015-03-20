@@ -51,6 +51,7 @@ import model.PendingLocItem;
 import model.PendingTimeItem;
 import model.SuggestionListItem;
 import utils.DateTimePicker;
+import utils.FirmUpDialog;
 import utils.GeoAutoCompleteInterface;
 import utils.GeocodingLocation;
 import utils.IAppConstants;
@@ -92,6 +93,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     boolean mIsAJoiner = false;
     boolean mIsACreator = false;
     boolean mIsCanceled = false;
+    boolean mIsConfirmed = false;
     String eventID;
 
     @Override
@@ -150,8 +152,17 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 // Invalidate the my events cache to get updated values
                 PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
 
-                JoinEventTask joinEventTask = new JoinEventTask(mEventID);
-                joinEventTask.execute();
+                if(mIsACreator)
+                {
+                    FirmUpDialog firmUp = new FirmUpDialog(ViewEventActivity.this, eventID, locSuggestionList, timeSuggestionList, mIsACreator);
+                    firmUp.showFirmUpRsvp();
+                }
+                else if(mIsConfirmed)
+                {
+                    JoinEventTask joinEventTask = new JoinEventTask(mEventID);
+                    joinEventTask.execute();
+                }
+
             }
         });
 
@@ -507,8 +518,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
                     if(mIsACreator)
                     {
-                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                        mJoinEventBtn.setText(getString(R.string.view_event_firm_up_button));
                         mCancelBtn.setText("Cancel Event");
+
                     }
                     else if(mIsAJoiner)
                     {
@@ -524,7 +536,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         mSuggestTimeBtn.setVisibility(View.GONE);
                         mAddLocationBtn.setVisibility(View.GONE);
                     }
-
                 }
 
                 addAttendees();
