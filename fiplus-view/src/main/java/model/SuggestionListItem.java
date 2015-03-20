@@ -29,4 +29,18 @@ public class SuggestionListItem {
     public int getVote(){
         return this.mVoteCount;
     }
+
+    public void setSuggestion(String s) {
+        mSuggestion = s;
+    }
+
+    public void setSuggestionId(String s) {
+        mSuggestionId = s;
+    }
+
+    public void setYesVote(boolean b) { mYesVote = b; }
+
+    public void setVote(int n){
+        mVoteCount = n;
+    }
 }

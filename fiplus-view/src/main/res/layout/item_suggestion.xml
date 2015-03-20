@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
     >
 
     <CheckBox
@@ -12,7 +13,11 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/vote_progress"/>
+        android:layout_toLeftOf="@+id/vote_progress"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:focusable="false"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,5 +26,9 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:textColor="@color/counter_text_bg"
-        android:layout_marginRight="8dp"/>
+        android:layout_marginRight="8dp"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:focusable="false"
+        />
 </RelativeLayout>
