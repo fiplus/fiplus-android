@@ -37,12 +37,10 @@ import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 import com.wordnik.client.model.UserProfile;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import adapters.LocationArrayAdapterNoFilter;
 import adapters.PendingLocListAdapter;
@@ -95,6 +93,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     boolean mIsACreator = false;
     boolean mIsCanceled = false;
     boolean mIsConfirmed = false;
+    boolean mNeedRSVP = false;
     String eventID;
 
     @Override
@@ -167,8 +166,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     FirmUpDialog firmUp = new FirmUpDialog(ViewEventActivity.this, eventID, locSuggestionList, timeSuggestionList, mIsACreator);
                     firmUp.showFirmUpRsvp();
+
+
                 }
-                else if(mIsConfirmed)
+                else
                 {
                     JoinEventTask joinEventTask = new JoinEventTask(mEventID);
                     joinEventTask.execute();
@@ -242,12 +243,26 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     @Override
     public void onBackPressed() {
+        //update votes
+        if((mIsAJoiner || mIsACreator) && !mIsConfirmed)
+        {
+            UpdateVotes update = new UpdateVotes();
+            update.execute();
+        }
+
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
     }
 
     @Override
     public void onPause() {
+        //update votes
+        if((mIsAJoiner || mIsACreator) && !mIsConfirmed)
+        {
+            UpdateVotes update = new UpdateVotes();
+            update.execute();
+        }
+
         super.onPause();
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
     }
@@ -433,6 +448,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 attendees = getEventApi.getAttendees(sEventID, null);
                 creator = response.getCreator();
                 mIsCanceled = response.getIs_cancelled();
+                Log.e("Cancelled Event", String.valueOf(mIsCanceled));
+
+                mIsConfirmed = response.getIs_confirmed();
+                Log.e("Confirmed Event", String.valueOf(mIsConfirmed));
             } catch (Exception e) {
                 sEventDetails = e.getMessage();
                 Log.e("Error - Get Activity", sEventDetails);
@@ -446,6 +465,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             if(creator.equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
             {
                 mIsACreator = true;
+
+                Log.e("Creator?", String.valueOf(mIsACreator));
             }
             // to handle bad events
             try
@@ -455,11 +476,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     try {
                         Joiner joiner = attendees.getJoiners().get(i);
                         //check if a user is a joiner of this event
-                        if(joiner.getJoiner_id().toString().equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
+                        if(joiner.getJoiner_id().equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
                         {
                             mIsAJoiner = true;
+                            Log.e("Joiner?", String.valueOf(mIsAJoiner));
+
+                            mNeedRSVP = joiner.getConfirmed();
+                            Log.e("Need RSVP?", String.valueOf(mNeedRSVP));
                         }
-                        sUserProfile = usersApi.getUserProfile(joiner.getJoiner_id().toString());
+                        sUserProfile = usersApi.getUserProfile(joiner.getJoiner_id());
                         mAttendees.add(sUserProfile);
                     } catch (Exception e) {
                         sEventDetails = e.getMessage();
@@ -510,33 +535,73 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
                 else
                 {
-                    setTitle(response.getName());
-
-                    if(mIsACreator)
-                    {
-                        mJoinEventBtn.setText(getString(R.string.view_event_firm_up_button));
-                        mCancelBtn.setText("Cancel Event");
-
-                    }
-                    else if(mIsAJoiner)
-                    {
-                        mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
-                        mCancelBtn.setText("Un-Join");
-                    }
-
-                    //Hide the suggest buttons if the creator does not allow user input
-                    //and if the user is not a joiner
-                    if(!response.getAllow_joiner_input() && !mIsACreator)
-                    {
-                        mEventLocation.setVisibility(View.GONE);
-                        mSuggestTimeBtn.setVisibility(View.GONE);
-                        mAddLocationBtn.setVisibility(View.GONE);
-                    }
+                    setView();
                 }
 
                 addAttendees();
                 addLocation(response.getLocations());
                 addTime(response.getTimes());
+            }
+        }
+
+        private void setView()
+        {
+            setTitle(response.getName());
+
+            if(mIsACreator)
+            {
+                mJoinEventBtn.setText(getString(R.string.view_event_firm_up_button));
+                mCancelBtn.setText("Cancel Event");
+
+                if(mIsConfirmed)
+                {
+                    mLocationLabel.setText("Location:");
+                    mTimeLabel.setText("Time:");
+
+                    mJoinEventBtn.setVisibility(View.GONE);
+                    mEventLocation.setVisibility(View.GONE);
+                    mSuggestTimeBtn.setVisibility(View.GONE);
+                    mAddLocationBtn.setVisibility(View.GONE);
+                }
+
+            }
+            else if(mIsAJoiner)
+            {
+                mJoinEventBtn.setVisibility(View.GONE);
+                //mJoinEventBtn.setText(getString(R.string.view_event_joiner_button));
+                mCancelBtn.setText("Un-Join");
+            }
+
+            if(mIsConfirmed)
+            {
+                mLocationLabel.setText("Location:");
+                mTimeLabel.setText("Time:");
+
+                mEventLocation.setVisibility(View.GONE);
+                mSuggestTimeBtn.setVisibility(View.GONE);
+                mAddLocationBtn.setVisibility(View.GONE);
+
+                if(mIsAJoiner)
+                {
+                    if(mNeedRSVP)
+                    {
+                        mJoinEventBtn.setVisibility(View.VISIBLE);
+                        mJoinEventBtn.setText(getString(R.string.view_event_rsvp_button));
+                    }
+                    else
+                    {
+                        mJoinEventBtn.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            //Hide the suggest buttons if the creator does not allow user input
+            //and if the user is not a joiner
+            if(!response.getAllow_joiner_input() && !mIsACreator)
+            {
+                mEventLocation.setVisibility(View.GONE);
+                mSuggestTimeBtn.setVisibility(View.GONE);
+                mAddLocationBtn.setVisibility(View.GONE);
             }
         }
 
@@ -593,9 +658,29 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         numOfVotes, yesVote));
             }
 
-            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList, mIsCanceled);
+            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList, mIsCanceled, mIsConfirmed);
             mLocationList.setAdapter(mLocationListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
+
+            mLocationList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    boolean isChecked = locSuggestionList.get(position).getYesVote();
+                    locSuggestionList.get(position).setYesVote(!isChecked);
+                    if (isChecked) //if true, then deduct 1 coz we unchecked
+                    {
+                        locSuggestionList.get(position).setVote(locSuggestionList.get(position).getVote() - 1);
+                    } else //add 1 coz we checked
+                    {
+                        locSuggestionList.get(position).setVote(locSuggestionList.get(position).getVote() + 1);
+                    }
+                    mLocationListAdapter.notifyDataSetChanged();
+
+                }
+            });
 
             if(mIsCanceled) //change color
             {
@@ -624,9 +709,30 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         convertToTimeToString(time), numOfVotes, yesVote));
             }
 
-            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, timeSuggestionList, mIsCanceled);
+            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, timeSuggestionList, mIsCanceled, mIsConfirmed);
             mTimeList.setAdapter(mTimesListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
+
+            mTimeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    boolean isChecked = timeSuggestionList.get(position).getYesVote();
+                    timeSuggestionList.get(position).setYesVote(!isChecked);
+                    if(isChecked) //if true, then deduct 1 coz we unchecked
+                    {
+                        timeSuggestionList.get(position).setVote(timeSuggestionList.get(position).getVote()-1);
+                    }
+                    else //add 1 coz we checked
+                    {
+                        timeSuggestionList.get(position).setVote(timeSuggestionList.get(position).getVote()+1);
+                    }
+                    mTimesListAdapter.notifyDataSetChanged();
+
+                }
+            });
 
             if(mIsCanceled) //change color
             {
@@ -821,7 +927,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     class UnJoinEventTask extends AsyncTask<Void, Void, String>
     {
-        String sEventID, response;
+        String sEventID, response = null;
         ProgressDialog progressDialog;
         ActsApi getEventApi;
 
@@ -857,8 +963,17 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         @Override
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
-            message = "Un-Joined Event";
-            Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+
+            if(message==null)
+            {
+                message = "Un-Joined Event";
+                Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Log.e("Unjoin", message);
+            }
+
             finish();
         }
     }
@@ -996,5 +1111,101 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
 
         }
+    }
+
+    class UpdateVotes extends AsyncTask<Void, Void, String>
+    {
+        ActsApi getEventApi;
+        String response = null;
+
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            getEventApi = new ActsApi();
+            getEventApi.getInvoker().setContext(getBaseContext());
+            getEventApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
+
+            try {
+
+                response = checkVotes();
+
+            } catch (Exception e) {
+                response = e.getMessage();
+            }
+
+            return response;
+        }
+
+        private String checkVotes()
+        {
+
+            int addrCount = mLocationList.getChildCount();
+            int timeCount = mTimeList.getChildCount();
+
+            for (int i=0; i<addrCount; i++)
+            {
+                if(((CheckBox)mLocationList.getChildAt(i)
+                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                {
+                    try {
+                        getEventApi.voteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
+                else
+                {
+                    try {
+                        getEventApi.unvoteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
+            }
+
+            for (int i=0; i<timeCount; i++)
+            {
+                if(((CheckBox)mTimeList.getChildAt(i)
+                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                {
+                    try {
+                        getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
+                else
+                {
+                    try {
+                        getEventApi.unvoteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
+                    } catch (Exception e) {
+                        response = e.getMessage();
+                    }
+                }
+            }
+
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+
+            if(message != null) // have a pop up
+            {
+                message = message.replace("\"", "");
+                message = message.replace("{error:", "");
+                message = message.replace("}", "");
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ViewEventActivity.this);
+                alertDialog.setTitle("Warning").setMessage(message).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
+            }
+        }
+
     }
 }

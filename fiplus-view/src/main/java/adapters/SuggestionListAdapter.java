@@ -20,18 +20,16 @@ import utils.FirmUpDialog;
 public class SuggestionListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<SuggestionListItem> mSuggestionListItems;
-    private int firstTime[];
     private boolean isCancelled;
     private boolean isFirmUp = false;
+    private boolean isConfirmed = false;
     private int selectedItem = -1;
 
-    public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems, boolean isCancelled) {
+    public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems, boolean isCancelled, boolean isConfirmed) {
         this.context = context;
         this.mSuggestionListItems = suggestionListItems;
-        firstTime = new int[suggestionListItems.size()];
-        for(int i = 0; i < suggestionListItems.size(); i++)
-            firstTime[i] = 0;
         this.isCancelled = isCancelled;
+        this.isConfirmed = isConfirmed;
     }
 
     //for firm up
@@ -78,6 +76,9 @@ public class SuggestionListAdapter extends BaseAdapter {
             }
         }
 
+        TextView voteProgress = (TextView) convertView.findViewById(R.id.vote_progress);
+        voteProgress.setText("" + mSuggestionListItems.get(position).getVote() + " votes");
+
         if(isFirmUp)
         {
             CheckedTextView firmUpBox = (CheckedTextView) convertView.findViewById(R.id.suggestion_radio);
@@ -94,10 +95,7 @@ public class SuggestionListAdapter extends BaseAdapter {
         else
         {
             CheckBox sugCheckBox = (CheckBox) convertView.findViewById(R.id.suggestion_checkbox);
-            if(firstTime[position] < 2) {
-                sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
-                firstTime[position]++;
-            }
+            sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
             sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
 
             if(isCancelled)
@@ -106,10 +104,13 @@ public class SuggestionListAdapter extends BaseAdapter {
                 sugCheckBox.setEnabled(false);
                 sugCheckBox.setFocusable(false);
             }
+            else if(isConfirmed)
+            {
+                sugCheckBox.setClickable(false);
+                sugCheckBox.setChecked(true);
+                voteProgress.setVisibility(View.GONE);
+            }
         }
-
-        TextView voteProgress = (TextView) convertView.findViewById(R.id.vote_progress);
-        voteProgress.setText("" + mSuggestionListItems.get(position).getVote() + " votes");
 
         return convertView;
     }
