@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Favourites;
 
@@ -26,6 +28,10 @@ public class FavouriteUsersActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstancesState) {
+        Tracker t = ((FiplusApplication)this.getApplication()).getTracker();
+        t.setScreenName(this.getClass().getSimpleName());
+        t.send(new HitBuilders.ScreenViewBuilder().build());
+
         super.onCreate(savedInstancesState);
         setContentView(R.layout.activity_favourite_users);
 

@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Credentials;
 import com.wordnik.client.model.WhoAmI;
@@ -243,6 +245,11 @@ public class SignUpActivity extends Activity {
                Toast.makeText(getBaseContext(), "Sign up successful", Toast.LENGTH_SHORT).show();
                Intent in= new Intent(SignUpActivity.this,ConfigureProfileActivity.class);
                in.putExtra("class", ConfigureProfileActivity.class.toString());
+
+               Tracker t = ((FiplusApplication)getApplication()).getTracker();
+               t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.ACCOUNTS_CATEGORY)
+                       .setAction(FiplusApplication.SIGNUP_ACTION).build());
+
                startActivity(in);
                finish();
            }

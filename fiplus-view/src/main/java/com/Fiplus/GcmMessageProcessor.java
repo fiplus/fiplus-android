@@ -24,6 +24,7 @@ import utils.PrefUtil;
  */
 public class GcmMessageProcessor extends IntentService {
     public static final String TAG = GcmMessageProcessor.class.getSimpleName();
+    public static final String FROM_NOTIFICATION = "from_notification";
 
     NotificationCompat.Builder mBuilder;
     private static int sNotificationId = 1;
@@ -73,6 +74,9 @@ public class GcmMessageProcessor extends IntentService {
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, ViewEventActivity.class);
         resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
+
+        // Boolean which indicates that activity is started from notification; useful for tracking stats
+        resultIntent.putExtra(FROM_NOTIFICATION, true);
 
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
