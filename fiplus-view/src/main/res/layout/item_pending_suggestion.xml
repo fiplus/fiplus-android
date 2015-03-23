@@ -34,7 +34,6 @@
         android:layout_alignParentRight="true"
         android:contentDescription="@string/desc_list_item_icon"
         android:background="@android:drawable/ic_delete"
-        android:backgroundTint="@color/counter_text_bg"
         />
 
 </RelativeLayout>

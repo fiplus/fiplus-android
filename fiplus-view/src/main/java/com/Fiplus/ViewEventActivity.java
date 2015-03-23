@@ -106,39 +106,14 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         mLocationList.setOnTouchListener(new TouchListener());
 
         mSuggestedLocList = (ListView) findViewById(R.id.view_event_pending_loc);
-        mPendingLocSuggestionAdapter = new PendingLocListAdapter(this, locPendingSuggestion);
+        mPendingLocSuggestionAdapter = new PendingLocListAdapter(this, locPendingSuggestion, mSuggestedLocList);
         mSuggestedLocList.setAdapter(mPendingLocSuggestionAdapter);
         mSuggestedLocList.setOnTouchListener(new TouchListener());
-        mSuggestedLocList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                locPendingSuggestion.remove(position);
-                mPendingLocSuggestionAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedLocList);
-
-                if(locPendingSuggestion.size() == 0) {
-                    mSuggestedLocList.setVisibility(View.GONE);
-                }
-            }
-        });
 
         mSuggestedTimeList = (ListView) findViewById(R.id.view_event_pending_time);
-        mPendingTimeSuggestionAdapter = new PendingTimeLocListAdapter(this, timePendingSuggestion);
+        mPendingTimeSuggestionAdapter = new PendingTimeLocListAdapter(this, timePendingSuggestion, mSuggestedTimeList);
         mSuggestedTimeList.setAdapter(mPendingTimeSuggestionAdapter);
         mSuggestedTimeList.setOnTouchListener(new TouchListener());
-        mSuggestedTimeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                timePendingSuggestion.remove(position);
-                mPendingTimeSuggestionAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mSuggestedTimeList);
-
-                if(timePendingSuggestion.size() == 0) {
-                    mSuggestedTimeList.setVisibility(View.GONE);
-                }
-            }
-        });
-
 
         mTimeList = (ListView) findViewById(R.id.view_event_time_checkboxes);
         mTimeList.setOnTouchListener(new TouchListener());
