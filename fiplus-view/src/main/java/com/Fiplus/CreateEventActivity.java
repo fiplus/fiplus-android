@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -129,7 +130,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         mLocationListView = (ListView)findViewById(R.id.create_event_address_list);
         mRemovableLocationAdapter = new RemovableItemAdapter(this, mEventLocationListItems, mLocationListView);
         mLocationListView.setAdapter(mRemovableLocationAdapter);
-
+        
         ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
         mMaxPeople = (EditText) findViewById(R.id.create_event_number_of_people);
@@ -367,10 +368,15 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             createEventTag.setBackgroundResource(R.drawable.button_tags);
             createEventTag.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tags_delete, 0);
 
-            createEventTag.setOnClickListener(new View.OnClickListener() {
+            createEventTag.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View view) {
-                    removeTag(view, createEventTag.getText().toString());
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                        if(event.getRawX() >= createEventTag.getRight()){
+                            removeTag(v, createEventTag.getText().toString());
+                        }
+                    }
+                    return true;
                 }
             });
 

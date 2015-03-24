@@ -3,6 +3,7 @@ package adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -69,7 +70,6 @@ public class RemovableItemAdapter extends BaseAdapter {
             }
         });
         mText.setText(mRemovableListItems.get(position));
-
         return convertView;
     }
 }
