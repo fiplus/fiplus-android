@@ -27,10 +27,6 @@ public class GcmMessageProcessor extends IntentService {
 
     private static final String NEW_ACTIVITY_GROUP = "new_activity_group";
 
-    /** Push notification message types */
-    private static final String NEW_ACTIVITY_TYPE = "new_activity";
-    private static final String CANCELLED_ACTIVITY_TYPE = "cancelled_activity";
-
     public GcmMessageProcessor() {
         super(GcmMessageProcessor.class.getSimpleName());
     }
@@ -45,14 +41,7 @@ public class GcmMessageProcessor extends IntentService {
         if (!extras.isEmpty()) {
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-
-                switch(extras.getString("type")) {
-                    case NEW_ACTIVITY_TYPE:
-                    case CANCELLED_ACTIVITY_TYPE:
-                        sendActivityCreatedNotification(extras.getString("message"), extras.getString("activityId"));
-                        break;
-                    default:
-                        break;
+                    sendActivityNotification(extras.getString("message"), extras.getString("activityId"));
                 }
                 Log.i(TAG, "Received: " + extras.toString());
             }
@@ -61,8 +50,7 @@ public class GcmMessageProcessor extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-
-    private void sendActivityCreatedNotification(String msg, String activityId) {
+    private void sendActivityNotification(String msg, String activityId) {
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, ViewEventActivity.class);
@@ -81,7 +69,8 @@ public class GcmMessageProcessor extends IntentService {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
-
+        // Create the Current Notification
+        if(sNotificationId)
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.fiplus)
                 .setContentTitle("Fi+")
@@ -91,7 +80,24 @@ public class GcmMessageProcessor extends IntentService {
                 .setGroup(NEW_ACTIVITY_GROUP)
                 .setGroupSummary(true);
 
+
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(sNotificationId++, mBuilder.build());
+
+
+        // Create an InboxStyle Summary Notification and add the Current Notification
+        if(sNotificationId)
+        Notification summaryNotification = new NotificationCompat.Builder(mContext)
+                .setContentTitle("New Update")
+                .setSmallIcon(R.mipmap.fiplus)
+                .setLargeIcon(largeIcon)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .addLine(msg)
+                        .setBigContentTitle("New Update")
+                .setGroup(NEW_ACTIVITY_GROUP)
+                .setGroupSummary(true)
+                .build();
+
+        notificationManager.notify(sNotificationId, summaryNotification);
     }
 }
