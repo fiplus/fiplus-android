@@ -69,12 +69,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
     protected List<Location> mEventLocationList = new ArrayList<Location>();
     protected List<String> mEventLocationListItems = new ArrayList<String>();
-    protected ArrayAdapter<String> locationAdapter;
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
     protected List<Time> mDateTimeListItemsUTC = new ArrayList<Time>();
     protected List<String> mDateTimeListItems = new ArrayList<String>();
-    protected ArrayAdapter<String> dateTimeAdapter;
 
     protected List<String> mTagsList = new ArrayList<String>();
     protected LinearLayout mTagsLinearLayout;
@@ -91,9 +89,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         setContentView(R.layout.activity_create_event);
 
         setTitle(R.string.create_event_activity_title);
-
-//        mImageView = (ImageView)findViewById(R.id.createEventImageView);
-//        mImageView.setImageResource(R.drawable.fiplus);
 
         mEventName = (EditText) findViewById(R.id.create_event_name);
         mDescription = (EditText) findViewById(R.id.create_event_description);
@@ -128,9 +123,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
         //to show the list of suggested locations
         mLocationListView = (ListView)findViewById(R.id.create_event_address_list);
-        mRemovableLocationAdapter = new RemovableItemAdapter(this, mEventLocationListItems, mLocationListView);
+        mRemovableLocationAdapter = new RemovableItemAdapter(this, mEventLocationListItems, mEventLocationList, mLocationListView);
         mLocationListView.setAdapter(mRemovableLocationAdapter);
-        
+
         ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
         mMaxPeople = (EditText) findViewById(R.id.create_event_number_of_people);
@@ -173,7 +168,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
         //to show the list of suggested start and end date/time
         mDateTimeListView = (ListView)findViewById(R.id.create_event_datetimelist);
-        mRemovableDateTimeAdapter  = new RemovableItemAdapter(this, mDateTimeListItems, mDateTimeListView);
+        mRemovableDateTimeAdapter  = new RemovableItemAdapter(this, mDateTimeListItems, mDateTimeListView, mDateTimeListItemsUTC);
         mDateTimeListView.setAdapter(mRemovableDateTimeAdapter);
 
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);

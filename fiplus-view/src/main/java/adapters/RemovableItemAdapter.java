@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.Fiplus.R;
+import com.wordnik.client.model.Location;
+import com.wordnik.client.model.Time;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +27,27 @@ import utils.ListViewUtil;
 public class RemovableItemAdapter extends BaseAdapter {
     private Context context;
     private List<String> mRemovableListItems;
+    private List<Location> mLocationItems;
+    private List<Time> mTimeItems;
     private ListView view;
 
     public RemovableItemAdapter(Context context, List<String> listItems, ListView view) {
         this.context = context;
         this.mRemovableListItems = listItems;
+        this.view = view;
+    }
+
+    public RemovableItemAdapter(Context context, List<String> listItems, List<Location> locationItems, ListView view) {
+        this.context = context;
+        this.mRemovableListItems = listItems;
+        this.mLocationItems = locationItems;
+        this.view = view;
+    }
+
+    public RemovableItemAdapter(Context context, List<String> listItems, ListView view, List<Time> timeItems) {
+        this.context = context;
+        this.mRemovableListItems = listItems;
+        this.mTimeItems = timeItems;
         this.view = view;
     }
 
@@ -62,11 +80,16 @@ public class RemovableItemAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 mRemovableListItems.remove(position);
+                if(mLocationItems != null)
+                    mLocationItems.remove(position);
+                if(mTimeItems != null)
+                    mTimeItems.remove(position);
                 notifyDataSetChanged();
                 ListViewUtil.setListViewHeightBasedOnChildren(view);
 
-                if(mRemovableListItems.size() == 0)
+                if (mRemovableListItems.size() == 0)
                     view.setVisibility(View.GONE);
+
             }
         });
         mText.setText(mRemovableListItems.get(position));
