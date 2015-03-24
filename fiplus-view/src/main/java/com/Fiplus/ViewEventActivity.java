@@ -854,7 +854,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
                 catch (Exception e) {
                     error = true;
-                    response = e.getMessage() + "pendingLoc";
+                    response = e.getMessage();
                 }
             }
 
@@ -866,7 +866,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
                 catch (Exception e) {
                     error = true;
-                    response = e.getMessage() + "pendingTime";
+                    response = e.getMessage();
                 }
             }
 
