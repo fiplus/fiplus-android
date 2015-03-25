@@ -268,13 +268,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         mRemovableDateTimeAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
-        if(mDateTimeListItems.size() == MAX)
-        {
-            //mDateTimeError.setText(getString(R.string.create_event_max_time));
-            mDateTimeButton.setText(getString(R.string.create_event_max_time));
-            mDateTimeButton.setEnabled(false);
-        }
-        else if(mDateTimeListItems.size() > 0) {
+        if(mDateTimeListItems.size() > 0) {
             mDateTimeListView.setVisibility(View.VISIBLE);
         }
     }
@@ -327,13 +321,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             mRemovableLocationAdapter.notifyDataSetChanged();
             ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
-            if(mEventLocationListItems.size() == MAX)
-            {
-                mEventLocation.setHint(R.string.create_event_max_location);
-                mEventLocation.setClickable(false);
-                mEventLocation.setEnabled(false);
-            }
-            else if(mEventLocationListItems.size() > 0) {
+            if(mEventLocationListItems.size() > 0) {
                 mLocationListView.setVisibility(View.VISIBLE);
             }
 
@@ -403,19 +391,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
     private void checkMaxTags()
     {
-        if(mTagsList.size() == MAX)
-        {
-            mTags.setHint(R.string.create_event_tags_hint);
-            mTags.setClickable(false);
-            mTags.setText("");
-            mTags.setEnabled(false);
-        }
-        else
-        {
-            mTags.setHint("");
-            mTags.setClickable(true);
-            mTags.setEnabled(true);
-        }
+        mTags.setHint("");
+        mTags.setClickable(true);
+        mTags.setEnabled(true);
     }
 
     class GetInterestsTask extends AsyncTask<Void, Void, String>

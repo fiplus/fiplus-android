@@ -84,15 +84,17 @@ public class RemovableItemAdapter extends BaseAdapter {
                     mLocationItems.remove(position);
                 if(mTimeItems != null)
                     mTimeItems.remove(position);
-                notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(view);
 
                 if (mRemovableListItems.size() == 0)
                     view.setVisibility(View.GONE);
 
+                ListViewUtil.setListViewHeightBasedOnChildren(view);
+                notifyDataSetChanged();
+
             }
         });
         mText.setText(mRemovableListItems.get(position));
+        notifyDataSetChanged();
         return convertView;
     }
 }
