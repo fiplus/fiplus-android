@@ -338,10 +338,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     {
         String tag;
         tag = mTags.getText().toString();
-        int tagsAdded = mTagsList.size();
+        int tagsAdded;
         mTags.setText("");
 
-        if(!tag.isEmpty() && tagsAdded < 3)
+        if(!tag.isEmpty())
         {
             mTagsList.add(tag);
             tagsAdded = mTagsList.size();
@@ -367,7 +367,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             createEventTag.setPadding(padding, 0, padding, 0);
 
             mTagsLinearLayout.addView(createEventTag);
-            checkMaxTags();
         }
 
     }
@@ -385,15 +384,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                 break;
             }
         }
-
-        checkMaxTags();
-    }
-
-    private void checkMaxTags()
-    {
-        mTags.setHint("");
-        mTags.setClickable(true);
-        mTags.setEnabled(true);
     }
 
     //To handle multiple scrollviews
