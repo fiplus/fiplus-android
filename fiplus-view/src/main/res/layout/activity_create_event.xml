@@ -194,14 +194,15 @@
                 />
         </LinearLayout>
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="wrap_content"
+        <org.apmem.tools.layouts.FlowLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/create_event_tags_list"
             android:layout_below="@+id/tagsLinearLayout"
-            android:orientation="horizontal">
-        </LinearLayout>
+            android:orientation="horizontal"
+            android:listSelector="@drawable/list_selector"
+            />
 
         <LinearLayout
             android:id="@+id/create_event_buttons"
