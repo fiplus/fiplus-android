@@ -34,7 +34,7 @@ public class FirmUpDialog {
 
     private Button firmUpButton;
     private Button cancelFirmUpButton;
-    public static int selectedIndex = 0;
+    public static int selectedIndex;
 
     private Class<?> callingClass;
 
@@ -46,6 +46,7 @@ public class FirmUpDialog {
         timeSuggestionList = time;
         this.isACreator = isACreator;
         callingClass = c.getClass();
+        selectedIndex = 0;
     }
 
     public void showFirmUpRsvp()
@@ -91,7 +92,7 @@ public class FirmUpDialog {
             mFirmUP.setTitle(R.string.view_event_firm_up);
             firmUpButton.setText(R.string.view_event_firm_up_button);
         }
-        else
+        else //it should never go to this code.
         {
             mFirmUP.setTitle(R.string.view_event_rsvp_button);
             firmUpButton.setText(R.string.view_event_rsvp_button);
