@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/removable_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/counter_text_bg"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/remove_item"
+        android:layout_toStartOf="@+id/remove_item"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"/>
+
+    <ImageView
+        android:id="@+id/remove_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/desc_list_item_icon"
+        android:background="@android:drawable/ic_delete"
+        android:visibility="visible"
+        />
+
+</RelativeLayout>

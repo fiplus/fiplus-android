@@ -9,8 +9,8 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapters.LocationArrayAdapterNoFilter;
+import adapters.RemovableItemAdapter;
 import utils.DateTimePicker;
 import utils.GeoAutoCompleteInterface;
 import utils.GeocodingLocation;
@@ -61,18 +62,18 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     protected TextView mAddTags;
     protected ArrayAdapter<String> autoCompleteInterestAdapter;
     protected List<String> interestsList;
+    protected RemovableItemAdapter mRemovableLocationAdapter;
+    protected RemovableItemAdapter mRemovableDateTimeAdapter;
 
 
     protected EditText mDateTimeError;
 
     protected List<Location> mEventLocationList = new ArrayList<Location>();
     protected List<String> mEventLocationListItems = new ArrayList<String>();
-    protected ArrayAdapter<String> locationAdapter;
     protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
     protected List<Time> mDateTimeListItemsUTC = new ArrayList<Time>();
     protected List<String> mDateTimeListItems = new ArrayList<String>();
-    protected ArrayAdapter<String> dateTimeAdapter;
 
     protected List<String> mTagsList = new ArrayList<String>();
     protected LinearLayout mTagsLinearLayout;
@@ -93,9 +94,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         setContentView(R.layout.activity_create_event);
 
         setTitle(R.string.create_event_activity_title);
-
-//        mImageView = (ImageView)findViewById(R.id.createEventImageView);
-//        mImageView.setImageResource(R.drawable.fiplus);
 
         mEventName = (EditText) findViewById(R.id.create_event_name);
         mDescription = (EditText) findViewById(R.id.create_event_description);
@@ -130,31 +128,9 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
         //to show the list of suggested locations
         mLocationListView = (ListView)findViewById(R.id.create_event_address_list);
-        mLocationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                mEventLocationList.remove(position);
-                mEventLocationListItems.remove(position);
-                locationAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
-
-                if(mEventLocationListItems.size() < MAX)
-                {
-                    mEventLocation.setHint(R.string.create_event_location_hint);
-                    mEventLocation.setClickable(true);
-                    mEventLocation.setEnabled(true);
-                }
-
-                if(mEventLocationListItems.size() == 0) {
-                    mLocationListView.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        //for locations
-        locationAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mEventLocationListItems);
-        mLocationListView.setAdapter(locationAdapter);
+        mRemovableLocationAdapter = new RemovableItemAdapter(this, mEventLocationListItems, mEventLocationList, mLocationListView);
+        mLocationListView.setAdapter(mRemovableLocationAdapter);
+        mLocationListView.setOnTouchListener(new TouchListener());
         ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
         mMaxPeople = (EditText) findViewById(R.id.create_event_number_of_people);
@@ -197,30 +173,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
         //to show the list of suggested start and end date/time
         mDateTimeListView = (ListView)findViewById(R.id.create_event_datetimelist);
-        mDateTimeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                mDateTimeListItems.remove(position);
-                mDateTimeListItemsUTC.remove(position);
-                dateTimeAdapter.notifyDataSetChanged();
-                ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
+        mRemovableDateTimeAdapter  = new RemovableItemAdapter(this, mDateTimeListItems, mDateTimeListView, mDateTimeListItemsUTC);
+        mDateTimeListView.setAdapter(mRemovableDateTimeAdapter);
+        mDateTimeListView.setOnTouchListener(new TouchListener());
 
-                if(mDateTimeListItems.size() < MAX)
-                {
-                    mDateTimeButton.setText(getString(R.string.create_event_suggest_date_time));
-                    mDateTimeButton.setEnabled(true);
-                }
-
-                if(mDateTimeListItems.size() == 0) {
-                    mDateTimeListView.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        //for date time
-        dateTimeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDateTimeListItems);
-        mDateTimeListView.setAdapter(dateTimeAdapter);
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
         mCreateButton = (Button) findViewById(R.id.create_event_create__button);
@@ -315,16 +271,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         //getDateTime.convertTimeToString(time)
         mDateTimeListItems.add(sTime);
         mDateTimeListItemsUTC.add(time);
-        dateTimeAdapter.notifyDataSetChanged();
+        mRemovableDateTimeAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
-        if(mDateTimeListItems.size() == MAX)
-        {
-            //mDateTimeError.setText(getString(R.string.create_event_max_time));
-            mDateTimeButton.setText(getString(R.string.create_event_max_time));
-            mDateTimeButton.setEnabled(false);
-        }
-        else if(mDateTimeListItems.size() > 0) {
+        if(mDateTimeListItems.size() > 0) {
             mDateTimeListView.setVisibility(View.VISIBLE);
         }
     }
@@ -374,16 +324,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         {
             mEventLocationList.add(location);
             mEventLocationListItems.add(address);
-            locationAdapter.notifyDataSetChanged();
+            mRemovableLocationAdapter.notifyDataSetChanged();
             ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
-            if(mEventLocationListItems.size() == MAX)
-            {
-                mEventLocation.setHint(R.string.create_event_max_location);
-                mEventLocation.setClickable(false);
-                mEventLocation.setEnabled(false);
-            }
-            else if(mEventLocationListItems.size() > 0) {
+            if(mEventLocationListItems.size() > 0) {
                 mLocationListView.setVisibility(View.VISIBLE);
             }
 
@@ -400,10 +344,10 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     {
         String tag;
         tag = mTags.getText().toString();
-        int tagsAdded = mTagsList.size();
+        int tagsAdded;
         mTags.setText("");
 
-        if(!tag.isEmpty() && tagsAdded < 3)
+        if(!tag.isEmpty())
         {
             mTagsList.add(tag);
             tagsAdded = mTagsList.size();
@@ -413,10 +357,15 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             createEventTag.setBackgroundResource(R.drawable.button_tags);
             createEventTag.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tags_delete, 0);
 
-            createEventTag.setOnClickListener(new View.OnClickListener() {
+            createEventTag.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View view) {
-                    removeTag(view, createEventTag.getText().toString());
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                        if(event.getRawX() >= createEventTag.getRight()){
+                            removeTag(v, createEventTag.getText().toString());
+                        }
+                    }
+                    return true;
                 }
             });
 
@@ -424,7 +373,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             createEventTag.setPadding(padding, 0, padding, 0);
 
             mTagsLinearLayout.addView(createEventTag);
-            checkMaxTags();
         }
 
     }
@@ -442,24 +390,28 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                 break;
             }
         }
-
-        checkMaxTags();
     }
 
-    private void checkMaxTags()
-    {
-        if(mTagsList.size() == MAX)
-        {
-            mTags.setHint(R.string.create_event_tags_hint);
-            mTags.setClickable(false);
-            mTags.setText("");
-            mTags.setEnabled(false);
-        }
-        else
-        {
-            mTags.setHint("");
-            mTags.setClickable(true);
-            mTags.setEnabled(true);
+    //To handle multiple scrollviews
+    protected class TouchListener implements ListView.OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    // Allow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+
+            // Handle ListView touch events.
+            v.onTouchEvent(event);
+            return true;
         }
     }
 
