@@ -175,7 +175,6 @@ public class FragmentBeFit extends Fragment{
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
-                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
                         50.0,
                         false,

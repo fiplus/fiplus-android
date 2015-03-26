@@ -161,7 +161,6 @@ public class FragmentInterest extends Fragment {
             }
 
             try{
-                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
                         50.0,
                         true,
