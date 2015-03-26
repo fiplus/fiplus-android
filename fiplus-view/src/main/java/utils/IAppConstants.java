@@ -28,4 +28,8 @@ public interface IAppConstants {
     public String RECENT_EVENTS_CACHE_VALID_FLAG = "recent_event_cache_valid_flag";
     public String RECENT_EVENTS_CACHE_UPDATE_VALUE = "recent_event_cache_update_value";
     public long RECENT_EVENTS_CACHE_VALID_TIME = 600000;
+
+    public String NEAR_YOU_CACHE_VALID_FLAG = "near_you_event_cache_valid_flag";
+    public String NEAR_YOU_CACHE_UPDATE_VALUE = "near_you_event_cache_update_value";
+    public long NEAR_YOU_CACHE_VALID_TIME = 600000;
 }

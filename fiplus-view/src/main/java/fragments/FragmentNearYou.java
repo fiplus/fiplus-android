@@ -133,8 +133,8 @@ public class FragmentNearYou extends Fragment {
             usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
-            if(PrefUtil.getBoolean(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false)
-                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.INTEREST_EVENTS_CACHE_UPDATE_VALUE)) < IAppConstants.INTEREST_EVENTS_CACHE_VALID_TIME)
+            if(PrefUtil.getBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE)) < IAppConstants.INTEREST_EVENTS_CACHE_VALID_TIME)
             {
                 try
                 {
@@ -155,11 +155,11 @@ public class FragmentNearYou extends Fragment {
                     return null;
 
                 } catch(FileNotFoundException e) {
-                    PrefUtil.putBoolean(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false);
                 } catch (IOException e) {
-                    PrefUtil.putBoolean(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false);
                 } catch (ApiException e) {
-                    PrefUtil.putBoolean(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
+                    PrefUtil.putBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false);
                 }
             }
 
@@ -175,8 +175,8 @@ public class FragmentNearYou extends Fragment {
                 FileOutputStream toCacheStream = new FileOutputStream(cacheFile);
                 toCacheStream.write(toCacheString.getBytes("UTF-8"));
                 toCacheStream.close();
-                PrefUtil.putBoolean(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, true);
-                PrefUtil.putLong(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_UPDATE_VALUE, System.currentTimeMillis());
+                PrefUtil.putBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, true);
+                PrefUtil.putLong(getActivity(), IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE, System.currentTimeMillis());
             } catch (Exception e) {
                 return e.getMessage();
             }
