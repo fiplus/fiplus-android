@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -125,7 +124,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         mLocationListView = (ListView)findViewById(R.id.create_event_address_list);
         mRemovableLocationAdapter = new RemovableItemAdapter(this, mEventLocationListItems, mEventLocationList, mLocationListView);
         mLocationListView.setAdapter(mRemovableLocationAdapter);
-
+        mLocationListView.setOnTouchListener(new TouchListener());
         ListViewUtil.setListViewHeightBasedOnChildren(mLocationListView);
 
         mMaxPeople = (EditText) findViewById(R.id.create_event_number_of_people);
@@ -170,6 +169,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         mDateTimeListView = (ListView)findViewById(R.id.create_event_datetimelist);
         mRemovableDateTimeAdapter  = new RemovableItemAdapter(this, mDateTimeListItems, mDateTimeListView, mDateTimeListItemsUTC);
         mDateTimeListView.setAdapter(mRemovableDateTimeAdapter);
+        mDateTimeListView.setOnTouchListener(new TouchListener());
 
         ListViewUtil.setListViewHeightBasedOnChildren(mDateTimeListView);
 
@@ -394,6 +394,29 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         mTags.setHint("");
         mTags.setClickable(true);
         mTags.setEnabled(true);
+    }
+
+    //To handle multiple scrollviews
+    protected class TouchListener implements ListView.OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    // Disallow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    // Allow ScrollView to intercept touch events.
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+
+            // Handle ListView touch events.
+            v.onTouchEvent(event);
+            return true;
+        }
     }
 
     class GetInterestsTask extends AsyncTask<Void, Void, String>

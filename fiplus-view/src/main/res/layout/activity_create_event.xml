@@ -80,11 +80,8 @@
             android:id="@+id/create_event_address_list"
             android:layout_below="@+id/create_event_location"
             android:layout_marginTop="10dp"
-            android:footerDividersEnabled="true"
-            android:headerDividersEnabled="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            style="?android:attr/textAppearanceSmall"
+            android:orientation="vertical"
+            android:fadeScrollbars="false"
             />
 
         <Button
@@ -118,11 +115,8 @@
             android:id="@+id/create_event_datetimelist"
             android:layout_below="@+id/create_event_add_datetime"
             android:layout_marginTop="10dp"
-            android:footerDividersEnabled="true"
-            android:headerDividersEnabled="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            style="?android:attr/textAppearanceSmall"
+            android:orientation="vertical"
+            android:fadeScrollbars="false"
             />
 
         <TextView
