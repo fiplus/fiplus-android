@@ -10,6 +10,8 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/counter_text_bg"
         android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/remove_item"
+        android:layout_toStartOf="@+id/remove_item"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"/>
 
