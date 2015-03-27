@@ -360,7 +360,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         s = " (" + numOfVotes + " vote(s))";
 
-
         long startDate = time.getStart().longValue();
         if(time.getEnd() == null)
         {
