@@ -134,11 +134,11 @@ public class FragmentNearYou extends Fragment {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false)
-                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE)) < IAppConstants.INTEREST_EVENTS_CACHE_VALID_TIME)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE)) < IAppConstants.NEAR_YOU_CACHE_VALID_TIME)
             {
                 try
                 {
-                    File cacheFile = new File(getActivity().getCacheDir() + "/" + GetEvents.class.getSimpleName() +"-interests");
+                    File cacheFile = new File(getActivity().getCacheDir() + "/" + GetEvents.class.getSimpleName() +"-nearyou");
                     FileInputStream cacheIn = new FileInputStream(cacheFile);
                     ByteArrayOutputStream cacheBytes = new ByteArrayOutputStream();
                     byte[] buffer = new byte[cacheIn.available()];
@@ -171,7 +171,7 @@ public class FragmentNearYou extends Fragment {
                         10.0);
 
                 String toCacheString = ApiInvoker.serialize(response);
-                File cacheFile = new File(getActivity().getCacheDir().getAbsolutePath() + "/" + GetEvents.class.getSimpleName() + "-interests");
+                File cacheFile = new File(getActivity().getCacheDir().getAbsolutePath() + "/" + GetEvents.class.getSimpleName() + "-nearyou");
                 FileOutputStream toCacheStream = new FileOutputStream(cacheFile);
                 toCacheStream.write(toCacheString.getBytes("UTF-8"));
                 toCacheStream.close();
