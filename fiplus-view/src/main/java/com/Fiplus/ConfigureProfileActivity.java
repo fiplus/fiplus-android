@@ -127,6 +127,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher, G
 
         mProfileName = (EditText) findViewById(R.id.configure_profile_name);
         mGender = (EditText) findViewById(R.id.configure_gender);
+
         mAge = (EditText) findViewById(R.id.configure_age);
 
         mInterestInputField = (AutoCompleteTextView) findViewById(R.id.interests_input_field);

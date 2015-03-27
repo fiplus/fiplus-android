@@ -63,7 +63,6 @@ public class DateTimePicker {
 
         mDateTimeDialog.show();
 
-        mSetEndTime = (CheckBox) mDateTimeDialog.findViewById(R.id.no_end_time_checkbox);
         mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
         mTimePicker = (TimePicker) mDateTimeDialog.findViewById(R.id.timePicker);
 
