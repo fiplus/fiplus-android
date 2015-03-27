@@ -39,7 +39,9 @@
             android:layout_below="@+id/configure_profile_name"
             android:layout_alignLeft="@+id/configure_profile_name"
             android:layout_alignStart="@+id/configure_profile_name"
-            android:maxLength="1" />
+            android:maxLength="1"
+            android:inputType="text"
+            android:digits="mMfF"/>
 
         <EditText
             android:layout_width="wrap_content"

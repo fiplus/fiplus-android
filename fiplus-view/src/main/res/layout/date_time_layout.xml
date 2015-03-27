@@ -29,14 +29,23 @@
         android:id="@+id/no_end_time_checkbox"
         android:checked="true"
         android:layout_below="@+id/timePicker"
-        android:layout_alignParentRight="true"
+        android:layout_alignRight="@+id/buttonLayout"
+        android:layout_marginRight="@dimen/tags_text_size"
         />
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/no_end_time_checkbox"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:id="@+id/buttonLayout">
+
+        <Button
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/cancelPicker"
+            android:text="@string/create_event_cancel_button" />
 
         <Button
             android:layout_width="0dip"
@@ -45,12 +54,6 @@
             android:id="@+id/setPicker"
             android:text="@string/create_event_set_button" />
 
-        <Button
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/cancelPicker"
-            android:text="@string/create_event_cancel_button" />
     </LinearLayout>
 
 </RelativeLayout>

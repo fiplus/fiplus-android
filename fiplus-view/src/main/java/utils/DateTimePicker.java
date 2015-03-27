@@ -5,9 +5,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
@@ -56,13 +58,11 @@ public class DateTimePicker {
         if(callingContext == null)
             System.out.print("LAME");
         mDateTimeDialog = new Dialog(callingContext);
+        mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDateTimeDialog.setContentView(R.layout.date_time_layout);
-
-        mDateTimeDialog.setTitle(R.string.create_event_start_time);
 
         mDateTimeDialog.show();
 
-        mSetEndTime = (CheckBox) mDateTimeDialog.findViewById(R.id.no_end_time_checkbox);
         mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
         mTimePicker = (TimePicker) mDateTimeDialog.findViewById(R.id.timePicker);
 
@@ -86,7 +86,7 @@ public class DateTimePicker {
 
         //for set button
         mSetTimeButton = (Button) mDateTimeDialog.findViewById(R.id.setPicker);
-        mSetTimeButton.setText("Set Start Time");
+        mSetTimeButton.setText(callingContext.getString(R.string.create_event_start_time));
         mSetTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +109,7 @@ public class DateTimePicker {
                 {
                     //AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateEventActivity.this);
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(callingContext);
-                    alertDialog.setTitle("Error").setMessage(timeCheck).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    alertDialog.setTitle("Error").setMessage(timeCheck).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -128,14 +128,29 @@ public class DateTimePicker {
                 }
             }
         });
+
+        mSetEndTime = (CheckBox) mDateTimeDialog.findViewById(R.id.no_end_time_checkbox);
+        mSetEndTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()  {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                if(isChecked)
+                {
+                    mSetTimeButton.setText(callingContext.getString(R.string.create_event_start_time));
+                }
+                else
+                {
+                    mSetTimeButton.setText(callingContext.getString(R.string.create_event_end_time) + " >>");
+                }
+            }
+
+        });
     }
 
     private void getEndTime(int year, int month, int day, int hour, int minutes)
     {
         mDateTimeDialog = new Dialog(callingContext);
+        mDateTimeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDateTimeDialog.setContentView(R.layout.date_time_layout);
-
-        mDateTimeDialog.setTitle(R.string.create_event_end_time);
 
         mDateTimeDialog.show();
 
@@ -162,7 +177,7 @@ public class DateTimePicker {
 
         //for set button
         mSetTimeButton = (Button) mDateTimeDialog.findViewById(R.id.setPicker);
-        mSetTimeButton.setText("Set End Time");
+        mSetTimeButton.setText(callingContext.getString(R.string.create_event_end_time));
         mSetTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,38 +272,43 @@ public class DateTimePicker {
 
     public String convertTimeToString(Time time)
     {
-        SimpleDateFormat sdf1 = new SimpleDateFormat(DATEFORMAT);
-
         long startDate = time.getStart().longValue();
-        Date d1 = new Date(startDate);
-
-        if(time.getEnd() != null)
+        if(time.getEnd() == null)
         {
-            long endDate= time.getEnd().longValue();
-            Date d2 = new Date(endDate);
+            time.setEnd(time.getStart());
+        }
 
-            String format2 = DATEFORMAT;
-            String middle = " to ";
-            boolean curYear = d1.getYear() == new Date().getYear();
-            boolean sameMonth = d1.getMonth() == d2.getMonth();
-            boolean sameDay = d1.getDate() == d2.getDate();
+        long endDate= time.getEnd().longValue();
 
-            if(sameDay && sameMonth)
-            {
-                format2 = "hh:mm a";
-                middle = " to ";
-            }
-            if(!curYear)
-            {
-                format2 += ", yyyy";
-            }
+        Date d1 = new Date(startDate);
+        Date d2 = new Date(endDate);
 
-            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
-            return sdf1.format(d1) + middle + sdf2.format(d2);
+        String format2 = DATEFORMAT;
+        String middle = " to ";
+        boolean curYear = d1.getYear() == new Date().getYear();
+        boolean sameMonth = d1.getMonth() == d2.getMonth();
+        boolean sameDay = d1.getDate() == d2.getDate();
+
+        if(sameDay && sameMonth)
+        {
+            format2 = "hh:mm a";
+            middle = " to ";
+        }
+        if(!curYear)
+        {
+            format2 += ", yyyy";
+        }
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat(DATEFORMAT);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+
+        if(startDate == endDate)
+        {
+            return sdf1.format(d1);
         }
         else
         {
-            return sdf1.format(d1);
+            return sdf1.format(d1) + middle + sdf2.format(d2);
         }
     }
 

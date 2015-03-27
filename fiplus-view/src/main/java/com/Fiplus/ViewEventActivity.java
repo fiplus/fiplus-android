@@ -325,38 +325,44 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         s = " (" + numOfVotes + " vote(s))";
 
-        SimpleDateFormat sdf1 = new SimpleDateFormat(format);
 
         long startDate = time.getStart().longValue();
-        Date d1 = new Date(startDate);
-
-        if(time.getEnd() != null)
+        if(time.getEnd() == null)
         {
-            long endDate= time.getEnd().longValue();
-            Date d2 = new Date(endDate);
+            time.setEnd(time.getStart());
+        }
 
-            String format2 = format;
-            String middle = " to ";
-            boolean curYear = d1.getYear() == new Date().getYear();
-            boolean sameMonth = d1.getMonth() == d2.getMonth();
-            boolean sameDay = d1.getDate() == d2.getDate();
+        long endDate= time.getEnd().longValue();
 
-            if(sameDay && sameMonth)
-            {
-                format2 = "hh:mm a";
-                middle = " to ";
-            }
-            if(!curYear)
-            {
-                format2 += ", yyyy";
-            }
+        Date d1 = new Date(startDate);
+        Date d2 = new Date(endDate);
 
-            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
-            return sdf1.format(d1) + middle + sdf2.format(d2);
+        String format2 = format;
+        String middle = " to ";
+        boolean curYear = d1.getYear() == new Date().getYear();
+        boolean sameMonth = d1.getMonth() == d2.getMonth();
+        boolean sameDay = d1.getDate() == d2.getDate();
+
+        if(sameDay && sameMonth)
+        {
+            format2 = "hh:mm a";
+            middle = " to ";
+        }
+        if(!curYear)
+        {
+            format2 += ", yyyy";
+        }
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat(format);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+
+        if(startDate == endDate)
+        {
+            return sdf1.format(d1);
         }
         else
         {
-            return sdf1.format(d1);
+            return sdf1.format(d1) + middle + sdf2.format(d2);
         }
     }
 

@@ -55,7 +55,6 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher, G
     protected RemovableItemAdapter mRemovableItemAdapter;
     protected Button mSaveButton;
     protected Button mCancelButton;
-    //protected Button mLocationButton;
 
     protected EditText mProfileName;
     protected EditText mGender;
@@ -128,8 +127,8 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher, G
 
         mProfileName = (EditText) findViewById(R.id.configure_profile_name);
         mGender = (EditText) findViewById(R.id.configure_gender);
+
         mAge = (EditText) findViewById(R.id.configure_age);
-        //mLocationButton = (Button) findViewById(R.id.configure_location_button);
 
         mInterestInputField = (AutoCompleteTextView) findViewById(R.id.interests_input_field);
         mInterestInputField.addTextChangedListener(new TextWatcher() {
@@ -282,6 +281,12 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher, G
                 location.execute(address);
             }
 
+        }
+        else
+        {
+            userLocation = null;
+            SaveProfileTask saveProfileTask = new SaveProfileTask();
+            saveProfileTask.execute();
         }
     }
 

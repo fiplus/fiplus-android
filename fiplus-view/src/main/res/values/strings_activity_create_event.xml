@@ -17,8 +17,8 @@
     <string name="create_event_add_location">Add</string>
     <string name="create_event_set_button">Set</string>
     <string name="create_event_cancel_button">Cancel</string>
-    <string name="create_event_start_time">Set Start Time</string>
-    <string name="create_event_end_time">Set End Time</string>
+    <string name="create_event_start_time">Set Start</string>
+    <string name="create_event_end_time">Set End</string>
 
     <string name="create_event_add_tags">Add</string>
     <string name="create_event_tags_hint">Max tags reached</string>
