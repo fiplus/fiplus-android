@@ -38,12 +38,10 @@ import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 import com.wordnik.client.model.UserProfile;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import adapters.LocationArrayAdapterNoFilter;
 import adapters.PendingLocListAdapter;

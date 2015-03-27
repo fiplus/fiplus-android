@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
@@ -21,7 +22,6 @@ import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
-import com.wordnik.client.model.UserProfile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -51,6 +51,7 @@ public class FragmentNearYou extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
+    private ProgressBar spinner;
 
     public FragmentNearYou() {
         // Required empty public constructor
@@ -68,6 +69,9 @@ public class FragmentNearYou extends Fragment {
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
+        spinner = (ProgressBar)v.findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
+
         return v;
     }
 
@@ -79,7 +83,6 @@ public class FragmentNearYou extends Fragment {
         getEvents.execute();
     }
 
-    //TODO: Remove DUMMY EVENTS
     private void setEventList(List<Activity> activities)
     {
         if (activities == null)
@@ -99,7 +102,7 @@ public class FragmentNearYou extends Fragment {
         mEventsList.setAdapter(mEventListAdapter);
 
         mEventListAdapter.notifyDataSetChanged();
-
+        spinner.setVisibility(View.GONE);
     }
 
     protected class EventItemClickListener implements AdapterView.OnItemClickListener {
@@ -120,6 +123,7 @@ public class FragmentNearYou extends Fragment {
         @Override
         protected void onPreExecute()
         {
+            spinner.setVisibility(View.VISIBLE);
         }
 
         @Override
