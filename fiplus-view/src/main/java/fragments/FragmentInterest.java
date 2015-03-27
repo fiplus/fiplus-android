@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class FragmentInterest extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
+    private SwipeRefreshLayout mSwipeLayout;
 
     public FragmentInterest() {
         // Required empty public constructor
@@ -65,6 +67,16 @@ public class FragmentInterest extends Fragment {
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
+
+        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeLayout.setRefreshing(true);
+                GetEvents getEvents = new GetEvents();
+                getEvents.execute();
+            }
+        });
 
         return v;
     }
