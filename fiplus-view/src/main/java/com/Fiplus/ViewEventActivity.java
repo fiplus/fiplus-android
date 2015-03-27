@@ -676,6 +676,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             if(mIsCanceled) //change color
             {
                 mLocationLabel.setTextColor(Color.GRAY);
+                mLocationList.setClickable(false);
+                mLocationList.setEnabled(false);
+                mLocationList.setFocusable(false);
+            }
+            else if(mIsConfirmed)
+            {
+                mLocationList.setClickable(false);
+                mLocationList.setEnabled(false);
+                mLocationList.setFocusable(false);
             }
         }
 
@@ -728,6 +737,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             if(mIsCanceled) //change color
             {
                 mTimeLabel.setTextColor(Color.GRAY);
+                mTimeList.setClickable(false);
+                mTimeList.setEnabled(false);
+                mTimeList.setFocusable(false);
+            }
+            else if(mIsConfirmed)
+            {
+                mTimeList.setClickable(false);
+                mTimeList.setEnabled(false);
+                mTimeList.setFocusable(false);
             }
         }
 

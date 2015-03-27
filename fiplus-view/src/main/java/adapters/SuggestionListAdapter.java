@@ -2,6 +2,7 @@ package adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,14 +101,12 @@ public class SuggestionListAdapter extends BaseAdapter {
 
             if(isCancelled)
             {
-                sugCheckBox.setClickable(false);
-                sugCheckBox.setEnabled(false);
-                sugCheckBox.setFocusable(false);
+                voteProgress.setVisibility(View.GONE);
             }
             else if(isConfirmed)
             {
-                sugCheckBox.setClickable(false);
                 sugCheckBox.setChecked(true);
+                sugCheckBox.setTextColor(Color.rgb(0, 200, 0));
                 voteProgress.setVisibility(View.GONE);
             }
         }
