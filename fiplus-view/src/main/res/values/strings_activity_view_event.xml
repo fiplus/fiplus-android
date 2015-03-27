@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="view_event_join_btn">Be Fi+!</string>
+    <string name="view_event_join_btn">Join</string>
     <string name="view_event_not_interested_btn">Not Interested</string>
     <string name="view_event_cancel_event_btn">Cancel Event</string>
     <string name="view_event_joiner">Joiner</string>
@@ -21,5 +21,6 @@
     <string name="unjoin_event_progress_bar_title">Un-Joining Event</string>
     <string name="cancel_event_progress_bar_title">Un-Joining Event</string>
 
+    <string name="no_end_time">No End Time</string>
 
 </resources>

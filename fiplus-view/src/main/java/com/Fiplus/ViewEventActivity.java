@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -38,12 +37,10 @@ import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
 import com.wordnik.client.model.UserProfile;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import adapters.LocationArrayAdapterNoFilter;
 import adapters.PendingLocListAdapter;
@@ -135,6 +132,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         mTimeList.setOnTouchListener(new TouchListener());
 
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
+        mSuggestedTimeList.setOnTouchListener(new TouchListener());
 
         GetEventTask getEventTask = new GetEventTask(mEventID);
         getEventTask.execute();
@@ -313,8 +311,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     private String convertToTimeToString(Time time)
     {
-        long startDate = time.getStart().longValue();
-        long endDate = time.getEnd().longValue();
+        String format = "E MMM dd, hh:mm a";
         int numOfVotes;
         String s;
 
@@ -328,29 +325,39 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         s = " (" + numOfVotes + " vote(s))";
 
-        Date d1 = new Date(startDate);
-        Date d2 = new Date(endDate);
-        String format = "EEE MMM d, h:m a";
-
-        String format2 = format;
-        String middle = " to ";
-        boolean curYear = d1.getYear() == new Date().getYear();
-        boolean sameMonth = d1.getMonth() == d2.getMonth();
-        boolean sameDay = d1.getDate() == d2.getDate();
-
-        if(sameDay && sameMonth)
-        {
-            format2 = "h:m a";
-            middle = " to ";
-        }
-        if(!curYear)
-        {
-            format2 += ", yyyy";
-        }
-
         SimpleDateFormat sdf1 = new SimpleDateFormat(format);
-        SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
-        return sdf1.format(d1) + middle + sdf2.format(d2);
+
+        long startDate = time.getStart().longValue();
+        Date d1 = new Date(startDate);
+
+        if(time.getEnd() != null)
+        {
+            long endDate= time.getEnd().longValue();
+            Date d2 = new Date(endDate);
+
+            String format2 = format;
+            String middle = " to ";
+            boolean curYear = d1.getYear() == new Date().getYear();
+            boolean sameMonth = d1.getMonth() == d2.getMonth();
+            boolean sameDay = d1.getDate() == d2.getDate();
+
+            if(sameDay && sameMonth)
+            {
+                format2 = "hh:mm a";
+                middle = " to ";
+            }
+            if(!curYear)
+            {
+                format2 += ", yyyy";
+            }
+
+            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+            return sdf1.format(d1) + middle + sdf2.format(d2);
+        }
+        else
+        {
+            return sdf1.format(d1);
+        }
     }
 
     //To handle multiple scrollviews

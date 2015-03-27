@@ -84,7 +84,7 @@ public class FragmentRecentActivities extends Fragment {
                     activities.get(i).getName(),
                     LocationUtil.getLocationStrings(activities.get(i).getLocations(), getActivity().getBaseContext()),
                     activities.get(i).getTimes(),
-                    ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
+                    ((Integer)activities.get(i).getNum_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);

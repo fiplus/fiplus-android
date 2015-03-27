@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants">
-
-    <!--<ImageView-->
-        <!--android:id="@+id/event_pic"-->
-        <!--android:layout_width="25dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_marginLeft="12dp"-->
-        <!--android:layout_marginRight="12dp"-->
-        <!--android:contentDescription="@string/desc_list_item_icon"-->
-        <!--android:layout_centerVertical="true" />-->
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,9 +21,8 @@
         android:layout="@id/event_pic"
         android:layout_toEndOf="@id/event_pic"
         android:layout_toRightOf="@id/event_pic"
-        android:layout_toLeftOf="@+id/event_button"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:gravity="center_vertical"
         android:text="Event 1"
         android:textColor="@color/list_item_title"
@@ -53,7 +42,6 @@
         android:layout_alignLeft="@+id/event_name"
         android:layout_alignStart="@+id/event_name"
         android:layout_below="@+id/event_name"
-        android:layout_toLeftOf="@+id/event_button"
         android:textColor="@color/list_item_title"
         android:ellipsize = "end"
         android:singleLine="true"/>
@@ -84,15 +72,15 @@
         android:layout_alignStart="@+id/event_location"
         android:textColor="@color/list_item_title" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/join_button"
-        android:id="@+id/event_button"
-        android:theme="@android:style/Theme.Holo"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+    <!--<Button-->
+        <!--style="?android:attr/buttonStyleSmall"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/join_button"-->
+        <!--android:id="@+id/event_button"-->
+        <!--android:theme="@android:style/Theme.Holo"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true" />-->
 
     <TextView
         android:layout_width="wrap_content"

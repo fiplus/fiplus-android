@@ -1,27 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearLayout1"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    >
 
     <DatePicker
         android:id="@+id/datePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:calendarViewShown="false" > <!-- style="@style/date_picker_style" -->
+        android:calendarViewShown="false"
+        android:layout_centerHorizontal="true"
+        >
     </DatePicker>
 
     <TimePicker
         android:id="@+id/timePicker"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/datePicker"
+        android:layout_centerHorizontal="true">
     </TimePicker>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_end_time"
+        android:id="@+id/no_end_time_checkbox"
+        android:checked="true"
+        android:layout_below="@+id/timePicker"
+        android:layout_alignParentRight="true"
+        />
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/no_end_time_checkbox"
+        android:layout_centerHorizontal="true">
 
         <Button
             android:layout_width="0dip"
@@ -38,4 +53,4 @@
             android:text="@string/create_event_cancel_button" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

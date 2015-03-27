@@ -9,15 +9,35 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SignUpActivity">
 
-    <ImageView
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:id="@+id/sign_up_fit_logo"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up_banner_1"
+        android:id="@+id/sign_up_banner_1"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/be_fit"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        />
+        android:textSize="@android:dimen/app_icon_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up_banner_2"
+        android:id="@+id/sign_up_banner_2"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/sign_up_banner_1"
+        android:textSize="20dp"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
+
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:id="@+id/sign_up_fit_logo"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:src="@drawable/be_fit"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--/>-->
 
     <EditText
         android:layout_width="wrap_content"
@@ -28,7 +48,7 @@
         android:hint="@string/prompt_email"
         android:ems="10"
         android:id="@+id/sign_up_email"
-        android:layout_below="@+id/sign_up_fit_logo"
+        android:layout_below="@+id/sign_up_banner_2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
@@ -49,6 +69,21 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/edit_text"
+        android:textColor="@android:color/primary_text_light"
+        android:inputType="textPassword"
+        android:hint="@string/prompt_confirm_password"
+        android:ems="10"
+        android:id="@+id/sign_up_confirm_password"
+        android:layout_below="@+id/sign_up_password"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,7 +93,7 @@
         android:layout_marginTop="25dp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/sign_up_password"/>
+        android:layout_below="@+id/sign_up_confirm_password"/>
 
     <Button
         android:layout_width="302dp"

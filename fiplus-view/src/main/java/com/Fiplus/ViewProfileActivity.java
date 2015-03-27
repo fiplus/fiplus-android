@@ -26,6 +26,7 @@ import adapters.EventListAdapter;
 import model.EventListItem;
 import utils.IAppConstants;
 import utils.LocationUtil;
+import utils.PrefUtil;
 
 public class ViewProfileActivity extends Activity
 {
@@ -59,7 +60,6 @@ public class ViewProfileActivity extends Activity
 
         overridePendingTransition(R.anim.activity_in_from_right, R.anim.activity_out_to_left);
 
-
         userName = getIntent().getExtras().getString("userName");
         userInterest = getIntent().getExtras().getStringArrayList("userInterest");
         mUserId = getIntent().getExtras().getString("userId");
@@ -73,6 +73,12 @@ public class ViewProfileActivity extends Activity
         mInterestList = (FlowLayout)findViewById(R.id.profileInterestLayout);
         mFavoriteStar = (CheckBox)findViewById(R.id.checkBox);
 
+        //this means ths current user clicked his own profile
+        if(mUserId.equalsIgnoreCase(PrefUtil.getString(getApplicationContext(), IAppConstants.USER_ID, null)))
+        {
+            mFavoriteStar.setVisibility(View.GONE);
+        }
+
         mFavoriteStar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -81,7 +87,7 @@ public class ViewProfileActivity extends Activity
                     AddFavorite addFavorite = new AddFavorite();
                     addFavorite.execute();
                 }
-                else if(!isChecked)
+                else
                 {
                     RemoveFavorite removeFavorite = new RemoveFavorite();
                     removeFavorite.execute();

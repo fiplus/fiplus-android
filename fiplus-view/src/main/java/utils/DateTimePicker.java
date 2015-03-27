@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
@@ -21,12 +22,14 @@ import java.util.List;
 
 public class DateTimePicker {
 
-    private static final String DATEFORMAT = "E MMM-dd hh:mm a";
+    private static final String DATEFORMAT = "E MMM dd, hh:mm a";
+    private final static int TIME_PICKER_INTERVAL = 5;
     private final Integer MAX = 3;
 
     private Dialog mDateTimeDialog;
     private Button mSetTimeButton;
     private Button mCancelTimeButton;
+    private CheckBox mSetEndTime;
     private DatePicker mDatePicker;
     private TimePicker mTimePicker;
 
@@ -59,8 +62,18 @@ public class DateTimePicker {
 
         mDateTimeDialog.show();
 
+        mSetEndTime = (CheckBox) mDateTimeDialog.findViewById(R.id.no_end_time_checkbox);
         mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
         mTimePicker = (TimePicker) mDateTimeDialog.findViewById(R.id.timePicker);
+
+        //update 30 mins
+        Integer mins = mTimePicker.getCurrentMinute() + 30;
+        Integer hour = mTimePicker.getCurrentHour();
+        mTimePicker.setCurrentMinute(mins);
+        if(mins>59)
+        {
+            mTimePicker.setCurrentHour(hour + 1);
+        }
 
         //for cancel button
         mCancelTimeButton = (Button) mDateTimeDialog.findViewById(R.id.cancelPicker);
@@ -73,6 +86,7 @@ public class DateTimePicker {
 
         //for set button
         mSetTimeButton = (Button) mDateTimeDialog.findViewById(R.id.setPicker);
+        mSetTimeButton.setText("Set Start Time");
         mSetTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,10 +117,14 @@ public class DateTimePicker {
                     });
                     alertDialog.show();
                 }
-                else
+                else if(!mSetEndTime.isChecked())
                 {
                     //set end date if start time is set properly
                     getEndTime(year, month, day, hour, minutes);
+                }
+                else
+                {
+                    addToList();
                 }
             }
         });
@@ -121,6 +139,8 @@ public class DateTimePicker {
 
         mDateTimeDialog.show();
 
+        mSetEndTime = (CheckBox) mDateTimeDialog.findViewById(R.id.no_end_time_checkbox);
+        mSetEndTime.setVisibility(View.GONE);
         mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
         mTimePicker = (TimePicker) mDateTimeDialog.findViewById(R.id.timePicker);
 
@@ -142,6 +162,7 @@ public class DateTimePicker {
 
         //for set button
         mSetTimeButton = (Button) mDateTimeDialog.findViewById(R.id.setPicker);
+        mSetTimeButton.setText("Set End Time");
         mSetTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,31 +194,35 @@ public class DateTimePicker {
                 }
                 else
                 {
-                    try {
-                        //instantiate an object of the class above
-                        //Class helloClass = Class.forName(callingClass.getName());//callingClass.newInstance();
-                        Object o = callingContext;
-
-                        //Prepare array of the arguments that your function accepts
-                        Class[] paramTypes = new Class[2];
-                        paramTypes[0]=Time.class;
-                        paramTypes[1]=String.class;
-
-                        Method j[] = callingClass.getDeclaredMethods();
-
-                        //Instantiate an object of type method that returns you method name
-                        Method m = callingClass.getDeclaredMethod("addDateTime", paramTypes);
-
-                        //invoke method with actual params
-                        m.invoke(o, time, convertTimeToString(time));
-                    }
-                    catch (Throwable e) {
-                        System.err.println(e);
-                    }
-
+                    addToList();
                 }
             }
         });
+    }
+
+    private void addToList()
+    {
+        try {
+            //instantiate an object of the class above
+            //Class helloClass = Class.forName(callingClass.getName());//callingClass.newInstance();
+            Object o = callingContext;
+
+            //Prepare array of the arguments that your function accepts
+            Class[] paramTypes = new Class[2];
+            paramTypes[0]=Time.class;
+            paramTypes[1]=String.class;
+
+            Method j[] = callingClass.getDeclaredMethods();
+
+            //Instantiate an object of type method that returns you method name
+            Method m = callingClass.getDeclaredMethod("addDateTime", paramTypes);
+
+            //invoke method with actual params
+            m.invoke(o, time, convertTimeToString(time));
+        }
+        catch (Throwable e) {
+            System.err.println(e);
+        }
     }
 
 
@@ -232,18 +257,39 @@ public class DateTimePicker {
 
     public String convertTimeToString(Time time)
     {
-        long startDate = time.getStart().longValue();//Double.doubleToLongBits(time.getStart());
-        long endDate = time.getEnd().longValue();//Double.doubleToLongBits(time.getEnd());
+        SimpleDateFormat sdf1 = new SimpleDateFormat(DATEFORMAT);
 
+        long startDate = time.getStart().longValue();
         Date d1 = new Date(startDate);
-        Date d2 = new Date(endDate);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATEFORMAT);
-        return "From: " + dateFormat.format(d1) + "\nUntil : " + dateFormat.format(d2);
+        if(time.getEnd() != null)
+        {
+            long endDate= time.getEnd().longValue();
+            Date d2 = new Date(endDate);
 
-//        PrettyTime t1 = new PrettyTime(new Date());
-//        PrettyTime t2 = new PrettyTime(new Date());
-//        return "Start: " + t1.format(d1) + "\nEnd  : " + t2.format(d2);
+            String format2 = DATEFORMAT;
+            String middle = " to ";
+            boolean curYear = d1.getYear() == new Date().getYear();
+            boolean sameMonth = d1.getMonth() == d2.getMonth();
+            boolean sameDay = d1.getDate() == d2.getDate();
+
+            if(sameDay && sameMonth)
+            {
+                format2 = "hh:mm a";
+                middle = " to ";
+            }
+            if(!curYear)
+            {
+                format2 += ", yyyy";
+            }
+
+            SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
+            return sdf1.format(d1) + middle + sdf2.format(d2);
+        }
+        else
+        {
+            return sdf1.format(d1);
+        }
     }
 
 }
