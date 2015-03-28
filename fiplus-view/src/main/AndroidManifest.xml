@@ -30,11 +30,12 @@
         android:icon="@mipmap/fiplus"
         android:label="@string/app_name"
         android:name=".FiplusApplication"
-        android:screenOrientation="portrait">
+        >
 
         <activity
             android:name=".SplashScreenActivity"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,13 +45,15 @@
         <activity
             android:name=".MainScreenActivity"
             android:label="@string/mainscreen_activity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ViewEventActivity"
             android:label="@string/view_event"
             android:parentActivityName=".MainScreenActivity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -59,7 +62,8 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/welcome"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -70,7 +74,8 @@
             android:name=".SignUpActivity"
             android:label="@string/sign_up_activity"
             android:parentActivityName=".LoginActivity"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -81,7 +86,8 @@
             android:name=".MyEventsActivity"
             android:label="@string/my_events"
             android:parentActivityName=".MainScreenActivity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -92,7 +98,8 @@
             android:name=".ConfigureProfileActivity"
             android:label="@string/configure_profile"
             android:parentActivityName=".MainScreenActivity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -103,7 +110,8 @@
             android:name=".RecentActivitiesActivity"
             android:label="@string/recent_activities_activity"
             android:parentActivityName=".MainScreenActivity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -114,7 +122,8 @@
             android:name=".CreateEventActivity"
             android:label="@string/create_event_activity_title"
             android:parentActivityName=".MainScreenActivity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -127,7 +136,8 @@
             android:name=".ViewProfileActivity"
             android:label="@string/view_profile"
             android:parentActivityName=".MainScreenActivity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -138,7 +148,8 @@
             android:name=".FavouriteUsersActivity"
             android:label="@string/favourite_users"
             android:parentActivityName=".MainScreenActivity"
-            android:theme="@style/Theme.Mainscreen" >
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
