@@ -184,7 +184,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
                 // Invalidate the my events cache to get updated values
                 PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
-                finish();
             }
         });
 
@@ -222,7 +221,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         GeocodingLocation location = new GeocodingLocation(getBaseContext(), ViewEventActivity.this, FINAL_LOC);
                         location.execute(address);
                     }
-
                 }
             }
         });
@@ -233,7 +231,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     @Override
     public void onBackPressed() {
         //update votes
-        if((mIsAJoiner || mIsACreator) && !mIsConfirmed)
+        if((mIsAJoiner || mIsACreator) && !mIsConfirmed && !mIsCanceled)
         {
             UpdateVotes update = new UpdateVotes();
             update.execute();
@@ -246,7 +244,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     @Override
     public void onPause() {
         //update votes
-        if((mIsAJoiner || mIsACreator) && !mIsConfirmed)
+        if((mIsAJoiner || mIsACreator) && !mIsConfirmed && !mIsCanceled)
         {
             UpdateVotes update = new UpdateVotes();
             update.execute();
@@ -980,6 +978,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             if(message==null)
             {
                 message = "Un-Joined Event";
+                mIsAJoiner = false;
+                mIsACreator = false;
                 Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             }
             else
@@ -1029,6 +1029,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
             message = "Cancelled Event";
+            mIsAJoiner = false;
+            mIsACreator = false;
             Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
         }

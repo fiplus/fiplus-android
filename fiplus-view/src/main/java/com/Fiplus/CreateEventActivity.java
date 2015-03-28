@@ -501,6 +501,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             else
             {
                 Toast.makeText(getBaseContext(), address, Toast.LENGTH_SHORT).show();
+                // Invalidate the my events cache to get updated values
+                PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
                 finish();
             }
         }
