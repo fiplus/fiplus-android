@@ -1172,7 +1172,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             for (int i=0; i<timeSuggestionList.size(); i++)
             {
-                if(mLocationListAdapter.getItem(i).getYesVote())
+                if(mTimesListAdapter.getItem(i).getYesVote())
                 {
                     try {
                         getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
@@ -1202,14 +1202,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 message = message.replace("{error:", "");
                 message = message.replace("}", "");
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ViewEventActivity.this);
-                alertDialog.setTitle("Warning").setMessage(message).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                alertDialog.show();
+                Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             }
         }
 

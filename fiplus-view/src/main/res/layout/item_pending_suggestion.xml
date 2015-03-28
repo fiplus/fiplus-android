@@ -11,8 +11,8 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/desc_list_item_icon"
-        android:background="@android:drawable/ic_menu_recent_history"
-        android:backgroundTint="#fff8a426" />
+        android:src="@android:drawable/ic_menu_recent_history"
+        />
 
     <TextView
         android:id="@+id/pending_suggestion"
