@@ -56,9 +56,16 @@
         android:id="@+id/view_event_loc_label"
         android:layout_below="@+id/view_event_description"
         android:layout_alignParentLeft="true"
-        android:textColor="@color/counter_text_color"
+        android:textColor="@android:color/holo_blue_dark"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
         />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:id="@+id/list_divider3"
+        android:layout_below="@+id/view_event_loc_label"
+        android:background="#fff8a426" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -69,6 +76,13 @@
         android:fadeScrollbars="false"
         />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:id="@+id/list_divider1"
+        android:layout_below="@+id/view_event_loc_checkboxes"
+        android:background="#fff8a426" />
+
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -76,6 +90,7 @@
         android:id="@+id/view_event_pending_loc"
         android:orientation="vertical"
         android:fadeScrollbars="false"
+        android:layout_marginTop="@dimen/tags_padding"
         />
 
     <AutoCompleteTextView
@@ -111,7 +126,14 @@
         android:layout_below="@+id/view_event_add_location"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:textColor="@color/counter_text_color"/>
+        android:textColor="@android:color/holo_blue_dark"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:id="@+id/list_divider4"
+        android:layout_below="@+id/view_event_time_label"
+        android:background="#fff8a426" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -122,6 +144,12 @@
         android:fadeScrollbars="false"
         />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:id="@+id/list_divider2"
+        android:layout_below="@+id/view_event_time_checkboxes"
+        android:background="#fff8a426" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -130,6 +158,7 @@
         android:id="@+id/view_event_pending_time"
         android:orientation="vertical"
         android:fadeScrollbars="false"
+        android:layout_marginTop="@dimen/tags_padding"
         />
 
     <Button

@@ -75,6 +75,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected Button mAddLocationBtn;
     protected TextView mLocationLabel;
     protected TextView mTimeLabel;
+    protected View divider1, divider2, divider3, divider4;
 
     ArrayList<PendingLocItem> locPendingSuggestion = new ArrayList<PendingLocItem>();
     private PendingLocListAdapter mPendingLocSuggestionAdapter;
@@ -224,6 +225,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
         });
+
+        //set dividers
+        divider1 = findViewById(R.id.list_divider1);
+        divider2 = findViewById(R.id.list_divider2);
+        divider3 = findViewById(R.id.list_divider3);
+        divider4 = findViewById(R.id.list_divider4);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
@@ -688,6 +695,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 if(mIsCanceled)
                 {
                     mLocationLabel.setTextColor(Color.GRAY);
+                    divider1.setBackgroundColor(Color.GRAY);
+                    divider2.setBackgroundColor(Color.GRAY);
+                    divider3.setBackgroundColor(Color.GRAY);
+                    divider4.setBackgroundColor(Color.GRAY);
                 }
                 mLocationList.setClickable(false);
                 mLocationList.setEnabled(false);
