@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
@@ -74,14 +73,7 @@ public class FragmentInterest extends Fragment {
     private void setEventList(List<Activity> activities)
     {
         if (activities == null)
-        {
             return;
-        }
-        else if(activities.size() == 0)
-        {
-            Toast.makeText(getActivity().getBaseContext(), getString(R.string.no_events_interest), Toast.LENGTH_LONG).show();
-        }
-
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
         for(int i = 0; i < activities.size(); i++)

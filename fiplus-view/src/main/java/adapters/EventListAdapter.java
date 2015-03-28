@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -63,24 +62,20 @@ public class EventListAdapter extends BaseAdapter
     public View getView(final int position, View convertView, ViewGroup parent)
     {
         Classes currentClass = Classes.valueOf(className.toUpperCase());
-        TextView confirmEvent;
 
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
             convertView = mInflater.inflate(R.layout.item_events_whats_happening, parent, false);
-            confirmEvent = (TextView) convertView.findViewById(R.id.confirm_event);
 
-            switch (currentClass)
-            {
-                case FRAGMENTMYEVENTS:
-                    //possibly show firm up here
-                default:
-                    confirmEvent.setVisibility(convertView.GONE);
-                    break;
-            }
-
+//            switch (currentClass)
+//            {
+//                case FRAGMENTMYEVENTS:
+//                    //possibly show firm up here
+//                default:
+//                    break;
+//            }
         }
 
         ImageView eventPic = (ImageView)convertView.findViewById(R.id.event_pic);
