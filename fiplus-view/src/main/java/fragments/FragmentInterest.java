@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
@@ -21,7 +22,6 @@ import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
-import com.wordnik.client.model.UserProfile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,6 +48,7 @@ public class FragmentInterest extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
+    private ProgressBar spinner;
 
     public FragmentInterest() {
         // Required empty public constructor
@@ -65,6 +66,8 @@ public class FragmentInterest extends Fragment {
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
+
+        spinner = (ProgressBar)v.findViewById(R.id.progressBar1);
 
         return v;
     }
@@ -102,6 +105,7 @@ public class FragmentInterest extends Fragment {
         mEventsList.setAdapter(mEventListAdapter);
 
         mEventListAdapter.notifyDataSetChanged();
+        spinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -130,6 +134,7 @@ public class FragmentInterest extends Fragment {
         @Override
         protected void onPreExecute()
         {
+            spinner.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -174,7 +179,6 @@ public class FragmentInterest extends Fragment {
             }
 
             try{
-                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
                         50.0,
                         true,

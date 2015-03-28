@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
@@ -22,7 +23,6 @@ import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
-import com.wordnik.client.model.UserProfile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,6 +48,7 @@ public class FragmentBeFit extends Fragment{
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
+    private ProgressBar spinner;
 
     public FragmentBeFit() {
         // Required empty public constructor
@@ -70,6 +71,9 @@ public class FragmentBeFit extends Fragment{
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
+
+        spinner = (ProgressBar)v.findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
 
         return v;
     }
@@ -107,6 +111,7 @@ public class FragmentBeFit extends Fragment{
         mEventsList.setAdapter(mEventListAdapter);
 
         mEventListAdapter.notifyDataSetChanged();
+        spinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -135,6 +140,7 @@ public class FragmentBeFit extends Fragment{
         @Override
         protected void onPreExecute()
         {
+            spinner.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -179,7 +185,6 @@ public class FragmentBeFit extends Fragment{
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
-                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
                         50.0,
                         false,

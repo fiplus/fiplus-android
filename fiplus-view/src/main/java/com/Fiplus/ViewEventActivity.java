@@ -683,7 +683,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             });
 
-
             if(mIsCanceled || mIsConfirmed) //change color
             {
                 if(mIsCanceled)
