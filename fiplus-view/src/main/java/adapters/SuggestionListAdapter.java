@@ -107,7 +107,7 @@ public class SuggestionListAdapter extends BaseAdapter {
             else if(isConfirmed)
             {
                 sugCheckBox.setChecked(true);
-                sugCheckBox.setTextColor(Color.rgb(0, 200, 0));
+                sugCheckBox.setTextColor(Color.rgb(0, 100, 0));
                 voteProgress.setVisibility(View.GONE);
             }
         }

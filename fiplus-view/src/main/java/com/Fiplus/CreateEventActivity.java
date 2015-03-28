@@ -1,5 +1,6 @@
 package com.Fiplus;
 
+import android.graphics.Color;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -352,6 +353,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             final TextView createEventTag = new TextView(getBaseContext());
             createEventTag.setText(Html.fromHtml(String.format(btnInnerHTML, mTagsList.get(tagsAdded - 1))));
             createEventTag.setBackgroundResource(R.drawable.button_tags);
+            createEventTag.setTextColor(Color.BLACK);
             createEventTag.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tags_delete, 0);
 
             createEventTag.setOnTouchListener(new View.OnTouchListener() {

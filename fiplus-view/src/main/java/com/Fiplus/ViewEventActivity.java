@@ -21,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -686,6 +685,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             });
 
+
             if(mIsCanceled || mIsConfirmed) //change color
             {
                 if(mIsCanceled)
@@ -802,7 +802,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         @Override
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
-            Log.e("Join", message);
 
             if(error) // have a pop up
             {
@@ -891,17 +890,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         private String checkVotes()
         {
-
-            int addrCount = mLocationList.getChildCount();
-            int timeCount = mTimeList.getChildCount();
-
-            for (int i=0; i<addrCount; i++)
+            for (int i=0; i<locSuggestionList.size(); i++)
             {
-                if(((CheckBox)mLocationList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mLocationListAdapter.getItem(i).getYesVote())
                 {
                     try {
-                        getEventApi.voteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
+                        getEventApi.voteForSuggestion(locSuggestionList.get(i).getSuggestionId());
                     } catch (Exception e) {
                         error = true;
                         response = e.getMessage();
@@ -910,7 +904,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 else
                 {
                     try {
-                        getEventApi.unvoteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
+                        getEventApi.unvoteForSuggestion(locSuggestionList.get(i).getSuggestionId());
                     } catch (Exception e) {
                         error = true;
                         response = e.getMessage();
@@ -918,10 +912,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
 
-            for (int i=0; i<timeCount; i++)
+            for (int i=0; i<timeSuggestionList.size(); i++)
             {
-                if(((CheckBox)mTimeList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mTimesListAdapter.getItem(i).getYesVote())
                 {
                     try {
                         getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
@@ -1083,8 +1076,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     suggested = setEventApi.suggestLocationForActivity(sEventID, suggestedLocation);
                 }
 
-
-
             } catch (Exception e) {
                 error = true;
                 response = e.getMessage();
@@ -1158,14 +1149,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         private String checkVotes()
         {
-
-            int addrCount = mLocationList.getChildCount();
-            int timeCount = mTimeList.getChildCount();
-
-            for (int i=0; i<addrCount; i++)
+            for (int i=0; i<locSuggestionList.size(); i++)
             {
-                if(((CheckBox)mLocationList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mLocationListAdapter.getItem(i).getYesVote())
                 {
                     try {
                         getEventApi.voteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
@@ -1183,10 +1169,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
 
-            for (int i=0; i<timeCount; i++)
+            for (int i=0; i<timeSuggestionList.size(); i++)
             {
-                if(((CheckBox)mTimeList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mLocationListAdapter.getItem(i).getYesVote())
                 {
                     try {
                         getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());

@@ -21,9 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/desc_list_item_icon"
-        android:background="@android:drawable/ic_delete"
         android:visibility="visible"
-
-        />
+        android:src="@android:drawable/ic_delete"
+        android:tint="#fff83d40" />
 
 </RelativeLayout>
