@@ -81,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/view_event_location"
-        android:hint="@string/create_event_location_hint"
+        android:hint="@string/view_event_suggest_loc"
         android:background="@android:drawable/edit_text"
         android:textColor="@android:color/primary_text_light"
         android:layout_below="@+id/view_event_pending_loc"

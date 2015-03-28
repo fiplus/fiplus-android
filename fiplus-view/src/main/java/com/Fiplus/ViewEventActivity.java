@@ -158,8 +158,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     FirmUpDialog firmUp = new FirmUpDialog(ViewEventActivity.this, eventID, locSuggestionList, timeSuggestionList, mIsACreator);
                     firmUp.showFirmUpRsvp();
-
-
                 }
                 else
                 {
@@ -180,7 +178,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     CancelEventTask cancelEventTask = new CancelEventTask(mEventID);
                     cancelEventTask.execute();
                 }
-                if(mIsAJoiner)
+                else if(mIsAJoiner)
                 {
                     UnJoinEventTask unJoinEventTask = new UnJoinEventTask(mEventID);
                     unJoinEventTask.execute();
@@ -688,15 +686,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             });
 
-            if(mIsCanceled) //change color
+            if(mIsCanceled || mIsConfirmed) //change color
             {
-                mLocationLabel.setTextColor(Color.GRAY);
-                mLocationList.setClickable(false);
-                mLocationList.setEnabled(false);
-                mLocationList.setFocusable(false);
-            }
-            else if(mIsConfirmed)
-            {
+                if(mIsCanceled)
+                {
+                    mLocationLabel.setTextColor(Color.GRAY);
+                }
                 mLocationList.setClickable(false);
                 mLocationList.setEnabled(false);
                 mLocationList.setFocusable(false);
@@ -749,15 +744,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             });
 
-            if(mIsCanceled) //change color
+            if(mIsCanceled || mIsConfirmed) //change color
             {
-                mTimeLabel.setTextColor(Color.GRAY);
-                mTimeList.setClickable(false);
-                mTimeList.setEnabled(false);
-                mTimeList.setFocusable(false);
-            }
-            else if(mIsConfirmed)
-            {
+                if(mIsCanceled)
+                {
+                    mTimeLabel.setTextColor(Color.GRAY);
+                }
                 mTimeList.setClickable(false);
                 mTimeList.setEnabled(false);
                 mTimeList.setFocusable(false);

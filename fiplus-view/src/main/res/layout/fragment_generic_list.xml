@@ -15,7 +15,7 @@
         android:divider="@color/list_divider"
         android:dividerHeight="2dp"
         android:listSelector="@drawable/list_selector"
-        android:scrollbars="none"
-        android:smoothScrollbar="true"/>
+        android:orientation="vertical"
+        android:fadeScrollbars="false"/>
 
 </FrameLayout>

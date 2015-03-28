@@ -10,7 +10,7 @@
     <string name="view_event_rsvp_button">RSVP</string>
 
     <string name="view_event_joiner_button">Update Changes</string>
-    <string name="view_event_suggest_date">Suggest Date</string>
+    <string name="view_event_suggest_loc">Suggest Location</string>
     <string name="view_event_suggest_time">Suggest Time</string>
 
     <string name="view_event_name_label">Event Name:</string>
