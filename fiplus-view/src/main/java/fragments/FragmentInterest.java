@@ -132,7 +132,8 @@ public class FragmentInterest extends Fragment {
         @Override
         protected void onPreExecute()
         {
-            spinner.setVisibility(View.VISIBLE);
+            if(!mSwipeLayout.isRefreshing())
+                spinner.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -201,6 +202,8 @@ public class FragmentInterest extends Fragment {
         {
             if (response != null)
                 setEventList(response);
+
+            mSwipeLayout.setRefreshing(false);
         }
     }
 
