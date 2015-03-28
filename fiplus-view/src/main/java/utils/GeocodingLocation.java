@@ -63,7 +63,6 @@ public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
             addr = addressList.get(0);
             location.setLatitude(addr.getLatitude());
             location.setLongitude(addr.getLongitude());
-            location.setAddress(addr.getAddressLine(0));
 
             //only have one address
             addressList.clear();
@@ -87,6 +86,7 @@ public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
                 temp = (a.getMaxAddressLineIndex() > 0 ? a.getAddressLine(0) : "")+" "+
                         (a.getLocality() != null ? a.getLocality() : "")
                         +" "+(a.getCountryName() != null ? a.getCountryName() : "");
+                location.setAddress(temp);
             }
 
             callerActivity.populateLocation(location, temp);

@@ -2,12 +2,13 @@ package adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ProgressBar;
+import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import com.Fiplus.R;
@@ -15,23 +16,38 @@ import com.Fiplus.R;
 import java.util.ArrayList;
 
 import model.SuggestionListItem;
+import utils.FirmUpDialog;
 
 public class SuggestionListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<SuggestionListItem> mSuggestionListItems;
-    private int firstTime[];
+    private boolean isCancelled;
+    private boolean isFirmUp = false;
+    private boolean isConfirmed = false;
+    private int selectedItem = -1;
 
+    public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems, boolean isCancelled, boolean isConfirmed) {
+        this.context = context;
+        this.mSuggestionListItems = suggestionListItems;
+        this.isCancelled = isCancelled;
+        this.isConfirmed = isConfirmed;
+    }
+
+    //for firm up
     public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems) {
         this.context = context;
         this.mSuggestionListItems = suggestionListItems;
-        firstTime = new int[suggestionListItems.size()];
-        for(int i = 0; i < suggestionListItems.size(); i++)
-            firstTime[i] = 0;
+        isFirmUp = true;
     }
 
     @Override
     public int getCount() {
         return mSuggestionListItems.size();
+    }
+
+    public int getSelectedItem()
+    {
+        return selectedItem;
     }
 
     @Override
@@ -46,21 +62,54 @@ public class SuggestionListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.item_suggestion, parent, false);
+
+            if(isFirmUp)
+            {
+                convertView = mInflater.inflate(R.layout.firmup_suggestion, parent, false);
+            }
+            else
+            {
+                convertView = mInflater.inflate(R.layout.item_suggestion, parent, false);
+            }
         }
 
-        CheckBox sugCheckBox = (CheckBox) convertView.findViewById(R.id.suggestion_checkbox);
-        if(firstTime[position] < 2) {
-            sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
-            firstTime[position]++;
-        }
         TextView voteProgress = (TextView) convertView.findViewById(R.id.vote_progress);
-
-        sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
         voteProgress.setText("" + mSuggestionListItems.get(position).getVote() + " votes");
+
+        if(isFirmUp)
+        {
+            CheckedTextView firmUpBox = (CheckedTextView) convertView.findViewById(R.id.suggestion_radio);
+            firmUpBox.setText(mSuggestionListItems.get(position).getSuggestion());
+
+            if (position == FirmUpDialog.selectedIndex)// || position == FirmUpDialog.selectedIndexTime) {
+            {
+                selectedItem = position;
+                firmUpBox.setChecked(true);
+            } else {
+                firmUpBox.setChecked(false);
+            }
+        }
+        else
+        {
+            CheckBox sugCheckBox = (CheckBox) convertView.findViewById(R.id.suggestion_checkbox);
+            sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
+            sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
+
+            if(isCancelled)
+            {
+                voteProgress.setVisibility(View.GONE);
+            }
+            else if(isConfirmed)
+            {
+                sugCheckBox.setChecked(true);
+                sugCheckBox.setTextColor(Color.rgb(0, 200, 0));
+                voteProgress.setVisibility(View.GONE);
+            }
+        }
 
         return convertView;
     }

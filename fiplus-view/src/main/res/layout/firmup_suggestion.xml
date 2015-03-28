@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
+    android:id="@+id/firmup_suggestion"
     android:descendantFocusability="blocksDescendants"
     >
 
-    <CheckBox
+    <CheckedTextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/suggestion_checkbox"
+        android:id="@+id/suggestion_radio"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/vote_progress"
-        android:focusableInTouchMode="false"
-        android:clickable="false"
-        android:focusable="false"
+        android:drawableLeft="?android:attr/listChoiceIndicatorSingle"
+        android:gravity="center_vertical"
         />
 
     <TextView
@@ -26,9 +25,5 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:textColor="@color/counter_text_bg"
-        android:layout_marginRight="8dp"
-        android:focusableInTouchMode="false"
-        android:clickable="false"
-        android:focusable="false"
-        />
+        android:layout_marginRight="8dp"/>
 </RelativeLayout>
