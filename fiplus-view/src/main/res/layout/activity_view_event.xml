@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    >
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
@@ -45,8 +46,9 @@
         android:id="@+id/view_event_loc_label"
         android:layout_below="@+id/view_event_description"
         android:layout_alignParentLeft="true"
+        android:textColor="@color/counter_text_color"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:textColor="@color/counter_text_color" />
+        />
 
     <ListView
         android:layout_width="wrap_content"
@@ -132,7 +134,6 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_below="@+id/view_event_suggest_time"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:id="@+id/linearLayout">

@@ -15,9 +15,6 @@ import com.google.android.gms.analytics.Tracker;
 
 import adapters.TabPagerAdapter;
 
-/**
- * Created by jsfirme on 14-11-26.
- */
 public class FragmentWhatsHappening extends Fragment {
 
     public static final String TAG = FragmentWhatsHappening.class

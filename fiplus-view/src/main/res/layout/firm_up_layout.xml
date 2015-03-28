@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/view_event_suggested_loc_label"
+        android:id="@+id/view_event_loc_label"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:textColor="@color/counter_text_color" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:id="@+id/firm_up_location"
+        android:orientation="vertical"
+        android:layout_below="@+id/view_event_loc_label"
+        android:fadeScrollbars="false"
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/view_event_suggested_time_label"
+        android:id="@+id/view_event_time_label"
+        android:layout_below="@+id/firm_up_location"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:textColor="@color/counter_text_color"/>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:id="@+id/firm_up_time"
+        android:orientation="vertical"
+        android:fadeScrollbars="false"
+        android:layout_below="@+id/view_event_time_label"
+        android:clickable="true"
+        />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/firm_up_time"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
+
+        <Button
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/firm_up_button"
+            android:text="@string/view_event_firm_up_button"
+            />
+
+        <Button
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/cancel_firm_up"
+            android:text="@string/create_event_cancel_button"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

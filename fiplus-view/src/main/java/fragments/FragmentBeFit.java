@@ -1,11 +1,9 @@
 package fragments;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -14,34 +12,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
-import com.wordnik.client.ApiException;
-import com.wordnik.client.ApiInvoker;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.wordnik.client.ApiException;
+import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
-import com.wordnik.client.model.UserProfile;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
@@ -59,6 +50,7 @@ public class FragmentBeFit extends Fragment{
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
     private SwipeRefreshLayout mSwipeLayout;
+    private ProgressBar spinner;
 
     public FragmentBeFit() {
         // Required empty public constructor
@@ -91,6 +83,8 @@ public class FragmentBeFit extends Fragment{
                 getEvents.execute();
             }
         });
+        spinner = (ProgressBar)v.findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
 
         return v;
     }
@@ -115,6 +109,7 @@ public class FragmentBeFit extends Fragment{
         mEventsList.setAdapter(mEventListAdapter);
 
         mEventListAdapter.notifyDataSetChanged();
+        spinner.setVisibility(View.GONE);
     }
 
     @Override
@@ -143,6 +138,7 @@ public class FragmentBeFit extends Fragment{
         @Override
         protected void onPreExecute()
         {
+            spinner.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -187,7 +183,6 @@ public class FragmentBeFit extends Fragment{
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try {
-                UserProfile profile = usersApi.getUserProfile(PrefUtil.getString(getActivity().getApplicationContext(), IAppConstants.USER_ID));
                 response = matchesApi.matchActivities(
                         50.0,
                         false,
