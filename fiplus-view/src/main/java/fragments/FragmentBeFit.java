@@ -1,11 +1,9 @@
 package fragments;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,30 +15,23 @@ import android.widget.ListView;
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
 import com.Fiplus.ViewEventActivity;
-import com.wordnik.client.ApiException;
-import com.wordnik.client.ApiInvoker;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.wordnik.client.ApiException;
+import com.wordnik.client.ApiInvoker;
 import com.wordnik.client.api.MatchesApi;
 import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.UserProfile;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
@@ -92,7 +83,7 @@ public class FragmentBeFit extends Fragment{
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(
-                    R.drawable.ic_configure,
+                    R.mipmap.ic_event,
                     activities.get(i).getName(),
                     LocationUtil.getLocationStrings(activities.get(i).getLocations(), getActivity().getBaseContext()),
                     activities.get(i).getTimes(),

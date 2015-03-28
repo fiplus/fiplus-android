@@ -123,7 +123,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher, G
 
         //TODO: (Nick) Configure Profile - Upload Profile Photo
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mImageView.setImageResource(R.drawable.ic_nopic);
+        mImageView.setImageResource(R.mipmap.ic_configure);
 
         mProfileName = (EditText) findViewById(R.id.configure_profile_name);
         mGender = (EditText) findViewById(R.id.configure_gender);

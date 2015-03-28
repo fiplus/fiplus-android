@@ -10,7 +10,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/joiner_image"
-        android:src="@drawable/ic_nopic"
+        android:src="@mipmap/ic_configure"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:clickable="true" />
@@ -26,7 +26,3 @@
         android:textSize="@dimen/joiners_text_size" />
 
 </LinearLayout>
-
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--app:border_width="2dp"-->
-    <!--app:border_color="none"-->

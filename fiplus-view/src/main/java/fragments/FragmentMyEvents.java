@@ -93,7 +93,7 @@ public class FragmentMyEvents extends Fragment {
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(
-                    R.drawable.ic_configure,
+                    R.mipmap.ic_event,
                     activities.get(i).getName(),
                     LocationUtil.getLocationStrings(activities.get(i).getLocations(), getActivity().getBaseContext()),
                     activities.get(i).getTimes(),

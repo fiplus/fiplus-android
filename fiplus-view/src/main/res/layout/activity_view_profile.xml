@@ -19,7 +19,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/profileImage"
-            android:src="@drawable/ic_nopic"
+            android:src="@mipmap/ic_configure"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_alignParentTop="true"

@@ -15,7 +15,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/imageView"
-            android:src="@drawable/ic_nopic"
+            android:src="@mipmap/ic_configure"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginTop="24dp"

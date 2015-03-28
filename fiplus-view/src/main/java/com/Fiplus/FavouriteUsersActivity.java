@@ -79,7 +79,7 @@ public class FavouriteUsersActivity extends Activity {
         for(int i = 0; i < favourites.getFavourite_users().size(); i++ )
         {
             FavouriteUsersList.add(new FavouriteUsersListItem(favourites.getFavourite_users().get(i).getUsername(),
-                    R.mipmap.fiplus,
+                    R.mipmap.ic_star,
                     favourites.getFavourite_users().get(i).getUser_id(),
                     favourites.getFavourite_users().get(i).getTagged_interests()));
         }

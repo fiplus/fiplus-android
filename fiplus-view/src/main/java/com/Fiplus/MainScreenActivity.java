@@ -1,22 +1,14 @@
 package com.Fiplus;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.os.AsyncTask;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,13 +18,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 import adapters.NavDrawerListAdapter;
@@ -277,13 +263,15 @@ public class MainScreenActivity extends BaseFragmentActivity
                 break;
             case 3: //Settings
                 break;
-            case 4: //logout
-                logout();
+            case 4: //help
                 break;
             case 5://feedback
                 Uri uriUrl = Uri.parse("https://docs.google.com/forms/d/1IJanmZWGyjQ2f8rQuzSDyo8Y8PKvV8Ed4wrzGRkXoNI/viewform?usp=send_form");
                 Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
                 startActivity(launchBrowser);
+                break;
+            case 6: //logout
+                logout();
                 break;
         }
 
