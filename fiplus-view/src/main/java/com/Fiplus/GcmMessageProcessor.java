@@ -3,9 +3,11 @@ package com.Fiplus;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
+import android.content.IntentFilter;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -40,15 +42,21 @@ public class GcmMessageProcessor extends IntentService {
     public static final String FROM_NOTIFICATION = "from_notification";
 
     NotificationCompat.Builder mBuilder;
-    private static int sNotificationId = 1;
+    public static NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
+    public static boolean sIsStacked = false;
 
     private static final String NEW_ACTIVITY_GROUP = "new_activity_group";
+    public static final int ACTIVITY_GROUP_NOTIF_ID = 1;
     private static final String FIRM_UP_GROUP = "firm_up_group";
+    public static int FIRM_UP_GROUP_NOTIF_ID = 2;
 
     /** Push notification message types */
     private static final String NEW_ACTIVITY_TYPE = "new_activity";
     private static final String CANCELLED_ACTIVITY_TYPE = "cancelled_activity";
     private static final String FIRM_UP_ACTIVITY_TYPE = "firm_up";
+
+    /** Notification Intent Actions */
+    public static final String ACTION_NOTIFICATION_CLEARED = "notification_cleared";
 
     public GcmMessageProcessor() {
         super(GcmMessageProcessor.class.getSimpleName());
@@ -80,10 +88,10 @@ public class GcmMessageProcessor extends IntentService {
                             JSONObject reader = new JSONObject(extras.getString("time"));
 
                             long start = reader.getLong("start");
-                            long end = reader.getLong("start");
+                            long end = reader.getLong("end");
                             Date d1 = new Date(start);
                             Date d2 = new Date(end);
-                            String format = "EEE MMM d, h:m a";
+                            String format = "EEE MMM d, h:mm a";
 
                             String format2 = format;
                             String middle = " to ";
@@ -93,7 +101,7 @@ public class GcmMessageProcessor extends IntentService {
 
                             if(sameDay && sameMonth)
                             {
-                                format2 = "h:m a";
+                                format2 = "h:mm a";
                                 middle = " to ";
                             }
                             if(!curYear)
@@ -105,17 +113,13 @@ public class GcmMessageProcessor extends IntentService {
                             SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
                             time = sdf1.format(d1) + middle + sdf2.format(d2);
 
-                        } catch (JSONException e) {
-                            // No Time, ignore
-                        }
-
-                        try {
-                            JSONObject reader = new JSONObject(extras.getString("location"));
+                            reader = new JSONObject(extras.getString("location"));
                             location = reader.getString("address");
+
+                            firmUpNotification(extras.getString("activityId"), extras.getString("Name"), time, location);
                         } catch (JSONException e) {
-                            // No Location, ignore
+                            // No Location or no time, ignore
                         }
-                        firmUpNotification(extras.getString("activityId"), extras.getString("Name"), time, location);
                         break;
                     default:
                         break;
@@ -132,7 +136,6 @@ public class GcmMessageProcessor extends IntentService {
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, ViewEventActivity.class);
         resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
-
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -148,7 +151,8 @@ public class GcmMessageProcessor extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.fiplus)
-                .setContentText(name + " will be at: ")
+                .setContentText(name + " has been confirmed... ")
+                .setContentTitle("Event Firmed Up!")
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.InboxStyle()
@@ -157,18 +161,24 @@ public class GcmMessageProcessor extends IntentService {
                         .addLine(location)
                         .setSummaryText(location))
                 .setGroup(FIRM_UP_GROUP)
-                .setGroupSummary(true)
-                ;
+                .setGroupSummary(true);
+
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(sNotificationId++, mBuilder.build());
+        mNotificationManager.notify(FIRM_UP_GROUP_NOTIF_ID++, mBuilder.build());
     }
 
     private void activityNotification(String msg, String activityId) {
 
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, ViewEventActivity.class);
-        resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
+        Intent resultIntent;
+        if(sIsStacked) {
+            resultIntent = new Intent(this, MainScreenActivity.class);
+
+        } else {
+            resultIntent = new Intent(this, ViewEventActivity.class);
+            resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
+        }
+        sIsStacked = true;
 
         // Boolean which indicates that activity is started from notification; useful for tracking stats
         resultIntent.putExtra(FROM_NOTIFICATION, true);
@@ -186,17 +196,23 @@ public class GcmMessageProcessor extends IntentService {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
+        style.setBigContentTitle("Event Updates");
+        style.addLine(msg);
 
-        mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.fiplus)
+        Intent notificationClearedIntent = new Intent(ACTION_NOTIFICATION_CLEARED);
+
+        mBuilder =  new NotificationCompat.Builder(this)
                 .setContentTitle("Fi+")
                 .setContentText(msg)
+                .setSmallIcon(R.mipmap.fiplus)
+                .setStyle(style)
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true)
+                .setGroupSummary(true)
                 .setGroup(NEW_ACTIVITY_GROUP)
-                .setGroupSummary(true);
+                .setDeleteIntent(PendingIntent.getBroadcast(this, 0, notificationClearedIntent, 0));
 
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(sNotificationId++, mBuilder.build());
+        mNotificationManager.notify(ACTIVITY_GROUP_NOTIF_ID, mBuilder.build());
     }
 }

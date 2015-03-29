@@ -141,11 +141,11 @@ public class FragmentInterest extends Fragment {
         protected String doInBackground(Void... params)
         {
             MatchesApi matchesApi = new MatchesApi();
-            matchesApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            matchesApi.getInvoker().setContext(getActivity());
             matchesApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.getInvoker().setContext(getActivity());
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false)

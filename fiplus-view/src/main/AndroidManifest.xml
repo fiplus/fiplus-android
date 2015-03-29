@@ -24,14 +24,15 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <!-- <uses-sdk android:minSdkVersion="20" /> -->
     <application
+        android:name=".FiplusApplication"
         android:allowBackup="true"
         android:icon="@mipmap/fiplus"
-        android:label="@string/app_name"
+        android:label="@string/app_name" >
         android:name=".FiplusApplication"
         >
-
         <activity
             android:name=".SplashScreenActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
@@ -178,6 +179,15 @@
                 <category android:name="com.Fiplus.gcm" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".NotificationClearReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="notification_cleared" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".GcmMessageProcessor"
             android:exported="false" >

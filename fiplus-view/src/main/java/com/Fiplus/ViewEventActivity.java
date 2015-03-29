@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -123,6 +124,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         {
             t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
                 .setAction(FiplusApplication.CLICKED_NOTIFICATION_ACTION).build());
+            GcmMessageProcessor.style = new NotificationCompat.InboxStyle();
+            GcmMessageProcessor.sIsStacked = false;
         }
 
         mEventDesc = (TextView) findViewById(R.id.view_event_description);
