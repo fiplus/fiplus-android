@@ -323,7 +323,7 @@ public class LoginActivity extends BaseFragmentActivity implements LoaderCallbac
         private final String mPassword;
 
         UserLoginTask(String email, String password) {
-            mEmail = email;
+            mEmail = email.toLowerCase();
             mPassword = password;
         }
 

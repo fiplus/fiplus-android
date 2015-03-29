@@ -202,7 +202,7 @@ public class SignUpActivity extends Activity {
 
        public SignUpTask()
        {
-           email = signUpEmail.getText().toString();
+           email = signUpEmail.getText().toString().toLowerCase();
            password = signUpPassword.getText().toString();
        }
 
