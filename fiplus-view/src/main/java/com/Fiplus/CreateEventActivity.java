@@ -478,7 +478,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                 error = true;
                 return e.getMessage();
             }
-
+            PrefUtil.putBoolean(getBaseContext(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
+            PrefUtil.putBoolean(getBaseContext(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false);
             return message;
         }
 

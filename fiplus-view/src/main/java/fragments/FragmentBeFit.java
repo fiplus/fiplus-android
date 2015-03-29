@@ -146,7 +146,8 @@ public class FragmentBeFit extends Fragment{
         protected String doInBackground(Void... params)
         {
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false)
-                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.BEFIT_CACHE_UPDATE_VALUE)) < IAppConstants.BEFIT_CACHE_VALID_TIME)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.BEFIT_CACHE_UPDATE_VALUE)) < IAppConstants.BEFIT_CACHE_VALID_TIME
+                    && !mSwipeLayout.isRefreshing())
             {
                 try
                 {

@@ -148,7 +148,8 @@ public class FragmentInterest extends Fragment {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false)
-                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.INTEREST_EVENTS_CACHE_UPDATE_VALUE)) < IAppConstants.INTEREST_EVENTS_CACHE_VALID_TIME)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.INTEREST_EVENTS_CACHE_UPDATE_VALUE)) < IAppConstants.INTEREST_EVENTS_CACHE_VALID_TIME
+                    && !mSwipeLayout.isRefreshing())
             {
                 try
                 {

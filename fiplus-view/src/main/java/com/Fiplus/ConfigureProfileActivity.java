@@ -344,6 +344,8 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
 
             try{
                 usersApi.saveUserProfile(userProfile);
+                PrefUtil.putBoolean(getBaseContext(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false);
+                PrefUtil.putBoolean(getBaseContext(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
             } catch (Exception e) {
                 return e.getMessage();
             }

@@ -151,7 +151,8 @@ public class FragmentNearYou extends Fragment {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false)
-                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE)) < IAppConstants.NEAR_YOU_CACHE_VALID_TIME)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE)) < IAppConstants.NEAR_YOU_CACHE_VALID_TIME
+                    && !mSwipeLayout.isRefreshing())
             {
                 try
                 {
