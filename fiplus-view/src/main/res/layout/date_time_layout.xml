@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:text="@string/no_end_time"
         android:id="@+id/no_end_time_checkbox"
-        android:checked="true"
         android:layout_below="@+id/timePicker"
         android:layout_alignRight="@+id/buttonLayout"
         android:layout_marginRight="@dimen/tags_text_size"
@@ -44,15 +43,16 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/cancelPicker"
-            android:text="@string/create_event_cancel_button" />
+            android:id="@+id/setPicker"
+            android:text="@string/create_event_end_time"
+        />
 
         <Button
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/setPicker"
-            android:text="@string/create_event_set_button" />
+            android:id="@+id/cancelPicker"
+            android:text="@string/create_event_cancel_button" />
 
     </LinearLayout>
 

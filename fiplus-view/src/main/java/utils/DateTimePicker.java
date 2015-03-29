@@ -86,7 +86,7 @@ public class DateTimePicker {
 
         //for set button
         mSetTimeButton = (Button) mDateTimeDialog.findViewById(R.id.setPicker);
-        mSetTimeButton.setText(callingContext.getString(R.string.create_event_start_time));
+        mSetTimeButton.setText(callingContext.getString(R.string.create_event_end_time) + " >>");
         mSetTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
