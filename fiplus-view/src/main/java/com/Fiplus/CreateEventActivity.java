@@ -289,6 +289,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
     @Override
     public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+        mEventLocation.setError(null);
         final String address = arg0.toString();
 
         if(!address.isEmpty() && address.length() >= MAX_CHARS)
