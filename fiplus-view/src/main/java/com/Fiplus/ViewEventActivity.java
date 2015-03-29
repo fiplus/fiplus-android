@@ -186,6 +186,10 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     UnJoinEventTask unJoinEventTask = new UnJoinEventTask(mEventID);
                     unJoinEventTask.execute();
                 }
+                else
+                {
+                    finish();
+                }
                 // Invalidate the my events cache to get updated values
                 PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
             }
