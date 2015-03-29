@@ -9,10 +9,7 @@
         <item >Recent Activities</item>
         <item >Favorites</item>
         <item >Settings</item>
-        <item >Help</item>
-        <item >Feedback</item>
         <item >Log Out</item>
-        <!--<item >Help</item>-->
     </string-array>
 
     <array name="nav_drawer_icons">
@@ -20,8 +17,6 @@
         <item>@mipmap/ic_activities</item>
         <item>@mipmap/ic_star</item>
         <item>@mipmap/ic_settings</item>
-        <item>@mipmap/ic_help</item>
-        <item>@mipmap/ic_feedback</item>
         <item>@mipmap/ic_logout</item>
     </array>
 

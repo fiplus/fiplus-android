@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -262,15 +261,10 @@ public class MainScreenActivity extends BaseFragmentActivity
                 startActivity(intent);
                 break;
             case 3: //Settings
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 break;
-            case 4: //help
-                break;
-            case 5://feedback
-                Uri uriUrl = Uri.parse("https://docs.google.com/forms/d/1IJanmZWGyjQ2f8rQuzSDyo8Y8PKvV8Ed4wrzGRkXoNI/viewform?usp=send_form");
-                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
-                startActivity(launchBrowser);
-                break;
-            case 6: //logout
+            case 4: //logout
                 logout();
                 break;
         }

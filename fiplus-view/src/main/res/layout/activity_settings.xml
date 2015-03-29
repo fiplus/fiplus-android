@@ -1,5 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffdddddd"
+    android:theme="@style/Theme.Mainscreen"
+    tools:context=".SettingsActivity"
+    >
 
-</RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider1"
+        android:background="#fff8a426"
+        android:layout_marginTop="37dp" />
+
+    <Switch
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_push_notif"
+        android:id="@+id/setting_push_notif_switch"
+        android:background="@color/list_background"
+        android:paddingLeft="@dimen/tags_padding"
+        android:paddingRight="@dimen/tags_padding"
+        android:paddingTop="@dimen/tags_padding"
+        android:paddingBottom="@dimen/tags_padding"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider2"
+        android:background="#fff8a426"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider3"
+        android:background="#fff8a426"
+        android:layout_marginTop="37dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/help"
+        android:id="@+id/setting_help"
+        android:background="@drawable/list_selector"
+        android:paddingLeft="@dimen/tags_padding"
+        android:paddingRight="@dimen/tags_padding"
+        android:paddingTop="@dimen/tags_padding"
+        android:paddingBottom="@dimen/tags_padding"
+        android:textStyle="bold"
+        android:clickable="true"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider4"
+        android:background="#fff8a426"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/terms_of_use"
+        android:id="@+id/setting_terms_of_use"
+        android:background="@drawable/list_selector"
+        android:paddingLeft="@dimen/tags_padding"
+        android:paddingRight="@dimen/tags_padding"
+        android:paddingTop="@dimen/tags_padding"
+        android:paddingBottom="@dimen/tags_padding"
+        android:textStyle="bold"
+        android:clickable="true"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider5"
+        android:background="#fff8a426"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/privacy"
+        android:id="@+id/setting_privacy"
+        android:background="@drawable/list_selector"
+        android:paddingLeft="@dimen/tags_padding"
+        android:paddingRight="@dimen/tags_padding"
+        android:paddingTop="@dimen/tags_padding"
+        android:paddingBottom="@dimen/tags_padding"
+        android:textStyle="bold"
+        android:clickable="true"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider6"
+        android:background="#fff8a426"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider7"
+        android:background="#fff8a426"
+        android:layout_marginTop="37dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/feedback"
+        android:id="@+id/setting_feedback"
+        android:background="@drawable/list_selector"
+        android:paddingLeft="@dimen/tags_padding"
+        android:paddingRight="@dimen/tags_padding"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:paddingTop="@dimen/tags_padding"
+        android:paddingBottom="@dimen/tags_padding"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider8"
+        android:background="#fff8a426"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider9"
+        android:background="#fff8a426"
+        android:layout_marginTop="37dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/rate"
+        android:id="@+id/setting_rate"
+        android:background="@drawable/list_selector"
+        android:paddingLeft="@dimen/tags_padding"
+        android:paddingRight="@dimen/tags_padding"
+        android:paddingTop="@dimen/tags_padding"
+        android:paddingBottom="@dimen/tags_padding"
+        android:textStyle="bold"
+        android:clickable="true"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/list_divider10"
+        android:background="#fff8a426"
+        />
+
+
+</LinearLayout>

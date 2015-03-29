@@ -13,5 +13,6 @@
     <string name="recent_activities_activity">Recent Activities</string>
     <string name="view_profile">View Profile</string>
     <string name="favourite_users">Favourite Users</string>
+    <string name="settings">Settings</string>
 
 </resources>

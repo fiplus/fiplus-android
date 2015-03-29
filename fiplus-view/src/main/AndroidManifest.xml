@@ -156,6 +156,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainScreenActivity" />
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName=".MainScreenActivity"
+            android:theme="@style/Theme.Mainscreen"
+            android:screenOrientation="portrait">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainScreenActivity" />
+        </activity>
         <!-- Required for Push Notifications TODO: Finish creating GcmBroadcastReceiver (Allan) -->
         <receiver
             android:name=".GcmBroadcastReceiver"
