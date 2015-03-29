@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
@@ -43,6 +44,7 @@ public class FragmentRecentActivities extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter;
+    private TextView mNoRecent;
 
     public static FragmentRecentActivities newInstance() {
         return new FragmentRecentActivities();
@@ -65,6 +67,7 @@ public class FragmentRecentActivities extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
+        mNoRecent = (TextView) v.findViewById(R.id.no_recent_activities);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
@@ -76,13 +79,17 @@ public class FragmentRecentActivities extends Fragment {
     private void setEventList(List<Activity> activities)
     {
         if (activities == null)
-        {
             return;
+
+        int size = activities.size();
+        if(size == 0)
+        {
+            mNoRecent.setVisibility(View.VISIBLE);
         }
 
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
-        for(int i = 0; i < activities.size(); i++)
+        for(int i = 0; i < size; i++)
             eventList.add(new EventListItem(
                     R.mipmap.ic_past,
                     activities.get(i).getName(),

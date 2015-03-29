@@ -6,6 +6,21 @@
     tools:context="fragments.FragmentNearYou"
     android:theme="@style/AppTheme">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="No Recent Activities"
+        android:id="@+id/no_recent_activities"
+        android:paddingLeft="@dimen/tags_padding"
+        android:paddingRight="@dimen/tags_padding"
+        android:paddingTop="@dimen/tags_padding"
+        android:paddingBottom="@dimen/tags_padding"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:textColor="#fc050401"
+        android:visibility="gone"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +31,8 @@
         android:dividerHeight="2dp"
         android:listSelector="@drawable/list_selector"
         android:orientation="vertical"
-        android:fadeScrollbars="false"/>
+        android:fadeScrollbars="false"
+        />
 
     <ProgressBar
         android:id="@+id/progressBar1"

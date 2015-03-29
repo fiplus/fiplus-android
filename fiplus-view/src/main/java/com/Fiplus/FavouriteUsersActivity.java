@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -25,6 +26,7 @@ public class FavouriteUsersActivity extends Activity {
 
     private ListView mFavouriteUsersList;
     private FavouriteUsersListAdapter mFavouriteUsersListAdapter;
+    private TextView mNoFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstancesState) {
@@ -35,6 +37,7 @@ public class FavouriteUsersActivity extends Activity {
         super.onCreate(savedInstancesState);
         setContentView(R.layout.activity_favourite_users);
 
+        mNoFavorite = (TextView) findViewById(R.id.no_favorites);
         mFavouriteUsersList = (ListView) findViewById(R.id.favouriteUsersList);
 
         mFavouriteUsersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -76,7 +79,13 @@ public class FavouriteUsersActivity extends Activity {
     private void setFavouriteUsersList(Favourites favourites) {
         ArrayList<FavouriteUsersListItem> FavouriteUsersList = new ArrayList<FavouriteUsersListItem>();
 
-        for(int i = 0; i < favourites.getFavourite_users().size(); i++ )
+        int size = favourites.getFavourite_users().size();
+        if(size == 0)
+        {
+            mNoFavorite.setVisibility(View.VISIBLE);
+        }
+
+        for(int i = 0; i < size; i++ )
         {
             FavouriteUsersList.add(new FavouriteUsersListItem(favourites.getFavourite_users().get(i).getUsername(),
                     R.mipmap.ic_star,
