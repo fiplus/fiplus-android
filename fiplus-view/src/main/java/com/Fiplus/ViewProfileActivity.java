@@ -2,6 +2,7 @@ package com.Fiplus;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -100,13 +101,16 @@ public class ViewProfileActivity extends Activity
             mFavoriteStar.setChecked(true);
         }
 
-        //TODO: View Other Profile - Recent Activities
         mEventsList = (ListView)findViewById(R.id.profileEventListView);
         mEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-
+                String sEventID = mEventListAdapter.getItem(position).getEventId();
+                Intent intent = new Intent(getBaseContext(), ViewEventActivity.class);
+                intent.putExtra("eventID", sEventID);
+                intent.putExtra("pastID", true);
+                startActivity(intent);
             }
         });
 
@@ -206,7 +210,7 @@ public class ViewProfileActivity extends Activity
 
         for(int i = 0; i < activities.size(); i++)
             eventList.add(new EventListItem(
-                    R.mipmap.ic_event,
+                    R.mipmap.ic_past,
                     activities.get(i).getName(),
                     LocationUtil.getLocationStrings(activities.get(i).getLocations(),   getBaseContext()),
                     activities.get(i).getTimes(),
