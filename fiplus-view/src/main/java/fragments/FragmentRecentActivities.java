@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class FragmentRecentActivities extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter;
+    private SwipeRefreshLayout mSwipeLayout;
 
     public static FragmentRecentActivities newInstance() {
         return new FragmentRecentActivities();
@@ -64,6 +66,16 @@ public class FragmentRecentActivities extends Fragment {
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         //mEventsList.setOnItemClickListener(new EventItemClickListener());
+
+        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeLayout.setRefreshing(true);
+                GetRecentEvents getRecentEvents = new GetRecentEvents();
+                getRecentEvents.execute();
+            }
+        });
         GetRecentEvents getRecentEvents= new GetRecentEvents();
         getRecentEvents.execute();
         return v;
@@ -112,7 +124,8 @@ public class FragmentRecentActivities extends Fragment {
         @Override
         protected void onPreExecute()
         {
-            progressDialog= ProgressDialog.show(getActivity(), getString(R.string.view_event_progress_bar_title) + "s...", getString(R.string.progress_dialog_text), true);
+            if(!mSwipeLayout.isRefreshing())
+                progressDialog= ProgressDialog.show(getActivity(), getString(R.string.view_event_progress_bar_title) + "s...", getString(R.string.progress_dialog_text), true);
         }
 
         @Override
@@ -174,7 +187,9 @@ public class FragmentRecentActivities extends Fragment {
         {
             if (response != null)
                 setEventList(response);
-            progressDialog.dismiss();
+            if(progressDialog != null)
+                progressDialog.dismiss();
+            mSwipeLayout.setRefreshing(false);
         }
     }
 }

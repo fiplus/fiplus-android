@@ -778,7 +778,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
             try {
                 getEventApi.joinActivity(sEventID);
-
+                PrefUtil.putBoolean(getBaseContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
                 if(!mIsConfirmed){
                     response = checkPendingSuggestions();
                     response = checkVotes();
