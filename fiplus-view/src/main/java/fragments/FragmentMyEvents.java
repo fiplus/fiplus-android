@@ -95,7 +95,11 @@ public class FragmentMyEvents extends Fragment {
 
         for(int i = 0; i < activities.size(); i++)
         {
-            if(activities.get(i).getIs_confirmed())
+            if(activities.get(i).getIs_cancelled())
+            {
+                image = R.mipmap.ic_cancelled;
+            }
+            else if(activities.get(i).getIs_confirmed())
             {
                 image = R.mipmap.ic_confirm;
             }
