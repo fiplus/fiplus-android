@@ -10,9 +10,18 @@ public class NotificationClearReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e("mytag", "notification cleared");
         // Notification cleared means we need to reset the notification to start building a new stack
-        GcmMessageProcessor.style = new NotificationCompat.InboxStyle();
-        GcmMessageProcessor.sIsStacked = false;
+        switch(intent.getExtras().getInt(GcmMessageProcessor.NOTIFICATION_ID)) {
+            case GcmMessageProcessor.ACTIVITY_GROUP_NOTIF_ID:
+                GcmMessageProcessor.newActivitiesStyle = new NotificationCompat.InboxStyle();
+                GcmMessageProcessor.sNewActivitiesIsStacked = false;
+                break;
+            case GcmMessageProcessor.CANCELLED_ACTIVITY_ID:
+                GcmMessageProcessor.cancelledActivitiesStyle = new NotificationCompat.InboxStyle();
+                GcmMessageProcessor.sCancelledActivitiesIsStacked = false;
+                break;
+            default:
+                break;
+        }
     }
 }

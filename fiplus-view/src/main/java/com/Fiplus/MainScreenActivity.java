@@ -66,8 +66,8 @@ public class MainScreenActivity extends BaseFragmentActivity
             t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
                     .setAction(FiplusApplication.CLICKED_NOTIFICATION_ACTION).build());
             // Navigated here from stacked event info notification, need to reset stack
-            GcmMessageProcessor.style = new NotificationCompat.InboxStyle();
-            GcmMessageProcessor.sIsStacked = false;
+            GcmMessageProcessor.newActivitiesStyle = new NotificationCompat.InboxStyle();
+            GcmMessageProcessor.sNewActivitiesIsStacked = false;
         }
 
         /**

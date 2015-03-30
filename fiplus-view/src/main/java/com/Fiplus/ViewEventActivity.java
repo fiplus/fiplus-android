@@ -124,8 +124,19 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         {
             t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
                 .setAction(FiplusApplication.CLICKED_NOTIFICATION_ACTION).build());
-            GcmMessageProcessor.style = new NotificationCompat.InboxStyle();
-            GcmMessageProcessor.sIsStacked = false;
+
+            switch(b.getInt(GcmMessageProcessor.NOTIFICATION_ID)) {
+                case GcmMessageProcessor.ACTIVITY_GROUP_NOTIF_ID:
+                    GcmMessageProcessor.newActivitiesStyle = new NotificationCompat.InboxStyle();
+                    GcmMessageProcessor.sNewActivitiesIsStacked = false;
+                    break;
+                case GcmMessageProcessor.CANCELLED_ACTIVITY_ID:
+                    GcmMessageProcessor.cancelledActivitiesStyle = new NotificationCompat.InboxStyle();
+                    GcmMessageProcessor.sCancelledActivitiesIsStacked = false;
+                    break;
+                default:
+                    break;
+            }
         }
 
         mEventDesc = (TextView) findViewById(R.id.view_event_description);

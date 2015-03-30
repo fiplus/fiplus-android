@@ -3,29 +3,20 @@ package com.Fiplus;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.content.IntentFilter;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.wordnik.client.model.Location;
-import com.wordnik.client.model.Time;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 import utils.IAppConstants;
 import utils.PrefUtil;
@@ -42,13 +33,17 @@ public class GcmMessageProcessor extends IntentService {
     public static final String FROM_NOTIFICATION = "from_notification";
 
     NotificationCompat.Builder mBuilder;
-    public static NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
-    public static boolean sIsStacked = false;
+    public static NotificationCompat.InboxStyle newActivitiesStyle = new NotificationCompat.InboxStyle();
+    public static boolean sNewActivitiesIsStacked = false;
 
-    private static final String NEW_ACTIVITY_GROUP = "new_activity_group";
+    public static NotificationCompat.InboxStyle cancelledActivitiesStyle = new NotificationCompat.InboxStyle();
+    public static boolean sCancelledActivitiesIsStacked = false;
+
+    /** The group just makes sure the different notification types appear next to each other */
+    private static final String FIPLUS_NOTIFS_GROUP = "fiplus_group";
     public static final int ACTIVITY_GROUP_NOTIF_ID = 1;
-    private static final String FIRM_UP_GROUP = "firm_up_group";
     public static int FIRM_UP_GROUP_NOTIF_ID = 2;
+    public static final int CANCELLED_ACTIVITY_ID = 3;
 
     /** Push notification message types */
     private static final String NEW_ACTIVITY_TYPE = "new_activity";
@@ -57,6 +52,7 @@ public class GcmMessageProcessor extends IntentService {
 
     /** Notification Intent Actions */
     public static final String ACTION_NOTIFICATION_CLEARED = "notification_cleared";
+    public static final String NOTIFICATION_ID = "notif_id";
 
     public GcmMessageProcessor() {
         super(GcmMessageProcessor.class.getSimpleName());
@@ -79,8 +75,10 @@ public class GcmMessageProcessor extends IntentService {
 
                 switch(extras.getString("type")) {
                     case NEW_ACTIVITY_TYPE:
+                        newActivityNotification(extras.getString("message"), extras.getString("activityId"));
+                        break;
                     case CANCELLED_ACTIVITY_TYPE:
-                        activityNotification(extras.getString("message"), extras.getString("activityId"));
+                        cancelledActivityNotification(extras.getString("message"), extras.getString("activityId"));
                         break;
                     case FIRM_UP_ACTIVITY_TYPE:
                         String time = null, location = null;
@@ -159,9 +157,8 @@ public class GcmMessageProcessor extends IntentService {
                 .setStyle(new NotificationCompat.InboxStyle()
                         .addLine(time)
                         .setBigContentTitle(name + " will be at: ")
-                        .addLine(location)
-                        .setSummaryText(location))
-                .setGroup(FIRM_UP_GROUP)
+                        .addLine(location))
+                .setGroup(FIPLUS_NOTIFS_GROUP)
                 .setGroupSummary(true);
 
         NotificationManager mNotificationManager = (NotificationManager)
@@ -169,20 +166,21 @@ public class GcmMessageProcessor extends IntentService {
         mNotificationManager.notify(FIRM_UP_GROUP_NOTIF_ID++, mBuilder.build());
     }
 
-    private void activityNotification(String msg, String activityId) {
+    private void newActivityNotification(String msg, String activityId) {
 
         Intent resultIntent;
-        if(sIsStacked) {
+        if(sNewActivitiesIsStacked) {
             resultIntent = new Intent(this, MainScreenActivity.class);
 
         } else {
             resultIntent = new Intent(this, ViewEventActivity.class);
             resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
         }
-        sIsStacked = true;
+        sNewActivitiesIsStacked = true;
 
         // Boolean which indicates that activity is started from notification; useful for tracking stats
         resultIntent.putExtra(FROM_NOTIFICATION, true);
+        resultIntent.putExtra(NOTIFICATION_ID, ACTIVITY_GROUP_NOTIF_ID);
 
         // The stack builder object will contain an artificial back stack for the started Activity.
         // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
@@ -197,23 +195,74 @@ public class GcmMessageProcessor extends IntentService {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
-        style.setBigContentTitle("Event Updates");
-        style.addLine(msg);
+        newActivitiesStyle.setBigContentTitle("New Events!");
+        newActivitiesStyle.addLine(msg);
 
         Intent notificationClearedIntent = new Intent(ACTION_NOTIFICATION_CLEARED);
+        notificationClearedIntent.putExtra(NOTIFICATION_ID, ACTIVITY_GROUP_NOTIF_ID);
 
         mBuilder =  new NotificationCompat.Builder(this)
                 .setContentTitle("Fi+")
                 .setContentText(msg)
                 .setSmallIcon(R.mipmap.fiplus)
-                .setStyle(style)
+                .setStyle(newActivitiesStyle)
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true)
                 .setGroupSummary(true)
-                .setGroup(NEW_ACTIVITY_GROUP)
+                .setGroup(FIPLUS_NOTIFS_GROUP)
                 .setDeleteIntent(PendingIntent.getBroadcast(this, 0, notificationClearedIntent, 0));
 
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(ACTIVITY_GROUP_NOTIF_ID, mBuilder.build());
+    }
+
+    private void cancelledActivityNotification(String msg, String activityId) {
+
+        Intent resultIntent;
+        if(sCancelledActivitiesIsStacked) {
+            resultIntent = new Intent(this, MyEventsActivity.class);
+
+        } else {
+            resultIntent = new Intent(this, ViewEventActivity.class);
+            resultIntent.putExtra(ViewEventActivity.EXTRA_EVENT_ID, activityId);
+        }
+        sCancelledActivitiesIsStacked = true;
+
+        // Boolean which indicates that activity is started from notification; useful for tracking stats
+        resultIntent.putExtra(FROM_NOTIFICATION, true);
+        resultIntent.putExtra(NOTIFICATION_ID, CANCELLED_ACTIVITY_ID);
+
+        // The stack builder object will contain an artificial back stack for the started Activity.
+        // This ensures that navigating backward from the Activity leads out of your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(ViewEventActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        cancelledActivitiesStyle.setBigContentTitle("Events Cancelled");
+        cancelledActivitiesStyle.addLine(msg);
+
+        Intent notificationClearedIntent = new Intent(ACTION_NOTIFICATION_CLEARED);
+        notificationClearedIntent.putExtra(NOTIFICATION_ID, CANCELLED_ACTIVITY_ID);
+
+        mBuilder =  new NotificationCompat.Builder(this)
+                .setContentTitle("Fi+")
+                .setContentText(msg)
+                .setSmallIcon(R.mipmap.fiplus)
+                .setStyle(cancelledActivitiesStyle)
+                .setContentIntent(resultPendingIntent)
+                .setAutoCancel(true)
+                .setGroupSummary(true)
+                .setGroup(FIPLUS_NOTIFS_GROUP)
+                .setDeleteIntent(PendingIntent.getBroadcast(this, 0, notificationClearedIntent, 0));
+
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(CANCELLED_ACTIVITY_ID, mBuilder.build());
     }
 }
