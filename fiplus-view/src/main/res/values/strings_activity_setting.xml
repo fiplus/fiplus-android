@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="settings_push_notif">Push Notification</string>
+        <string name="help">Help Center</string>
+        <string name="terms_of_use">Terms Of Use</string>
+        <string name="privacy">Privacy Policy</string>
+        <string name="feedback">Feedback</string>
+        <string name="rate">Rate Fi+</string>
+    </resources>

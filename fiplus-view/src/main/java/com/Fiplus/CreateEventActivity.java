@@ -1,5 +1,6 @@
 package com.Fiplus;
 
+import android.graphics.Color;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,7 +17,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +29,8 @@ import com.wordnik.client.api.InterestsApi;
 import com.wordnik.client.model.Activity;
 import com.wordnik.client.model.Location;
 import com.wordnik.client.model.Time;
+
+import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +78,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
     protected List<String> mDateTimeListItems = new ArrayList<String>();
 
     protected List<String> mTagsList = new ArrayList<String>();
-    protected LinearLayout mTagsLinearLayout;
+    protected FlowLayout mTagsLinearLayout;
 
     //zero argument constructor
     public CreateEventActivity()
@@ -107,17 +109,13 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
 
         mAddLocationBtn = (Button) findViewById(R.id.create_event_add_location);
-        mAddLocationBtn.setOnClickListener(new View.OnClickListener()
-        {
+        mAddLocationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 String address = mEventLocation.getText().toString();
 
-                if(!address.isEmpty())
-                {
-                    if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
-                    {
+                if (!address.isEmpty()) {
+                    if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent()) {
                         GeocodingLocation location = new GeocodingLocation(getBaseContext(), CreateEventActivity.this, FINAL_LOC);
                         location.execute(address);
                     }
@@ -156,7 +154,7 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         });
         mTags.setThreshold(1);
         mAddTags = (TextView) findViewById(R.id.create_event_tags_label);
-        mTagsLinearLayout = (LinearLayout) findViewById(R.id.create_event_tags_list);
+        mTagsLinearLayout = (FlowLayout) findViewById(R.id.create_event_tags_list);
 
         mDateTimeError = (EditText) findViewById(R.id.create_event_datetime_error);
         mDateTimeButton = (Button) findViewById(R.id.create_event_add_datetime);
@@ -291,6 +289,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
 
     @Override
     public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+        mEventLocation.setError(null);
         final String address = arg0.toString();
 
         if(!address.isEmpty() && address.length() >= MAX_CHARS)
@@ -355,13 +355,14 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             final TextView createEventTag = new TextView(getBaseContext());
             createEventTag.setText(Html.fromHtml(String.format(btnInnerHTML, mTagsList.get(tagsAdded - 1))));
             createEventTag.setBackgroundResource(R.drawable.button_tags);
+            createEventTag.setTextColor(Color.BLACK);
             createEventTag.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tags_delete, 0);
 
             createEventTag.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if(event.getAction() == MotionEvent.ACTION_UP) {
-                        if(event.getRawX() >= createEventTag.getRight()){
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (event.getRawX() >= createEventTag.getRight()) {
                             removeTag(v, createEventTag.getText().toString());
                         }
                     }
@@ -505,6 +506,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
             else
             {
                 Toast.makeText(getBaseContext(), address, Toast.LENGTH_SHORT).show();
+                // Invalidate the my events cache to get updated values
+                PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
                 finish();
             }
         }

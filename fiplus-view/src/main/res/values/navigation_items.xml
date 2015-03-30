@@ -10,18 +10,14 @@
         <item >Favorites</item>
         <item >Settings</item>
         <item >Log Out</item>
-        <item >Feedback</item>
-        <!--<item >Help</item>-->
     </string-array>
 
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_configure</item>
-        <item>@drawable/ic_activities</item>
-        <item>@drawable/ic_star</item>
-        <item>@drawable/ic_settings</item>
-        <item>@drawable/ic_logout</item>
-        <item>@drawable/ic_activities</item>
-        <!--<item>@drawable/ic_help</item>-->
+        <item>@mipmap/ic_configure</item>
+        <item>@mipmap/ic_activities</item>
+        <item>@mipmap/ic_star</item>
+        <item>@mipmap/ic_settings</item>
+        <item>@mipmap/ic_logout</item>
     </array>
 
     <!-- Content Description -->

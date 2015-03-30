@@ -3,14 +3,24 @@
     <!-- Strings related to Login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Re-enter Password</string>
     <string name="prompt_name">Name</string>
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="sign_up">Sign Up</string>
 
+    <string name="sign_up_banner_1">
+        Get Fi+
+    </string>
+
+    <string name="sign_up_banner_2">
+        You\'re almost there!
+    </string>
+
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_confirm_password">Password do not match</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_log_in">Authentication Failed!</string>
     <string name="error_password_length">Password must be > 5</string>

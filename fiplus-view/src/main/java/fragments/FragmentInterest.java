@@ -86,18 +86,31 @@ public class FragmentInterest extends Fragment {
     //TODO: Remove DUMMY EVENTS
     private void setEventList(List<Activity> activities)
     {
+        int image;
+
         if (activities == null)
             return;
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
         for(int i = 0; i < activities.size(); i++)
+        {
+            if(activities.get(i).getIs_confirmed())
+            {
+                image = R.mipmap.ic_confirm;
+            }
+            else
+            {
+                image = R.mipmap.ic_event;
+            }
+
             eventList.add(new EventListItem(
-                    R.drawable.ic_configure,
+                    image,
                     activities.get(i).getName(),
                     LocationUtil.getLocationStrings(activities.get(i).getLocations(), getActivity().getBaseContext()),
                     activities.get(i).getTimes(),
                     ((Integer)activities.get(i).getNum_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));
+        }
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);

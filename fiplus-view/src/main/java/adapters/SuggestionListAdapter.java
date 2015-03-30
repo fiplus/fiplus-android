@@ -24,13 +24,16 @@ public class SuggestionListAdapter extends BaseAdapter {
     private boolean isCancelled;
     private boolean isFirmUp = false;
     private boolean isConfirmed = false;
+    private boolean isInThePast = false;
     private int selectedItem = -1;
 
-    public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems, boolean isCancelled, boolean isConfirmed) {
+    public SuggestionListAdapter(Context context, ArrayList<SuggestionListItem> suggestionListItems,
+                                 boolean isCancelled, boolean isConfirmed, boolean isInThePast) {
         this.context = context;
         this.mSuggestionListItems = suggestionListItems;
         this.isCancelled = isCancelled;
         this.isConfirmed = isConfirmed;
+        this.isInThePast = isInThePast;
     }
 
     //for firm up
@@ -99,14 +102,24 @@ public class SuggestionListAdapter extends BaseAdapter {
             sugCheckBox.setChecked(mSuggestionListItems.get(position).getYesVote());
             sugCheckBox.setText(mSuggestionListItems.get(position).getSuggestion());
 
-            if(isCancelled)
+            if(isCancelled || isInThePast)
             {
+                sugCheckBox.setEnabled(false);
+                if(isCancelled)
+                {
+                    sugCheckBox.setTextColor(Color.GRAY);
+                }
+                else
+                {
+                    sugCheckBox.setTextColor(Color.BLACK);
+                }
                 voteProgress.setVisibility(View.GONE);
             }
             else if(isConfirmed)
             {
+                sugCheckBox.setEnabled(false);
                 sugCheckBox.setChecked(true);
-                sugCheckBox.setTextColor(Color.rgb(0, 200, 0));
+                sugCheckBox.setTextColor(Color.rgb(0, 100, 0));
                 voteProgress.setVisibility(View.GONE);
             }
         }
