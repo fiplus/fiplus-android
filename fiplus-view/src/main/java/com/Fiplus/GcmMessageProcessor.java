@@ -64,7 +64,11 @@ public class GcmMessageProcessor extends IntentService {
 
     @Override
     public void onHandleIntent(Intent intent) {
-        // TODO: Update push notification cases
+        // The activity list has changed for the user so set event cache to invalid
+        PrefUtil.putBoolean(getApplicationContext(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
+        PrefUtil.putBoolean(getApplicationContext(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
+        if(!PrefUtil.getBoolean(getBaseContext(),IAppConstants.PUSH_NOTIFICATIONS_ENABLED_SETTING, true)) return;
+
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
@@ -76,9 +80,6 @@ public class GcmMessageProcessor extends IntentService {
                 switch(extras.getString("type")) {
                     case NEW_ACTIVITY_TYPE:
                     case CANCELLED_ACTIVITY_TYPE:
-                        // The activity list has changed for the user so set event cache to invalid
-                        PrefUtil.putBoolean(getApplicationContext(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
-                        PrefUtil.putBoolean(getApplicationContext(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
                         activityNotification(extras.getString("message"), extras.getString("activityId"));
                         break;
                     case FIRM_UP_ACTIVITY_TYPE:

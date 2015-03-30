@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import utils.IAppConstants;
+import utils.PrefUtil;
+
 
 public class SettingsActivity extends Activity {
 
@@ -21,6 +24,14 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         mPushNotif = (Switch) findViewById(R.id.setting_push_notif_switch);
+        mPushNotif.setChecked(PrefUtil.getBoolean(this, IAppConstants.PUSH_NOTIFICATIONS_ENABLED_SETTING, true));
+        mPushNotif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean newValue = ((Switch) v).isChecked();
+                PrefUtil.putBoolean(getBaseContext(), IAppConstants.PUSH_NOTIFICATIONS_ENABLED_SETTING, newValue);
+            }
+        });
 
         mHelp = (TextView) findViewById(R.id.setting_help);
         mHelp.setOnClickListener(new View.OnClickListener() {

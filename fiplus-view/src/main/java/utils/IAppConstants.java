@@ -12,6 +12,7 @@ public interface IAppConstants {
 	public String CONTAINER_NAME = "applications";
 	public String FOLDER_NAME = "uploaded_files";
     public String USER_ID = "user_id";
+    public String PUSH_NOTIFICATIONS_ENABLED_SETTING = "push_notif_enabled";
 
     public String BEFIT_CACHE_VALID_FLAG = "befit_cache_valid_flag";
     public String BEFIT_CACHE_UPDATE_VALUE = "befit_cache_update_value";
