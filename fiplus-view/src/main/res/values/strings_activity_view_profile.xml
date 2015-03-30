@@ -3,4 +3,6 @@
     <string name="recent_activities">Recent Activities:</string>
     <string name="profile_interest">Interest(s):</string>
     <string name="view_profile_progress_bar_title">Getting Profile</string>
+    <string name="no_recent">No Recent Activities</string>
+    <string name="no_fav">No Favourited Users</string>
 </resources>
