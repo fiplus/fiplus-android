@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="view_event_join_btn">Be Fi+!</string>
+    <string name="view_event_join_btn">Join</string>
     <string name="view_event_not_interested_btn">Not Interested</string>
     <string name="view_event_cancel_event_btn">Cancel Event</string>
     <string name="view_event_joiner">Joiner</string>
@@ -10,7 +10,7 @@
     <string name="view_event_rsvp_button">RSVP</string>
 
     <string name="view_event_joiner_button">Update Changes</string>
-    <string name="view_event_suggest_date">Suggest Date</string>
+    <string name="view_event_suggest_loc">Suggest Location</string>
     <string name="view_event_suggest_time">Suggest Time</string>
 
     <string name="view_event_name_label">Event Name:</string>
@@ -25,5 +25,6 @@
     <string name="cancel_event_progress_bar_title">Cancelling Event</string>
     <string name="view_event_progress_bar_update">Updating Event</string>
 
+    <string name="no_end_time">No End Time</string>
 
 </resources>

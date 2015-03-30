@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -39,14 +38,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import adapters.LocationArrayAdapterNoFilter;
 import adapters.RemovableItemAdapter;
+import utils.GeoAutoCompleteInterface;
 import utils.IAppConstants;
 import utils.ListViewUtil;
 import utils.LocationUtil;
 import utils.PrefUtil;
 
 
-public class ConfigureProfileActivity extends Activity implements TextWatcher {
+public class ConfigureProfileActivity extends Activity implements TextWatcher, GeoAutoCompleteInterface {
 
     protected ImageView mImageView;
     protected TextView mAddTextView;
@@ -54,7 +55,6 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
     protected RemovableItemAdapter mRemovableItemAdapter;
     protected Button mSaveButton;
     protected Button mCancelButton;
-    protected Button mLocationButton;
 
     protected EditText mProfileName;
     protected EditText mGender;
@@ -64,7 +64,8 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
     protected ArrayAdapter<String> autoCompleteInterestAdapter;
     protected List<String> interestsList;
 
-    protected EditText mLocationInputField;
+    protected AutoCompleteTextView mLocationInputField;
+    protected ArrayAdapter<String> autoCompleteLocationAdapter;
 
     protected ArrayList<String> mInterestListItems = new ArrayList<String>();
 
@@ -82,15 +83,19 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_profile);
 
-        mLocationInputField = (EditText) findViewById(R.id.configure_location_field);
+        mLocationInputField = (AutoCompleteTextView) findViewById(R.id.configure_location_field);
+        autoCompleteLocationAdapter = new LocationArrayAdapterNoFilter(this, android.R.layout.simple_dropdown_item_1line);
+        autoCompleteLocationAdapter.setNotifyOnChange(false);
+        mLocationInputField.addTextChangedListener(this);
+        mLocationInputField.setThreshold(MAX_CHARS);
+        mLocationInputField.setAdapter(autoCompleteLocationAdapter);
 
         mSaveButton = (Button) findViewById(R.id.configure_save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (checkForValidInputs()) {
-                    SaveProfileTask saveProfileTask = new SaveProfileTask();
-                    saveProfileTask.execute();
+                    checkAddress();
                 }
             }
         });
@@ -118,16 +123,30 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
 
         //TODO: (Nick) Configure Profile - Upload Profile Photo
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mImageView.setImageResource(R.drawable.ic_nopic);
+        mImageView.setImageResource(R.mipmap.ic_configure);
 
         mProfileName = (EditText) findViewById(R.id.configure_profile_name);
         mGender = (EditText) findViewById(R.id.configure_gender);
-        mAge = (EditText) findViewById(R.id.configure_age);
-        mLocationButton = (Button) findViewById(R.id.configure_location_button);
 
+        mAge = (EditText) findViewById(R.id.configure_age);
 
         mInterestInputField = (AutoCompleteTextView) findViewById(R.id.interests_input_field);
-        mInterestInputField.addTextChangedListener(this);
+        mInterestInputField.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
         mInterestInputField.setThreshold(1);
 
         mInterestListView = (ListView) findViewById(R.id.interests_list);
@@ -174,9 +193,6 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         return super.onKeyDown(keyCode, event);
     }
 
-    /**
-     * This is for text listener in the address textbox
-     */
     @Override
     public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
 
@@ -185,10 +201,33 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
     @Override
     public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
 
+        final String address = arg0.toString();
+
+        if(!address.isEmpty() && address.length() >= MAX_CHARS)
+        {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
+            {
+                utils.GeocodingLocation location = new utils.GeocodingLocation(getBaseContext(), ConfigureProfileActivity.this, AUTOCOMPLETE);
+                location.execute(address);
+            }
+        }
+        else
+        {
+            autoCompleteLocationAdapter.clear();
+        }
+
     }
 
     @Override
     public void afterTextChanged(Editable arg0) {
+    }
+
+    public ArrayAdapter<String> getAutoComplete()
+    {
+        return autoCompleteLocationAdapter;
+    }
+
+    public void populateLocation(Location location, String address) {
     }
 
     public void onAddInterestClick(View view) {
@@ -196,20 +235,6 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
         mInterestInputField.setText("");
         mRemovableItemAdapter.notifyDataSetChanged();
         ListViewUtil.setListViewHeightBasedOnChildren(mInterestListView);
-    }
-
-    public void onAddLocationClick(View v){
-        String address = mLocationInputField.getText().toString();
-
-        if(!address.isEmpty())
-        {
-            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
-            {
-                GeocodingLocation location = new GeocodingLocation(getBaseContext());
-                location.execute(address);
-            }
-
-        }
     }
 
     @Override
@@ -243,6 +268,26 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
             return false;
         }
         return true;
+    }
+
+    private void checkAddress(){
+        String address = mLocationInputField.getText().toString();
+
+        if(!address.isEmpty())
+        {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) && Geocoder.isPresent())
+            {
+                GeocodingLocation location = new GeocodingLocation(getBaseContext());
+                location.execute(address);
+            }
+
+        }
+        else
+        {
+            userLocation = null;
+            SaveProfileTask saveProfileTask = new SaveProfileTask();
+            saveProfileTask.execute();
+        }
     }
 
     class GetInterestsTask extends AsyncTask<Void, Void, String>
@@ -302,16 +347,8 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
             if(response.getUsername() != null) mProfileName.setText(response.getUsername());
             if(response.getGender() != null) mGender.setText(response.getGender());
             if(response.getAge() != null)mAge.setText(String.valueOf(response.getAge().intValue()));
-
             if(response.getLocation().getLongitude() != null) {
-                //change the button text to "Change"
-                mLocationButton.setText(R.string.change_address);
                 mLocationInputField.setText(LocationUtil.getLocationString(response.getLocation(), getBaseContext()));
-            }
-            else
-            {
-                //since location is empty, change location button to "Add"
-                mLocationButton.setText(R.string.add_interest_label);
             }
 
             if(response.getTagged_interests() != null) {
@@ -338,7 +375,7 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
             userProfile.setEmail(PrefUtil.getString(getApplicationContext(), IAppConstants.EMAIL));
             if (!TextUtils.isEmpty(mAge.getText()))
                 userProfile.setAge(Double.parseDouble(mAge.getText().toString()));
-            userProfile.setGender(mGender.getText().toString());
+            userProfile.setGender(mGender.getText().toString().toUpperCase());
             userProfile.setTagged_interests(mInterestListItems);
             userProfile.setLocation(userLocation);
 
@@ -410,26 +447,15 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
             if (addressList != null && addressList.size() > 0) {
 
                 addr = addressList.get(0);
+                String addressText = (addr.getMaxAddressLineIndex() > 0 ? addr.getAddressLine(0) : "")+" "+
+                        (addr.getLocality() != null ? addr.getLocality() : "")
+                        +" "+(addr.getCountryName() != null ? addr.getCountryName() : "");
+
                 location.setLatitude(addr.getLatitude());
                 location.setLongitude(addr.getLongitude());
-                location.setAddress(addr.getAddressLine(0));
+                location.setAddress(addressText);
                 userLocation = location;
 
-                /*
-                 * Format the first line of address (if available),
-                 * city (if available), and country name.
-                 */
-                String addressText = String.format(
-                        "%s, %s, %s %s",
-                        // If there's a street address, add it
-                        addr.getMaxAddressLineIndex() > 0 ?
-                                addr.getAddressLine(0) : "",
-                        // Locality is usually a city
-                        addr.getLocality() != null ? addr.getLocality() : "",
-                        // The country of the address
-                        addr.getCountryName(),
-                        // If there's a postal code, add it
-                        addr.getPostalCode() != null ? addr.getPostalCode() : "");
                 // Return the text
                 return addressText;
             } else {
@@ -446,6 +472,8 @@ public class ConfigureProfileActivity extends Activity implements TextWatcher {
             if(address != null)
             {
                 mLocationInputField.setText(address);
+                SaveProfileTask saveProfileTask = new SaveProfileTask();
+                saveProfileTask.execute();
             }
             else
             {

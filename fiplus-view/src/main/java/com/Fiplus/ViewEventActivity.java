@@ -21,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -62,6 +61,7 @@ import utils.PrefUtil;
 
 public class ViewEventActivity extends FragmentActivity  implements TextWatcher, GeoAutoCompleteInterface {
     public static final String EXTRA_EVENT_ID = "eventID";
+    public static final String EXTRA_PAST_ID = "pastID";
 
     protected TextView mEventDesc;
     protected AutoCompleteTextView mEventLocation;
@@ -76,6 +76,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     protected Button mAddLocationBtn;
     protected TextView mLocationLabel;
     protected TextView mTimeLabel;
+    protected View divider1, divider2, divider3, divider4;
 
     ArrayList<PendingLocItem> locPendingSuggestion = new ArrayList<PendingLocItem>();
     private PendingLocListAdapter mPendingLocSuggestionAdapter;
@@ -96,6 +97,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     boolean mIsCanceled = false;
     boolean mIsConfirmed = false;
     boolean mNeedRSVP = false;
+    boolean mInThePast = false;
     String eventID;
 
     @Override
@@ -110,6 +112,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         Bundle b = getIntent().getExtras();
         final String mEventID = b.getString(EXTRA_EVENT_ID);
+        mInThePast = b.getBoolean(EXTRA_PAST_ID, false);
         eventID = mEventID;
 
         t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
@@ -142,6 +145,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         mTimeList.setOnTouchListener(new TouchListener());
 
         mAttendeesList = (LinearLayout)findViewById(R.id.view_event_attendees_list);
+        mSuggestedTimeList.setOnTouchListener(new TouchListener());
 
         GetEventTask getEventTask = new GetEventTask(mEventID);
         getEventTask.execute();
@@ -157,8 +161,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     FirmUpDialog firmUp = new FirmUpDialog(ViewEventActivity.this, eventID, locSuggestionList, timeSuggestionList, mIsACreator);
                     firmUp.showFirmUpRsvp();
-
-
                 }
                 else
                 {
@@ -179,14 +181,17 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                     CancelEventTask cancelEventTask = new CancelEventTask(mEventID);
                     cancelEventTask.execute();
                 }
-                if(mIsAJoiner)
+                else if(mIsAJoiner)
                 {
                     UnJoinEventTask unJoinEventTask = new UnJoinEventTask(mEventID);
                     unJoinEventTask.execute();
                 }
+                else
+                {
+                    finish();
+                }
                 // Invalidate the my events cache to get updated values
                 PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
-                finish();
             }
         });
 
@@ -224,10 +229,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         GeocodingLocation location = new GeocodingLocation(getBaseContext(), ViewEventActivity.this, FINAL_LOC);
                         location.execute(address);
                     }
-
                 }
             }
         });
+
+        //set dividers
+        divider1 = findViewById(R.id.list_divider1);
+        divider2 = findViewById(R.id.list_divider2);
+        divider3 = findViewById(R.id.list_divider3);
+        divider4 = findViewById(R.id.list_divider4);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
@@ -235,7 +245,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     @Override
     public void onBackPressed() {
         //update votes
-        if((mIsAJoiner || mIsACreator) && !mIsConfirmed)
+        if((mIsAJoiner || mIsACreator) && !mIsConfirmed && !mIsCanceled && !mInThePast)
         {
             UpdateVotes update = new UpdateVotes();
             update.execute();
@@ -248,7 +258,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
     @Override
     public void onPause() {
         //update votes
-        if((mIsAJoiner || mIsACreator) && !mIsConfirmed)
+        if((mIsAJoiner || mIsACreator) && !mIsConfirmed && !mIsCanceled && !mInThePast)
         {
             UpdateVotes update = new UpdateVotes();
             update.execute();
@@ -345,8 +355,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
     private String convertToTimeToString(Time time)
     {
-        long startDate = time.getStart().longValue();
-        long endDate = time.getEnd().longValue();
+        String format = "E MMM dd, hh:mm a";
         int numOfVotes;
         String s;
 
@@ -360,9 +369,16 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         s = " (" + numOfVotes + " vote(s))";
 
+        long startDate = time.getStart().longValue();
+        if(time.getEnd() == null)
+        {
+            time.setEnd(time.getStart());
+        }
+
+        long endDate= time.getEnd().longValue();
+
         Date d1 = new Date(startDate);
         Date d2 = new Date(endDate);
-        String format = "EEE MMM d, hh:mm a";
 
         String format2 = format;
         String middle = " to ";
@@ -382,7 +398,15 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         SimpleDateFormat sdf1 = new SimpleDateFormat(format);
         SimpleDateFormat sdf2 = new SimpleDateFormat(format2);
-        return sdf1.format(d1) + middle + sdf2.format(d2);
+
+        if(startDate == endDate)
+        {
+            return sdf1.format(d1);
+        }
+        else
+        {
+            return sdf1.format(d1) + middle + sdf2.format(d2);
+        }
     }
 
     //To handle multiple scrollviews
@@ -586,6 +610,16 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
 
+            Log.e("Past", String.valueOf(mInThePast));
+            if(mInThePast)
+            {
+                mJoinEventBtn.setVisibility(View.GONE);
+                mCancelBtn.setVisibility(View.GONE);
+                mEventLocation.setVisibility(View.GONE);
+                mSuggestTimeBtn.setVisibility(View.GONE);
+                mAddLocationBtn.setVisibility(View.GONE);
+            }
+
             //Hide the suggest buttons if the creator does not allow user input
             //and if the user is not a joiner
             if(!response.getAllow_joiner_input() && !mIsACreator)
@@ -649,7 +683,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         numOfVotes, yesVote));
             }
 
-            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList, mIsCanceled, mIsConfirmed);
+            mLocationListAdapter = new SuggestionListAdapter(ViewEventActivity.this, locSuggestionList, mIsCanceled, mIsConfirmed, mInThePast);
             mLocationList.setAdapter(mLocationListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mLocationList);
 
@@ -673,18 +707,19 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             });
 
-            if(mIsCanceled) //change color
+            if(mIsCanceled || mIsConfirmed || mInThePast) //change color
             {
-                mLocationLabel.setTextColor(Color.GRAY);
+                if(mIsCanceled) {
+                    mLocationLabel.setTextColor(Color.GRAY);
+                    divider1.setBackgroundColor(Color.GRAY);
+                    divider2.setBackgroundColor(Color.GRAY);
+                    divider3.setBackgroundColor(Color.GRAY);
+                    divider4.setBackgroundColor(Color.GRAY);
+                }
                 mLocationList.setClickable(false);
-                mLocationList.setEnabled(false);
                 mLocationList.setFocusable(false);
-            }
-            else if(mIsConfirmed)
-            {
-                mLocationList.setClickable(false);
-                mLocationList.setEnabled(false);
-                mLocationList.setFocusable(false);
+                mLocationList.setOnItemClickListener(null);
+                mLocationList.setSelector(android.R.color.transparent);
             }
         }
 
@@ -709,7 +744,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                         convertToTimeToString(time), numOfVotes, yesVote));
             }
 
-            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, timeSuggestionList, mIsCanceled, mIsConfirmed);
+            mTimesListAdapter = new SuggestionListAdapter(ViewEventActivity.this, timeSuggestionList, mIsCanceled, mIsConfirmed, mInThePast);
             mTimeList.setAdapter(mTimesListAdapter);
             ListViewUtil.setListViewHeightBasedOnChildren(mTimeList);
 
@@ -734,18 +769,16 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             });
 
-            if(mIsCanceled) //change color
+            if(mIsCanceled || mIsConfirmed || mInThePast) //change color
             {
-                mTimeLabel.setTextColor(Color.GRAY);
+                if(mIsCanceled)
+                {
+                    mTimeLabel.setTextColor(Color.GRAY);
+                }
                 mTimeList.setClickable(false);
-                mTimeList.setEnabled(false);
                 mTimeList.setFocusable(false);
-            }
-            else if(mIsConfirmed)
-            {
-                mTimeList.setClickable(false);
-                mTimeList.setEnabled(false);
-                mTimeList.setFocusable(false);
+                mTimeList.setOnItemClickListener(null);
+                mTimeList.setSelector(android.R.color.transparent);
             }
         }
 
@@ -795,7 +828,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         @Override
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
-            Log.e("Join", message);
 
             if(error) // have a pop up
             {
@@ -884,17 +916,12 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         private String checkVotes()
         {
-
-            int addrCount = mLocationList.getChildCount();
-            int timeCount = mTimeList.getChildCount();
-
-            for (int i=0; i<addrCount; i++)
+            for (int i=0; i<locSuggestionList.size(); i++)
             {
-                if(((CheckBox)mLocationList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mLocationListAdapter.getItem(i).getYesVote())
                 {
                     try {
-                        getEventApi.voteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
+                        getEventApi.voteForSuggestion(locSuggestionList.get(i).getSuggestionId());
                     } catch (Exception e) {
                         error = true;
                         response = e.getMessage();
@@ -903,7 +930,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 else
                 {
                     try {
-                        getEventApi.unvoteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
+                        getEventApi.unvoteForSuggestion(locSuggestionList.get(i).getSuggestionId());
                     } catch (Exception e) {
                         error = true;
                         response = e.getMessage();
@@ -911,10 +938,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
 
-            for (int i=0; i<timeCount; i++)
+            for (int i=0; i<timeSuggestionList.size(); i++)
             {
-                if(((CheckBox)mTimeList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mTimesListAdapter.getItem(i).getYesVote())
                 {
                     try {
                         getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
@@ -980,6 +1006,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             if(message==null)
             {
                 message = "Un-Joined Event";
+                mIsAJoiner = false;
+                mIsACreator = false;
                 Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             }
             else
@@ -1029,6 +1057,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
         protected void onPostExecute(String message) {
             progressDialog.dismiss();
             message = "Cancelled Event";
+            mIsAJoiner = false;
+            mIsACreator = false;
             Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -1075,8 +1105,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     suggested = setEventApi.suggestLocationForActivity(sEventID, suggestedLocation);
                 }
-
-
 
             } catch (Exception e) {
                 error = true;
@@ -1151,14 +1179,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
 
         private String checkVotes()
         {
-
-            int addrCount = mLocationList.getChildCount();
-            int timeCount = mTimeList.getChildCount();
-
-            for (int i=0; i<addrCount; i++)
+            for (int i=0; i<locSuggestionList.size(); i++)
             {
-                if(((CheckBox)mLocationList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mLocationListAdapter.getItem(i).getYesVote())
                 {
                     try {
                         getEventApi.voteForSuggestion(mLocationListAdapter.getItem(i).getSuggestionId());
@@ -1176,10 +1199,9 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 }
             }
 
-            for (int i=0; i<timeCount; i++)
+            for (int i=0; i<timeSuggestionList.size(); i++)
             {
-                if(((CheckBox)mTimeList.getChildAt(i)
-                        .findViewById(R.id.suggestion_checkbox)).isChecked())
+                if(mTimesListAdapter.getItem(i).getYesVote())
                 {
                     try {
                         getEventApi.voteForSuggestion(mTimesListAdapter.getItem(i).getSuggestionId());
@@ -1209,14 +1231,7 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 message = message.replace("{error:", "");
                 message = message.replace("}", "");
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ViewEventActivity.this);
-                alertDialog.setTitle("Warning").setMessage(message).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                alertDialog.show();
+                Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             }
         }
 

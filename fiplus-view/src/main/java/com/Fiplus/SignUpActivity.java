@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -40,9 +41,11 @@ public class SignUpActivity extends BaseFragmentActivity {
 
     protected EditText signUpEmail;
     protected EditText signUpPassword;
+    protected EditText signUpConfirmPassword;
     protected Button signUpButton;
     protected Button cancelButton;
     private TextView mFitTerms;
+    private TextView mBanner;
 
     private ProgressDialog progressDialog;
 
@@ -65,6 +68,7 @@ public class SignUpActivity extends BaseFragmentActivity {
         //initialize
         signUpEmail = (EditText)findViewById(R.id.sign_up_email);
         signUpPassword = (EditText)findViewById(R.id.sign_up_password);
+        signUpConfirmPassword = (EditText)findViewById(R.id.sign_up_confirm_password);
         signUpButton = (Button)findViewById(R.id.sign_up_button2);
         cancelButton = (Button)findViewById(R.id.sign_up_cancel);
 
@@ -81,6 +85,8 @@ public class SignUpActivity extends BaseFragmentActivity {
             }
         });
 
+        mBanner = (TextView) findViewById(R.id.sign_up_banner_1);
+        mBanner.setText(Html.fromHtml("Get <font color = #FFB300>Fi+</font>"));
         mFitTerms = (TextView) findViewById(R.id.signUpPolicy);
         setPrivacyTerms();
     }
@@ -143,6 +149,7 @@ public class SignUpActivity extends BaseFragmentActivity {
         // Store values at the time of the login attempt.
         String email = signUpEmail.getText().toString();
         String password = signUpPassword.getText().toString();
+        String confirmPassword = signUpConfirmPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -170,6 +177,20 @@ public class SignUpActivity extends BaseFragmentActivity {
             cancel = true;
         }
 
+        if(TextUtils.isEmpty(confirmPassword))
+        {
+            signUpConfirmPassword.setError(getString(R.string.error_field_required));
+            focusView = signUpConfirmPassword;
+            cancel = true;
+        }
+        else if(!password.equals(confirmPassword))
+        {
+            signUpPassword.setError(getString(R.string.error_confirm_password));
+            signUpConfirmPassword.setError(getString(R.string.error_confirm_password));
+            focusView = signUpPassword;
+            cancel = true;
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -193,7 +214,7 @@ public class SignUpActivity extends BaseFragmentActivity {
 
        public SignUpTask()
        {
-           email = signUpEmail.getText().toString();
+           email = signUpEmail.getText().toString().toLowerCase();
            password = signUpPassword.getText().toString();
        }
 

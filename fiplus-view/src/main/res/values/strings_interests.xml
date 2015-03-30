@@ -10,4 +10,7 @@
         <item >Dodgeball</item>
     </string-array>
 
+    <string name="no_events_interest">Unable to find events based on your interests!</string>
+    <string name="no_events_location">Unable to find events based on your location!</string>
+
 </resources>

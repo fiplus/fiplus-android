@@ -1,16 +1,20 @@
 package fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.Fiplus.FiplusApplication;
 import com.Fiplus.R;
+import com.Fiplus.ViewEventActivity;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.wordnik.client.ApiException;
@@ -40,6 +44,7 @@ public class FragmentRecentActivities extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter;
+    private TextView mNoRecent;
 
     public static FragmentRecentActivities newInstance() {
         return new FragmentRecentActivities();
@@ -62,8 +67,10 @@ public class FragmentRecentActivities extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
+        mNoRecent = (TextView) v.findViewById(R.id.no_recent_activities);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
-        //mEventsList.setOnItemClickListener(new EventItemClickListener());
+        mEventsList.setOnItemClickListener(new EventItemClickListener());
+
         GetRecentEvents getRecentEvents= new GetRecentEvents();
         getRecentEvents.execute();
         return v;
@@ -72,37 +79,49 @@ public class FragmentRecentActivities extends Fragment {
     private void setEventList(List<Activity> activities)
     {
         if (activities == null)
-        {
             return;
+
+        int size = activities.size();
+        if(size == 0)
+        {
+            mNoRecent.setVisibility(View.VISIBLE);
         }
 
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
-        for(int i = 0; i < activities.size(); i++)
+        for(int i = 0; i < size; i++)
             eventList.add(new EventListItem(
-                    R.drawable.ic_configure,
+                    R.mipmap.ic_past,
                     activities.get(i).getName(),
                     LocationUtil.getLocationStrings(activities.get(i).getLocations(), getActivity().getBaseContext()),
                     activities.get(i).getTimes(),
-                    ((Integer)activities.get(i).getMax_attendees().intValue()).toString(),
+                    ((Integer)activities.get(i).getNum_attendees().intValue()).toString(),
                     activities.get(i).getActivity_id()));
 
         mEventListAdapter = new EventListAdapter(getActivity(), eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);
         mEventListAdapter.notifyDataSetChanged();
-
     }
 
-//    protected class EventItemClickListener implements AdapterView.OnItemClickListener {
-//    @Override
-//     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-//        {
-//            String sEventID = mEventListAdapter.getItem(position).getEventId();
-//            Intent intent = new Intent(getActivity(), ViewEventActivity.class);
-//            intent.putExtra("eventID", sEventID);
-//            startActivity(intent);
-//        }
-//    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        GetRecentEvents getRecentEvents = new GetRecentEvents();
+        getRecentEvents.execute();
+    }
+
+    protected class EventItemClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+        {
+            String sEventID = mEventListAdapter.getItem(position).getEventId();
+            Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+            intent.putExtra("eventID", sEventID);
+            intent.putExtra("pastID", true);
+            startActivity(intent);
+        }
+    }
 
     private class GetRecentEvents extends AsyncTask<Void, Void, String>
     {
