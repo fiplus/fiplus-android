@@ -190,8 +190,6 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
                 {
                     finish();
                 }
-                // Invalidate the my events cache to get updated values
-                PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
             }
         });
 
@@ -1016,6 +1014,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             }
 
             finish();
+            // Invalidate the my events cache to get updated values
+            PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
         }
     }
 
@@ -1061,6 +1061,8 @@ public class ViewEventActivity extends FragmentActivity  implements TextWatcher,
             mIsACreator = false;
             Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
             finish();
+            // Invalidate the my events cache to get updated values
+            PrefUtil.putBoolean(getApplicationContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
         }
     }
 
