@@ -11,6 +11,7 @@ public class NotificationClearReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // Notification cleared means we need to reset the notification to start building a new stack
+        if(intent.getExtras() == null) return;
         switch(intent.getExtras().getInt(GcmMessageProcessor.NOTIFICATION_ID)) {
             case GcmMessageProcessor.ACTIVITY_GROUP_NOTIF_ID:
                 GcmMessageProcessor.newActivitiesStyle = new NotificationCompat.InboxStyle();
