@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="No Favourited Users"
+        android:text="@string/no_fav"
         android:id="@+id/no_favorites"
         android:paddingLeft="@dimen/tags_padding"
         android:paddingRight="@dimen/tags_padding"
@@ -18,8 +18,11 @@
         android:paddingBottom="@dimen/tags_padding"
         android:textStyle="bold"
         android:clickable="true"
-        android:textColor="#fc050401"
-        android:visibility="gone"/>
+        android:textColor="@android:color/darker_gray"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:visibility="gone"
+        />
 
     <ListView
         android:layout_width="wrap_content"
@@ -31,6 +34,5 @@
         android:divider="@color/list_divider"
         android:dividerHeight="2dp"
         android:listSelector="@drawable/list_selector"
-        android:layout_below="@+id/no_favorites"
       />
 </RelativeLayout>

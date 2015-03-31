@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="create_event">Creating Event</string>
     <string name="create_event_name_hint">Event Name</string>
     <string name="create_event_location_hint">Add Event Location</string>
     <string name="create_event_max_location">Max location added</string>

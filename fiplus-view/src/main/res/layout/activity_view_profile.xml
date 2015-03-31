@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<ScrollView-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:layout_width="fill_parent"-->
-    <!--android:layout_height="fill_parent"-->
-    <!--android:fillViewport="true"-->
-    <!--android:focusable="false"-->
-    <!--android:focusableInTouchMode="false"-->
-    <!--android:background="@color/list_background">-->
-
 <RelativeLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -98,17 +89,38 @@
             android:layout_below="@+id/recentActivitiesText"
             android:background="#fff8a426" />
 
-        <ListView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/profileEventListView"
             android:layout_below="@+id/list_divider"
-            android:layout_centerHorizontal="true"
-            android:divider="@color/list_divider"
-            android:listSelector="@drawable/list_selector"
-            android:dividerHeight="2dp"
-            android:orientation="vertical"
-            android:fadeScrollbars="false"/>
+            >
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/no_recent"
+                android:id="@+id/no_recent_activities"
+                android:paddingLeft="@dimen/tags_padding"
+                android:paddingRight="@dimen/tags_padding"
+                android:paddingTop="@dimen/tags_padding"
+                android:paddingBottom="@dimen/tags_padding"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:textColor="@android:color/darker_gray"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:visibility="gone"
+                />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/profileEventListView"
+                android:divider="@color/list_divider"
+                android:listSelector="@drawable/list_selector"
+                android:dividerHeight="2dp"
+                android:orientation="vertical"
+                android:fadeScrollbars="false"/>
+        </RelativeLayout>
 </RelativeLayout>
-<!--</ScrollView>-->

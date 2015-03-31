@@ -1,5 +1,6 @@
 package com.Fiplus;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -449,6 +450,15 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         String message;
         boolean error = false;
         boolean allow = false;
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute()
+        {
+            progressDialog = ProgressDialog.show(CreateEventActivity.this,
+                    getString(R.string.create_event) + "...",
+                    getString(R.string.progress_dialog_text), true);
+        }
 
         @Override
         protected String doInBackground(Void... params)
@@ -489,6 +499,8 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
         @Override
         protected void onPostExecute(String address) {
 
+            progressDialog.dismiss();
+
             if(error)
             {
                 address = address.replace("\"", "");
@@ -501,7 +513,6 @@ public class CreateEventActivity extends FragmentActivity implements TextWatcher
                 }
 
                 Toast.makeText(getBaseContext(), address, Toast.LENGTH_SHORT).show();
-                //TODO: (Jobelle) delete an incomplete created events when error occurs
             }
             else
             {

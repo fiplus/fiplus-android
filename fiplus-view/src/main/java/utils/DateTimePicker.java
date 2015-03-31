@@ -25,7 +25,6 @@ import java.util.List;
 public class DateTimePicker {
 
     private static final String DATEFORMAT = "E MMM dd, hh:mm a";
-    private final static int TIME_PICKER_INTERVAL = 5;
     private final Integer MAX = 3;
 
     private Dialog mDateTimeDialog;
@@ -66,14 +65,13 @@ public class DateTimePicker {
         mDatePicker = (DatePicker) mDateTimeDialog.findViewById(R.id.datePicker);
         mTimePicker = (TimePicker) mDateTimeDialog.findViewById(R.id.timePicker);
 
-        //update 30 mins
-        Integer mins = mTimePicker.getCurrentMinute() + 30;
-        Integer hour = mTimePicker.getCurrentHour();
-        mTimePicker.setCurrentMinute(mins);
-        if(mins>59)
-        {
-            mTimePicker.setCurrentHour(hour + 1);
-        }
+        //update 15 mins
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, 15);
+
+        mDatePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        mTimePicker.setCurrentMinute(convertMinuteTime(cal.get(Calendar.MINUTE)));
+        mTimePicker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
 
         //for cancel button
         mCancelTimeButton = (Button) mDateTimeDialog.findViewById(R.id.cancelPicker);
@@ -213,6 +211,17 @@ public class DateTimePicker {
                 }
             }
         });
+    }
+
+    private int convertMinuteTime(int minute)
+    {
+        final int TIME_PICKER_INTERVAL=5;
+
+        if (minute%TIME_PICKER_INTERVAL!=0){
+            minute = minute-(minute%TIME_PICKER_INTERVAL);
+        }
+
+        return minute;
     }
 
     private void addToList()

@@ -39,6 +39,7 @@ public class ViewProfileActivity extends Activity
     private TextView mProfileName;
     private FlowLayout mInterestList;
     private String mUserId;
+    private TextView mNoRecent;
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter;
@@ -69,6 +70,7 @@ public class ViewProfileActivity extends Activity
                 getString(R.string.progress_dialog_text), true);
 
         //initialize
+        mNoRecent = (TextView) findViewById(R.id.no_recent_activities);
         mImageView = (ImageView)findViewById(R.id.profileImage);
         mProfileName = (TextView)findViewById(R.id.profileName);
         mInterestList = (FlowLayout)findViewById(R.id.profileInterestLayout);
@@ -114,28 +116,6 @@ public class ViewProfileActivity extends Activity
             }
         });
 
-//        mEventsList.setOnTouchListener(new ListView.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                int action = event.getAction();
-//                switch (action) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        // Disallow ScrollView to intercept touch events.
-//                        v.getParent().requestDisallowInterceptTouchEvent(true);
-//                        break;
-//
-//                    case MotionEvent.ACTION_UP:
-//                        // Allow ScrollView to intercept touch events.
-//                        v.getParent().requestDisallowInterceptTouchEvent(false);
-//                        break;
-//                }
-//
-//                // Handle ListView touch events.
-//                v.onTouchEvent(event);
-//                return true;
-//            }
-//        });
-
         setProfile();
         GetRecentEvents getRecentEvents = new GetRecentEvents();
         getRecentEvents.execute();
@@ -153,19 +133,6 @@ public class ViewProfileActivity extends Activity
         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
     }
 
-    // TODO: layout for view profile recent event list
-    private void setEventList()
-    {
-//        EventListAdapter mEventListAdapter ;
-//
-//        eventList = new ArrayList<EventListItem>();
-//
-//        eventList.add(new EventListItem(R.drawable.ic_configure, "Dummy Event", "Saint John", "4:30PM", "4 Attendees"));
-//        eventList.add(new EventListItem(R.drawable.ic_activities, "Second Near You Event", "Calgary", "10:30PM", "4 Attendees"));
-//
-//        mEventListAdapter = new EventListAdapter(this, eventList, TAG);
-//        mEventsList.setAdapter(mEventListAdapter);
-    }
 
     private void setProfile()
     {
@@ -179,7 +146,7 @@ public class ViewProfileActivity extends Activity
         if(size == 0)
         {
             TextView interest = new TextView(getBaseContext());
-            interest.setText("No Interest Listed");
+            interest.setText("No Interest(s) Listed");
             interest.setPadding(padding, 0, 0, 0);
             interest.setTextColor(Color.GRAY);
             mInterestList.addView(interest);
@@ -199,23 +166,56 @@ public class ViewProfileActivity extends Activity
 
     }
 
-    private void setEventList(List<com.wordnik.client.model.Activity> activities)
+    private void setEventList(List<com.wordnik.client.model.Activity> current, List<com.wordnik.client.model.Activity> past)
     {
-        if (activities == null)
-        {
+        int image;
+
+        if (current == null || past == null)
             return;
+
+        if(current.size() == 0 && past.size() == 0)
+        {
+            mNoRecent.setVisibility(View.VISIBLE);
         }
 
         ArrayList<EventListItem> eventList = new ArrayList<EventListItem>();
 
-        for(int i = 0; i < activities.size(); i++)
+        //add current activities
+        for(int i = 0; i < current.size(); i++)
+        {
+            if(current.get(i).getIs_cancelled())
+            {
+                image = R.mipmap.ic_cancelled;
+            }
+            else if(current.get(i).getIs_confirmed())
+            {
+                image = R.mipmap.ic_confirm;
+            }
+            else
+            {
+                image = R.mipmap.ic_event;
+            }
+
+            eventList.add(new EventListItem(
+                    image,
+                    current.get(i).getName(),
+                    LocationUtil.getLocationStrings(current.get(i).getLocations(),   getBaseContext()),
+                    current.get(i).getTimes(),
+                    ((Integer)current.get(i).getNum_attendees().intValue()).toString(),
+                    current.get(i).getActivity_id()));
+        }
+
+        //add past activities
+        for(int i = 0; i < past.size(); i++)
+        {
             eventList.add(new EventListItem(
                     R.mipmap.ic_past,
-                    activities.get(i).getName(),
-                    LocationUtil.getLocationStrings(activities.get(i).getLocations(),   getBaseContext()),
-                    activities.get(i).getTimes(),
-                    ((Integer)activities.get(i).getNum_attendees().intValue()).toString(),
-                    activities.get(i).getActivity_id()));
+                    past.get(i).getName(),
+                    LocationUtil.getLocationStrings(past.get(i).getLocations(),   getBaseContext()),
+                    past.get(i).getTimes(),
+                    ((Integer)past.get(i).getNum_attendees().intValue()).toString(),
+                    past.get(i).getActivity_id()));
+        }
 
         mEventListAdapter = new EventListAdapter(this, eventList, TAG);
         mEventsList.setAdapter(mEventListAdapter);
@@ -259,7 +259,8 @@ public class ViewProfileActivity extends Activity
 
     private class GetRecentEvents extends AsyncTask<Void, Void, String>
     {
-        protected List<com.wordnik.client.model.Activity> response;
+        protected List<com.wordnik.client.model.Activity> responseCurrent;
+        protected List<com.wordnik.client.model.Activity> responsePast;
         protected ProgressDialog progressDialog;
 
         @Override
@@ -276,7 +277,13 @@ public class ViewProfileActivity extends Activity
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             try{
-                response = usersApi.getActivities(mUserId, true, false);
+                responseCurrent = usersApi.getActivities(mUserId, false, true);
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+            try{
+                responsePast = usersApi.getActivities(mUserId, true, false);
             } catch (Exception e) {
                 return e.getMessage();
             }
@@ -286,8 +293,8 @@ public class ViewProfileActivity extends Activity
         @Override
         protected void onPostExecute(String result)
         {
-            if (response != null)
-                setEventList(response);
+            if (responseCurrent != null && responsePast !=null)
+                setEventList(responseCurrent, responsePast);
             progressDialog.dismiss();
         }
     }
