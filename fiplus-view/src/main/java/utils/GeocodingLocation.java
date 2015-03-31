@@ -94,13 +94,18 @@ public class GeocodingLocation extends AsyncTask<String, Void, List<Address>>
         else
         {
             callerActivity.getAutoComplete().clear();
-            for (Address a : addressList) {
-                //String temp = ""+ a.getFeatureName()+" "+a.getCountryName()+" "+a.getPostalCode();
-                temp = (a.getMaxAddressLineIndex() > 0 ? a.getAddressLine(0) : "")+" "+
-                        (a.getLocality() != null ? a.getLocality() : "")
-                        +" "+(a.getCountryName() != null ? a.getCountryName() : "");
-                callerActivity.getAutoComplete().add(temp);
+
+            if(addressList != null)
+            {
+                for (Address a : addressList) {
+                    //String temp = ""+ a.getFeatureName()+" "+a.getCountryName()+" "+a.getPostalCode();
+                    temp = (a.getMaxAddressLineIndex() > 0 ? a.getAddressLine(0) : "")+" "+
+                            (a.getLocality() != null ? a.getLocality() : "")
+                            +" "+(a.getCountryName() != null ? a.getCountryName() : "");
+                    callerActivity.getAutoComplete().add(temp);
+                }
             }
+
             callerActivity.getAutoComplete().notifyDataSetChanged();
         }
     }
