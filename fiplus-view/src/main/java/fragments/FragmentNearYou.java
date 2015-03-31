@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public class FragmentNearYou extends Fragment {
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
     private ProgressBar spinner;
+    private SwipeRefreshLayout mSwipeLayout;
 
     public FragmentNearYou() {
         // Required empty public constructor
@@ -68,6 +70,16 @@ public class FragmentNearYou extends Fragment {
         View v = inflater.inflate(R.layout.fragment_generic_list, container, false);
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
+
+        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeLayout.setRefreshing(true);
+                GetEvents getEvents = new GetEvents();
+                getEvents.execute();
+            }
+        });
 
         spinner = (ProgressBar)v.findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);
@@ -137,7 +149,8 @@ public class FragmentNearYou extends Fragment {
         @Override
         protected void onPreExecute()
         {
-            spinner.setVisibility(View.VISIBLE);
+            if(!mSwipeLayout.isRefreshing())
+                spinner.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -152,7 +165,8 @@ public class FragmentNearYou extends Fragment {
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false)
-                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE)) < IAppConstants.NEAR_YOU_CACHE_VALID_TIME)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.NEAR_YOU_CACHE_UPDATE_VALUE)) < IAppConstants.NEAR_YOU_CACHE_VALID_TIME
+                    && !mSwipeLayout.isRefreshing())
             {
                 try
                 {
@@ -206,6 +220,7 @@ public class FragmentNearYou extends Fragment {
         {
             if (response != null)
                 setEventList(response);
+            mSwipeLayout.setRefreshing(false);
         }
     }
 }

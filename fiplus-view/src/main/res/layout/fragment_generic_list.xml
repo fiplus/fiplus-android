@@ -1,45 +1,50 @@
-<FrameLayout
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="fragments.FragmentNearYou"
-    android:theme="@style/AppTheme">
-
-    <TextView
+    android:layout_height="match_parent">
+    <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="No Recent Activities"
-        android:id="@+id/no_recent_activities"
-        android:paddingLeft="@dimen/tags_padding"
-        android:paddingRight="@dimen/tags_padding"
-        android:paddingTop="@dimen/tags_padding"
-        android:paddingBottom="@dimen/tags_padding"
-        android:textStyle="bold"
-        android:clickable="true"
-        android:textColor="#fc050401"
-        android:visibility="gone"/>
+        android:layout_height="match_parent"
+        tools:context="fragments.FragmentNearYou"
+        android:theme="@style/AppTheme">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/eventsList"
-        android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@color/list_divider"
-        android:dividerHeight="2dp"
-        android:listSelector="@drawable/list_selector"
-        android:orientation="vertical"
-        android:fadeScrollbars="false"
-        />
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/eventsList"
+            android:layout_gravity="start"
+            android:choiceMode="singleChoice"
+            android:divider="@color/list_divider"
+            android:dividerHeight="2dp"
+            android:listSelector="@drawable/list_selector"
+            android:scrollbars="none"
+            android:smoothScrollbar="true"/>
 
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
+         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="No Recent Activities"
+            android:id="@+id/no_recent_activities"
+            android:paddingLeft="@dimen/tags_padding"
+            android:paddingRight="@dimen/tags_padding"
+            android:paddingTop="@dimen/tags_padding"
+            android:paddingBottom="@dimen/tags_padding"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:textColor="#fc050401"
+            android:visibility="gone"/>
 
-</FrameLayout>
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

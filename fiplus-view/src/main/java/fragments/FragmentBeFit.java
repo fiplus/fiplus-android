@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,7 @@ public class FragmentBeFit extends Fragment{
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
+    private SwipeRefreshLayout mSwipeLayout;
     private ProgressBar spinner;
 
     public FragmentBeFit() {
@@ -72,6 +74,15 @@ public class FragmentBeFit extends Fragment{
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
+        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeLayout.setRefreshing(true);
+                GetEvents getEvents = new GetEvents();
+                getEvents.execute();
+            }
+        });
         spinner = (ProgressBar)v.findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);
 
@@ -140,14 +151,16 @@ public class FragmentBeFit extends Fragment{
         @Override
         protected void onPreExecute()
         {
-            spinner.setVisibility(View.VISIBLE);
+            if(!mSwipeLayout.isRefreshing())
+                spinner.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected String doInBackground(Void... params)
         {
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false)
-                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.BEFIT_CACHE_UPDATE_VALUE)) < IAppConstants.BEFIT_CACHE_VALID_TIME)
+                    && (System.currentTimeMillis() - PrefUtil.getLong(getActivity(),IAppConstants.BEFIT_CACHE_UPDATE_VALUE)) < IAppConstants.BEFIT_CACHE_VALID_TIME
+                    && !mSwipeLayout.isRefreshing())
             {
                 try
                 {
@@ -214,6 +227,7 @@ public class FragmentBeFit extends Fragment{
             {
                 progressDialog.dismiss();
             }
+            mSwipeLayout.setRefreshing(false);
         }
     }
 }
