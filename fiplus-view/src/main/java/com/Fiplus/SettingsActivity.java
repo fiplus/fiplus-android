@@ -26,7 +26,9 @@ public class SettingsActivity extends Activity {
         mHelp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                //TODO: When allan finishes the tutorial
+                Uri uriUrl = Uri.parse("http://fiplus.github.io/#!page-help");
+                Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+                startActivity(launchBrowser);
             }
         });
 
