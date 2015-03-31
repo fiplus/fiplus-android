@@ -73,6 +73,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         PrefUtil.putString(getApplicationContext(), IAppConstants.EMAIL, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.PWD, "");
         PrefUtil.putString(getApplicationContext(), IAppConstants.USER_ID, "");
+        PrefUtil.putBoolean(getApplicationContext(), IAppConstants.PUSH_NOTIFICATIONS_ENABLED_SETTING, true);
 
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

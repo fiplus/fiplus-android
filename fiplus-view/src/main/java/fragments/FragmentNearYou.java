@@ -161,7 +161,7 @@ public class FragmentNearYou extends Fragment {
             matchesApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             UsersApi usersApi = new UsersApi();
-            usersApi.addHeader("X-DreamFactory-Application-Name", IAppConstants.APP_NAME);
+            usersApi.getInvoker().setContext(getActivity());
             usersApi.setBasePath(IAppConstants.DSP_URL + IAppConstants.DSP_URL_SUFIX);
 
             if(PrefUtil.getBoolean(getActivity(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false)

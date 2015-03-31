@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 
@@ -55,6 +58,17 @@ public class MainScreenActivity extends BaseFragmentActivity
     {
         super.onCreate(savedInstancesState);
         setContentView(R.layout.activity_mainscreen);
+
+
+        if(getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(GcmMessageProcessor.FROM_NOTIFICATION))
+        {
+            Tracker t = ((FiplusApplication)this.getApplication()).getTracker();
+            t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
+                    .setAction(FiplusApplication.CLICKED_NOTIFICATION_ACTION).build());
+            // Navigated here from stacked event info notification, need to reset stack
+            GcmMessageProcessor.newActivitiesStyle = new NotificationCompat.InboxStyle();
+            GcmMessageProcessor.sNewActivitiesIsStacked = false;
+        }
 
         /**
          * Create Event Button

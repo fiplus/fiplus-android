@@ -2,6 +2,7 @@ package com.Fiplus;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -14,6 +15,16 @@ public class MyEventsActivity extends FragmentActivity {
         Tracker t = ((FiplusApplication)this.getApplication()).getTracker();
         t.setScreenName(this.getClass().getSimpleName());
         t.send(new HitBuilders.ScreenViewBuilder().build());
+
+        if(getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(GcmMessageProcessor.FROM_NOTIFICATION))
+        {
+            t = ((FiplusApplication)this.getApplication()).getTracker();
+            t.send(new HitBuilders.EventBuilder().setCategory(FiplusApplication.VIEWS_CATEGORY)
+                    .setAction(FiplusApplication.CLICKED_NOTIFICATION_ACTION).build());
+            // Navigated here from stacked event info notification, need to reset stack
+            GcmMessageProcessor.cancelledActivitiesStyle = new NotificationCompat.InboxStyle();
+            GcmMessageProcessor.sCancelledActivitiesIsStacked = false;
+        }
 
         super.onCreate(savedInstancesState);
         setContentView(R.layout.activity_my_events);
