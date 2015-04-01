@@ -17,7 +17,6 @@
         android:paddingTop="@dimen/tags_padding"
         android:paddingBottom="@dimen/tags_padding"
         android:textStyle="bold"
-        android:clickable="true"
         android:textColor="@android:color/darker_gray"
         android:layout_centerInParent="true"
         android:gravity="center"

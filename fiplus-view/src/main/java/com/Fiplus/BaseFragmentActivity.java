@@ -9,14 +9,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-
-import com.wordnik.client.ApiException;
-import com.wordnik.client.api.UsersApi;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.wordnik.client.ApiException;
+import com.wordnik.client.api.UsersApi;
 import com.wordnik.client.model.SetDeviceId;
 
 import java.io.IOException;
@@ -79,6 +77,13 @@ public class BaseFragmentActivity extends FragmentActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("EXIT", true);
+
+        PrefUtil.putBoolean(getBaseContext(), IAppConstants.BEFIT_CACHE_VALID_FLAG, false);
+        PrefUtil.putBoolean(getBaseContext(), IAppConstants.NEAR_YOU_CACHE_VALID_FLAG, false);
+        PrefUtil.putBoolean(getBaseContext(), IAppConstants.MY_EVENTS_CACHE_VALID_FLAG, false);
+        PrefUtil.putBoolean(getBaseContext(), IAppConstants.INTEREST_EVENTS_CACHE_VALID_FLAG, false);
+        PrefUtil.putBoolean(getBaseContext(), IAppConstants.RECENT_EVENTS_CACHE_VALID_FLAG, false);
+
         startActivity(intent);
         finish();
     }

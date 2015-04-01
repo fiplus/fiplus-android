@@ -38,8 +38,9 @@
             android:paddingTop="@dimen/tags_padding"
             android:paddingBottom="@dimen/tags_padding"
             android:textStyle="bold"
-            android:clickable="true"
-            android:textColor="#fc050401"
+            android:textColor="@android:color/darker_gray"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:visibility="gone"/>
 
         <ProgressBar
