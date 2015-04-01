@@ -1,6 +1,5 @@
 package fragments;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,8 +41,6 @@ import utils.PrefUtil;
 
 public class FragmentBeFit extends Fragment{
 
-    private ProgressDialog progressDialog;
-
     public static final String TAG = FragmentBeFit.class
             .getSimpleName();
 
@@ -63,7 +60,6 @@ public class FragmentBeFit extends Fragment{
         Tracker t = ((FiplusApplication)getActivity().getApplication()).getTracker();
         t.setScreenName(this.getClass().getSimpleName());
         t.send(new HitBuilders.ScreenViewBuilder().build());
-        progressDialog = ProgressDialog.show(getActivity(), "Getting events...", getString(R.string.progress_dialog_text), true);
     }
 
     @Override
@@ -223,10 +219,7 @@ public class FragmentBeFit extends Fragment{
         {
             if (response != null)
                 setEventList(response);
-            if (progressDialog != null)
-            {
-                progressDialog.dismiss();
-            }
+
             mSwipeLayout.setRefreshing(false);
         }
     }
