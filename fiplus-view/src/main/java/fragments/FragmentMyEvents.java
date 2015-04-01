@@ -35,6 +35,7 @@ import java.util.List;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
+import model.GeneralSwipeRefreshLayout;
 import utils.AlertFragmentDialog;
 import utils.IAppConstants;
 import utils.LocationUtil;
@@ -46,7 +47,7 @@ public class FragmentMyEvents extends Fragment {
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
-    private SwipeRefreshLayout mSwipeLayout;
+    private GeneralSwipeRefreshLayout mSwipeLayout;
 
     public static FragmentMyEvents newInstance() {
         return new FragmentMyEvents();
@@ -72,13 +73,22 @@ public class FragmentMyEvents extends Fragment {
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
-        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout = (GeneralSwipeRefreshLayout) v.findViewById(R.id.swipe_container);
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeLayout.setRefreshing(true);
                 GetJoinedEvents getJoinedEvents = new GetJoinedEvents();
                 getJoinedEvents.execute();
+            }
+        });
+
+        mSwipeLayout.setOnChildScrollUpListener(new GeneralSwipeRefreshLayout.OnChildScrollUpListener() {
+            @Override
+            public boolean canChildScrollUp() {
+                return mEventsList.getFirstVisiblePosition() > 0 ||
+                        mEventsList.getChildAt(0) == null ||
+                        mEventsList.getChildAt(0).getTop() < 0;
             }
         });
 

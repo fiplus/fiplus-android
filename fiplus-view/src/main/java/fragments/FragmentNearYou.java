@@ -35,6 +35,7 @@ import java.util.List;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
+import model.GeneralSwipeRefreshLayout;
 import utils.IAppConstants;
 import utils.LocationUtil;
 import utils.PrefUtil;
@@ -53,7 +54,7 @@ public class FragmentNearYou extends Fragment {
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
     private ProgressBar spinner;
-    private SwipeRefreshLayout mSwipeLayout;
+    private GeneralSwipeRefreshLayout mSwipeLayout;
 
     public FragmentNearYou() {
         // Required empty public constructor
@@ -71,13 +72,22 @@ public class FragmentNearYou extends Fragment {
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
-        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout = (GeneralSwipeRefreshLayout) v.findViewById(R.id.swipe_container);
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeLayout.setRefreshing(true);
                 GetEvents getEvents = new GetEvents();
                 getEvents.execute();
+            }
+        });
+
+        mSwipeLayout.setOnChildScrollUpListener(new GeneralSwipeRefreshLayout.OnChildScrollUpListener() {
+            @Override
+            public boolean canChildScrollUp() {
+                return mEventsList.getFirstVisiblePosition() > 0 ||
+                        mEventsList.getChildAt(0) == null ||
+                        mEventsList.getChildAt(0).getTop() < 0;
             }
         });
 

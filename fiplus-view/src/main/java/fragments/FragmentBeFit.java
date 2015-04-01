@@ -35,6 +35,7 @@ import java.util.List;
 
 import adapters.EventListAdapter;
 import model.EventListItem;
+import model.GeneralSwipeRefreshLayout;
 import utils.IAppConstants;
 import utils.LocationUtil;
 import utils.PrefUtil;
@@ -46,7 +47,7 @@ public class FragmentBeFit extends Fragment{
 
     private ListView mEventsList;
     private EventListAdapter mEventListAdapter ;
-    private SwipeRefreshLayout mSwipeLayout;
+    private GeneralSwipeRefreshLayout mSwipeLayout;
     private ProgressBar spinner;
 
     public FragmentBeFit() {
@@ -70,7 +71,7 @@ public class FragmentBeFit extends Fragment{
         mEventsList = (ListView) v.findViewById(R.id.eventsList);
         mEventsList.setOnItemClickListener(new EventItemClickListener());
 
-        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout = (GeneralSwipeRefreshLayout) v.findViewById(R.id.swipe_container);
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -79,11 +80,22 @@ public class FragmentBeFit extends Fragment{
                 getEvents.execute();
             }
         });
+
+        mSwipeLayout.setOnChildScrollUpListener(new GeneralSwipeRefreshLayout.OnChildScrollUpListener() {
+            @Override
+            public boolean canChildScrollUp() {
+                return mEventsList.getFirstVisiblePosition() > 0 ||
+                        mEventsList.getChildAt(0) == null ||
+                        mEventsList.getChildAt(0).getTop() < 0;
+            }
+        });
+
         spinner = (ProgressBar)v.findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);
 
         return v;
     }
+
 
     //TODO: Remove DUMMY EVENTS
     private void setEventList(List<Activity> activities)
